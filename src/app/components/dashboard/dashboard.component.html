@@ -1,0 +1,98 @@
+<div class="admin-grid-layout">
+  
+  <!-- ==============================================================================
+     ROW 1: HIGH-LEVEL METRICS & LIVE TELEMETRY NODES
+     ============================================================================== -->
+  <!-- Asset Under Management Totalizator -->
+  <section class="executive-surface-card col-span-4">
+    <div class="card-title-node">Total Aggregated Principal (AUM)</div>
+    <div class="metric-hero-display text-emerald">
+      Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
+    </div>
+    <p class="metric-subtext-note">Cumulative total value of all manual and automated user positions.</p>
+  </section>
+
+  <!-- Compliance Funnel Status Tracking Node -->
+  <section class="executive-surface-card col-span-4" routerLink="/compliance" style="cursor: pointer;">
+    <div class="card-title-node">Compliance & Identity Pipeline</div>
+    <div class="metric-split-row">
+      <div class="split-segment">
+        <span class="value text-warning">{{ portfolioStore.totalPendingKycCount() }}</span>
+        <span class="label">Pending Verification</span>
+      </div>
+      <div class="split-segment border-left">
+        <span class="value text-muted">{{ portfolioStore.totalApprovedKycCount() }}</span>
+        <span class="label">Approved Ledgers</span>
+      </div>
+    </div>
+    <p class="metric-subtext-note">Click to review incoming citizen registration papers and document files.</p>
+  </section>
+
+  <!-- Premium Subscriptions User Saturation Profile -->
+  <section class="executive-surface-card col-span-4" routerLink="/subscriptions" style="cursor: pointer;">
+    <div class="card-title-node">Subscription Premium Tiers</div>
+    <div class="metric-hero-display text-teal">
+      {{ portfolioStore.premiumTierPercentage() }}%
+    </div>
+    <p class="metric-subtext-note">VIP tier density profile relative to standard free subscription instances.</p>
+  </section>
+
+  <!-- ==============================================================================
+     ROW 2: DYNAMIC MARKET EXPOSURE MATRIX & NODE MATRIX STATUS
+     ============================================================================== -->
+  <!-- Macro Allocation Exposure Radar Map -->
+  <section class="executive-surface-card col-span-7" routerLink="/risk-engine" style="cursor: pointer;">
+    <div class="card-title-node">Macro Assets Exposure Mapping</div>
+    
+    <div class="exposure-list-track">
+      @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
+        <div class="exposure-progress-row">
+          <div class="exposure-meta">
+            <span class="category-name">{{ sector.category.replace('_', ' ') }}</span>
+            <span class="percentage-val">{{ sector.percentage }}%</span>
+          </div>
+          <div class="progress-bar-rail">
+            <div class="progress-bar-fill" 
+                 [style.width.%]="sector.percentage"
+                 [ngClass]="{
+                   'bg-indigo': sector.percentage < 40,
+                   'bg-teal': sector.percentage >= 40 && sector.percentage < 70,
+                   'bg-danger': sector.percentage >= 70
+                 }">
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Network Integration API Telemetry Nodes -->
+  <section class="executive-surface-card col-span-5" routerLink="/node-monitor" style="cursor: pointer;">
+    <div class="card-title-node">Active Node Core Interfaces</div>
+    
+    <div class="node-telemetry-stack">
+      @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+        <div class="node-status-line">
+          <div class="node-identity">
+            <span class="indicator-dot" [class.live]="node.isHealthy"></span>
+            <span class="node-name">{{ node.name }}</span>
+          </div>
+          <div class="node-value-metric">
+            Rs. {{ node.lastKnownPrice.toLocaleString() }}
+            <span class="latency-pill">{{ node.latencyMs }}ms</span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ==============================================================================
+     ROW 3: OPERATIONAL DIRECT ROUTE DEEP-LINKS
+     ============================================================================== -->
+  <footer class="col-span-12 command-quick-dock">
+    <button class="dock-btn-node" routerLink="/support-hub">
+      🎧 Open Real-Time Client Support Hub
+    </button>
+  </footer>
+
+</div>

@@ -1,0 +1,85 @@
+<div class="admin-grid-layout">
+  
+  <!-- ==============================================================================
+     HEADER CONSOLE SECTION
+     ============================================================================== -->
+  <header class="col-span-12 system-banner-shelf">
+    <div class="banner-meta">
+      <h2>Subscription Premium Tier Manager</h2>
+      <p>Configure user account classification levels, grant premium licenses, and track VIP tier density profiles.</p>
+    </div>
+    
+    <!-- Real-Time VIP Tier Saturation Metric Tracker -->
+    <div class="banner-telemetry-pill font-mono">
+      Premium User Density: <span class="saturation-percentage">{{ portfolioStore.premiumTierPercentage() }}%</span>
+    </div>
+  </header>
+
+  <!-- ==============================================================================
+     MAIN COMPONENT: SECURE USER ACCOUNT TIER MANAGEMENT GRID (12 COLUMNS)
+     ============================================================================== -->
+  <section class="executive-surface-card col-span-12">
+    <div class="card-title-node">System Accounts Licensing Ledger</div>
+    <p class="section-desc-text">Manage administrative properties, audit active compliance standing, and toggle advanced feature access flags.</p>
+    
+    <div class="admin-table-wrapper" style="margin-top: 20px;">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>Registered User Profile</th>
+            <th>Compliance Standing</th>
+            <th>Current Licensing Tier</th>
+            <th style="text-align: right;">Administrative Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
+            <tr>
+              <!-- User Core Information Cluster -->
+              <td>
+                <div class="table-user-profile-cell">
+                  <div class="user-avatar-placeholder">👤</div>
+                  <div class="profile-meta">
+                    <strong>{{ user.name }}</strong>
+                    <span class="user-email-label font-mono">{{ user.email }}</span>
+                  </div>
+                </div>
+              </td>
+              
+              <!-- Core Compliance Pipeline Verification Badge -->
+              <td>
+                <span class="compliance-badge-pill" 
+                      [ngClass]="user.kycStatus.toLowerCase()">
+                  ● KYC {{ user.kycStatus }}
+                </span>
+              </td>
+              
+              <!-- Dynamic Account Level Indicator -->
+              <td>
+                <div class="tier-status-tag" [class.premium-active]="isUserPremium(user.email)">
+                  {{ isUserPremium(user.email) ? '🥇 PREMIUM VIP' : 'STANDARD FREEMIUM' }}
+                </div>
+              </td>
+              
+              <!-- Atomic Mutator Trigger Panel Options -->
+              <td style="text-align: right;">
+                <button class="admin-action-btn btn-secondary btn-table-scale"
+                        [ngClass]="{'btn-danger-toggle': isUserPremium(user.email)}"
+                        (click)="portfolioStore.togglePremiumStatus(user.email)">
+                  {{ isUserPremium(user.email) ? 'Downgrade to Standard' : 'Upgrade to Premium' }}
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-table-placeholder">
+                No registered user pipeline logs detected on the central authentication node.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

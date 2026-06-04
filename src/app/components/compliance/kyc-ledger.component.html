@@ -1,0 +1,82 @@
+<div class="admin-grid-layout">
+  
+  <header class="col-span-12 system-banner-shelf">
+    <div class="banner-meta">
+      <h2>Citizen KYC Verification Ledger</h2>
+      <p>Audit citizen registration profiles, review submitted file logs, and update network compliance parameters.</p>
+    </div>
+    
+    <div class="banner-telemetry-pill font-mono">
+      Awaiting Review Queue: <span class="attention-count-val">{{ portfolioStore.totalPendingKycCount() }} Files</span>
+    </div>
+  </header>
+
+  <section class="executive-surface-card col-span-12">
+    <div class="card-title-node">Identity Pipeline Verification Pool</div>
+    
+    <div class="admin-table-wrapper" style="margin-top: 16px;">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>Registered Citizen Profile</th>
+            <th>Submission Date Reference</th>
+            <th>Pipeline Status</th>
+            <th style="text-align: right;">Compliance Decision Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
+            <tr>
+              <td>
+                <div class="table-user-profile-cell">
+                  <div class="user-avatar-placeholder">📁</div>
+                  <div class="profile-meta">
+                    <strong>{{ user.name }}</strong>
+                    <span class="user-email-label font-mono">{{ user.email }}</span>
+                  </div>
+                </div>
+              </td>
+              
+              <td class="font-mono table-timestamp-cell">
+                {{ user.submittedAt | date:'mediumDate' }}
+              </td>
+              
+              <td>
+                <span class="compliance-badge-pill" [ngClass]="user.kycStatus.toLowerCase()">
+                  ● KYC {{ user.kycStatus }}
+                </span>
+              </td>
+              
+              <td style="text-align: right;">
+                <div class="table-action-btn-cluster">
+                  
+                  @if (user.kycStatus !== 'APPROVED') {
+                    <button class="admin-action-btn btn-success btn-table-scale"
+                            (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')">
+                      Approve & Clear
+                    </button>
+                  }
+                  
+                  @if (user.kycStatus !== 'UNVERIFIED') {
+                    <button class="admin-action-btn btn-danger btn-table-scale"
+                            (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')">
+                      Reject Account
+                    </button>
+                  }
+
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-table-placeholder">
+                No compliance or citizen verification pipelines loaded onto active registers.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

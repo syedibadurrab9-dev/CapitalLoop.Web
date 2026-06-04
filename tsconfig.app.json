@@ -3,6 +3,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",                  /* 🚀 MATCHED: Anchors application compilation boundaries safely */
     "outDir": "./out-tsc/app",
     "types": []
   },

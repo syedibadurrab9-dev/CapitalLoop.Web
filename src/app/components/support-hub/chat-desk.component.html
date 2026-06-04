@@ -1,0 +1,147 @@
+<div class="workspace-viewport">
+
+  <aside class="sidebar-tray">
+    
+    <div class="hub-telemetry-header">
+      <h2>Active Support Queues</h2>
+      
+      <div class="connection-status-wrapper">
+        @if (chatStore.connectionStatus() === 'Connected') {
+          <span class="hub-pill status-online font-mono" style="background: rgba(16, 185, 129, 0.08); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+            ● LINK ONLINE
+          </span>
+        } @else if (chatStore.connectionStatus() === 'Connecting') {
+          <span class="hub-pill status-syncing font-mono" style="background: rgba(245, 158, 11, 0.08); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+            ⏳ SYNCING PIPELINE...
+          </span>
+        } @else {
+          <span class="hub-pill status-offline font-mono" style="background: rgba(239, 68, 68, 0.08); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+            ● LINK OFFLINE
+          </span>
+        }
+      </div>
+    </div>
+    
+    <div class="conversations-list">
+      @for (chat of chatStore.activeThreads(); track chat.email) {
+        <div class="queue-card" 
+             [class.active]="portfolioStore.selectedUserEmail() === chat.email"
+             (click)="selectClientUser(chat.email)">
+          
+          <div class="queue-header">
+            <span class="client-title">{{ chat.clientName }}</span>
+            <span class="status-dot" [class.online]="chat.isOnline"></span>
+          </div>
+          
+          <div class="client-email-sub font-mono">{{ chat.email }}</div>
+          <div class="snippet">{{ chat.lastMessageSnippet }}</div>
+        </div>
+      } @empty {
+        <div class="empty-tray-msg">No active client signals detected on connection pool.</div>
+      }
+    </div>
+  </aside>
+
+  <section class="chat-terminal-core">
+    @if (portfolioStore.selectedUserEmail()) {
+      
+      <div class="active-chat-header">
+        <h3>{{ getActiveThreadName() }}</h3>
+        <span class="font-mono">Channel Token: Direct Pass-Through Handshake (SignalR Hub)</span>
+      </div>
+
+      <div class="stream-scroller" #streamContainer>
+        @for (msg of chatStore.activeMessageStream(); track msg.id) {
+          <div class="message-row" [class.self-alignment]="msg.isAgentSender">
+            <div class="bubble-wrapper">
+              <span class="sender-identity">
+                {{ msg.isAgentSender ? 'System Operator' : msg.senderName }}
+              </span>
+              <div class="message-bubble">
+                {{ msg.text }}
+              </div>
+              <span class="timestamp-tag font-mono">{{ msg.timestamp | date:'shortTime' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <footer class="interaction-shelf" [style.opacity]="chatStore.connectionStatus() === 'Connected' ? '1' : '0.5'">
+        <input type="text" 
+               #replyInput
+               [disabled]="chatStore.connectionStatus() !== 'Connected'"
+               [placeholder]="chatStore.connectionStatus() === 'Connected' ? 'Type administrative dispatch message parameters...' : 'Pipeline link severed. Awaiting channel reconnection...'" 
+               (input)="0"
+               (keyup.enter)="chatStore.connectionStatus() === 'Connected' && replyInput.value.trim() && dispatchResponse(replyInput)" />
+        <button class="dispatch-btn" 
+                [disabled]="chatStore.connectionStatus() !== 'Connected' || !replyInput.value.trim()" 
+                (click)="dispatchResponse(replyInput)">
+          Dispatch Link
+        </button>
+      </footer>
+
+    } @else {
+      <div class="empty-state">
+        <p>
+          ⚡ **System Awaiting Target Acquisition** <br />
+          Select an active customer data ticket from the left communications sidebar queue to mount the real-time encrypted messaging channel and load user financial ledger overlays.
+        </p>
+      </div>
+    }
+  </section>
+
+  @if (portfolioStore.selectedUserEmail()) {
+    <aside class="context-sidebar-panel">
+      
+      <div class="panel-section-header">
+        <h3>Client Profile Context</h3>
+        <p>Live cross-inspections derived from system account nodes.</p>
+      </div>
+
+      <div class="context-data-block">
+        <label>Account Tier Standing</label>
+        <div class="tier-status-indicator" [class.premium]="portfolioStore.selectedUserIsPremium()">
+          {{ portfolioStore.selectedUserIsPremium() ? '🥇 PREMIUM SYSTEM ACCOUNT' : 'STANDARD FREEMIUM ACCOUNT' }}
+        </div>
+      </div>
+
+      <div class="context-data-block">
+        <label>KYC Ledger Pipeline</label>
+        <span class="compliance-badge" 
+              [ngClass]="portfolioStore.selectedUserKycStatus().toLowerCase()">
+          ● KYC {{ portfolioStore.selectedUserKycStatus() }}
+        </span>
+      </div>
+
+      <hr class="panel-divider" />
+
+      <div class="panel-section-header">
+        <h3>Active Position Ledger</h3>
+        <p>Declared structural asset holdings.</p>
+      </div>
+
+      <div class="sidebar-asset-scroll-track">
+        @for (asset of portfolioStore.selectedUserAssets(); track asset.id) {
+          <div class="sidebar-asset-row">
+            <div class="asset-meta-info">
+              <span class="name" [title]="asset.name">{{ asset.name }}</span>
+              <span class="category-pill font-mono">{{ asset.category.replace('_', ' ') }}</span>
+            </div>
+            <div class="asset-value-metric font-mono">
+              Rs. {{ asset.holdingValuePKR.toLocaleString() }}
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-tray-msg" style="padding: 12px 0;">No reported asset positions logged on this profile.</div>
+        }
+      </div>
+
+      <div class="sidebar-networth-footer">
+        <span>Aggregated Balance (PKR)</span>
+        <strong class="font-mono">Rs. {{ portfolioStore.selectedUserTotalPKR().toLocaleString() }}</strong>
+      </div>
+
+    </aside>
+  }
+
+</div>

@@ -1,0 +1,101 @@
+<div class="admin-grid-layout">
+  
+  <header class="col-span-12 system-banner-shelf">
+    <div class="banner-meta">
+      <h2>Infrastructure Node Monitor</h2>
+      <p>Live tracking of internal ingestion microservices and external price feed brokers.</p>
+    </div>
+    
+    <div class="banner-telemetry-pill">
+      Network Heartbeat Status: <span class="heartbeat-indicator active">HEALTHY</span>
+    </div>
+  </header>
+
+  <section class="executive-surface-card col-span-7">
+    <div class="card-title-node">Active Liquidity & Price Ingestion Feeds</div>
+    
+    <div class="admin-table-wrapper" style="margin-top: 16px;">
+      <table class="admin-data-table">
+        <thead>
+          <tr>
+            <th>Integration Node Identity</th>
+            <th>Last Reported Rate</th>
+            <th>Ping Latency</th>
+            <th>Interface State</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+            <tr [class.faulted-row-bg]="!node.isHealthy">
+              <td>
+                <div class="table-node-name">
+                  <strong>{{ node.name }}</strong>
+                  <span class="system-id-code">ID: {{ node.id }}</span>
+                </div>
+              </td>
+              
+              <td class="font-mono text-emerald">
+                Rs. {{ node.lastKnownPrice.toLocaleString() }}
+              </td>
+              
+              <td class="font-mono">
+                <span class="latency-badge" 
+                      [ngClass]="{
+                        'latency-low': node.latencyMs <= 20,
+                        'latency-mid': node.latencyMs > 20 && node.latencyMs <= 60,
+                        'latency-high': node.latencyMs > 60
+                      }">
+                  {{ node.latencyMs }} ms
+                </span>
+              </td>
+              
+              <td>
+                <span class="status-pill-badge" [class.live-state]="node.isHealthy">
+                  ● {{ node.isHealthy ? 'Operational' : 'Link Faulted' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="executive-surface-card col-span-5 manual-override-panel">
+    <div class="card-title-node">Emergency Spot-Rate Manipulation Gate</div>
+    <p class="panel-warning-text">
+      ⚠️ **Administrative Override Interceptor:** Injecting a manual override bypasses the active webhook ingestion streams and forces the chosen asset valuation model instantly across all customer positions.
+    </p>
+
+    <div class="override-form-group">
+      <label class="form-input-label">Target Broker Pipeline</label>
+      <select class="admin-form-field" #selectedNodeId>
+        @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+          <option [value]="node.id">{{ node.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="override-form-group" style="margin-top: 18px;">
+      <label class="form-input-label">Override Price Value (PKR)</label>
+      <div class="input-currency-addon-wrap">
+        <span class="currency-prefix">Rs.</span>
+        <input type="number" 
+               class="admin-form-field field-with-prefix" 
+               #overridePriceValue
+               placeholder="Enter absolute spot price override value..." />
+      </div>
+    </div>
+
+    <footer class="override-action-shelf" style="margin-top: 28px;">
+      <button class="admin-action-btn btn-danger wide-btn"
+              [disabled]="!overridePriceValue.value"
+              (click)="executeManualOverride(selectedNodeId.value, overridePriceValue)">
+        Force Rate Override Parameters
+      </button>
+      
+      <p class="audit-trail-footer-note"> Every price modification parameter is digitally recorded in our internal logs under your active session ID.</p>
+    </footer>
+  </section>
+
+</div>
