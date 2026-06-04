@@ -7,43 +7,79 @@ import { PortfolioStore } from '../../store/portfolio.store';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="admin-grid-layout">
-      <header class="col-span-12" style="border-bottom: 1px solid #1F2937; padding-bottom: 16px;">
-        <h2 style="font-size: 22px; font-weight: 700; color: #FFFFFF;">Citizen KYC Verification Ledger</h2>
-        <p style="font-size: 13px; color: #9CA3AF; margin-top: 4px;">Review and authenticate pending registration documentation packages.</p>
+    <div class="admin-grid-layout full-viewport-horizon">
+      
+      <header class="col-span-12 system-banner-shelf">
+        <div class="banner-meta">
+          <h2>Identity Verification Ledger</h2>
+          <p>Review submitted user verification profiles, audit document files, and update system status parameters.</p>
+        </div>
+        
+        <div class="banner-telemetry-pill">
+          Pending Reviews: <span class="attention-count-val">{{ portfolioStore.totalPendingKycCount() }} files</span>
+        </div>
       </header>
 
-      <section class="executive-surface-card col-span-12">
+      <section class="executive-surface-card col-span-12 ledger-analytics-card">
+        <div class="card-title-node">Verification Queue</div>
+        
         <div class="admin-table-wrapper">
           <table class="admin-data-table">
             <thead>
               <tr>
-                <th>Profile Node</th>
-                <th>Current Phase State</th>
-                <th style="text-align: right;">Verification Processing Actions</th>
+                <th>User Account Profile</th>
+                <th>Submission Date</th>
+                <th>Verification Status</th>
+                <th style="text-align: right;">Review Actions</th>
               </tr>
             </thead>
             <tbody>
               @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
                 <tr>
                   <td>
-                    <div style="display: flex; flex-direction: column; gap: 2px;">
-                      <strong style="color: #FFFFFF;">{{ user.name }}</strong>
-                      <span style="font-size: 11px; color: #6B7280; font-family: monospace;">{{ user.email }}</span>
+                    <div class="table-user-profile-cell">
+                      <div class="user-avatar-placeholder">📁</div>
+                      <div class="profile-meta">
+                        <strong>{{ user.name }}</strong>
+                        <span class="user-email-label font-mono">{{ user.email }}</span>
+                      </div>
                     </div>
                   </td>
+                  
+                  <td class="font-mono table-timestamp-cell">
+                    {{ user.submittedAt ? (user.submittedAt | date:'mediumDate') : 'Pending' }}
+                  </td>
+                  
                   <td>
-                    <span [style.color]="user.kycStatus === 'APPROVED' ? '#10B981' : '#F59E0B'" style="font-size: 12px; font-weight: 700;">
-                      ● {{ user.kycStatus }}
+                    <span class="compliance-badge-pill" [ngClass]="user.kycStatus.toLowerCase()">
+                      {{ user.kycStatus }}
                     </span>
                   </td>
-                  <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
-                    @if (user.kycStatus !== 'APPROVED') {
-                      <button class="admin-action-btn btn-success" style="padding: 6px 12px; font-size: 12px;" (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')">Approve Pass</button>
-                    }
-                    @if (user.kycStatus !== 'UNVERIFIED') {
-                      <button class="admin-action-btn btn-danger" style="padding: 6px 12px; font-size: 12px;" (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')">Reject Clear</button>
-                    }
+                  
+                  <td style="text-align: right;">
+                    <div class="table-action-btn-cluster">
+                      @if (user.kycStatus !== 'APPROVED') {
+                        <button class="admin-action-btn btn-success btn-table-scale" 
+                                (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')">
+                          Approve Profile
+                        </button>
+                      }
+                      @if (user.kycStatus !== 'UNVERIFIED') {
+                        <button class="admin-action-btn btn-danger btn-table-scale" 
+                                (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')">
+                          Reject Account
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="empty-table-placeholder">
+                    <div class="empty-state-content">
+                      <span class="empty-icon">📂</span>
+                      <p>No compliance or verification requests require review at this time.</p>
+                    </div>
                   </td>
                 </tr>
               }
@@ -51,6 +87,7 @@ import { PortfolioStore } from '../../store/portfolio.store';
           </table>
         </div>
       </section>
+
     </div>
   `
 })

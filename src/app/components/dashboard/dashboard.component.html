@@ -1,54 +1,55 @@
-<div class="admin-grid-layout">
+<div class="admin-grid-layout full-viewport-horizon">
   
   <!-- ==============================================================================
-     ROW 1: HIGH-LEVEL METRICS & LIVE TELEMETRY NODES
-     ============================================================================== -->
-  <!-- Asset Under Management Totalizator -->
+       ROW 1: HIGH-LEVEL EXECUTIVE METRIC TILES
+       ============================================================================== -->
+  <!-- Assets Under Management (AUM) Totalizer -->
   <section class="executive-surface-card col-span-4">
-    <div class="card-title-node">Total Aggregated Principal (AUM)</div>
+    <div class="card-title-node">Assets Under Management</div>
     <div class="metric-hero-display text-emerald">
       Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
     </div>
-    <p class="metric-subtext-note">Cumulative total value of all manual and automated user positions.</p>
+    <p class="metric-subtext-note">Cumulative value of all synchronized manual and automated positions.</p>
   </section>
 
-  <!-- Compliance Funnel Status Tracking Node -->
+  <!-- Identity Compliance Funnel Tracking Node -->
   <section class="executive-surface-card col-span-4" routerLink="/compliance" style="cursor: pointer;">
-    <div class="card-title-node">Compliance & Identity Pipeline</div>
+    <div class="card-title-node">Identity Verification Pipeline</div>
     <div class="metric-split-row">
       <div class="split-segment">
         <span class="value text-warning">{{ portfolioStore.totalPendingKycCount() }}</span>
-        <span class="label">Pending Verification</span>
+        <span class="label">Pending Review</span>
       </div>
       <div class="split-segment border-left">
         <span class="value text-muted">{{ portfolioStore.totalApprovedKycCount() }}</span>
-        <span class="label">Approved Ledgers</span>
+        <span class="label">Approved Profiles</span>
       </div>
     </div>
-    <p class="metric-subtext-note">Click to review incoming citizen registration papers and document files.</p>
+    <p class="metric-subtext-note">Click to review incoming registration files and verification documents.</p>
   </section>
 
-  <!-- Premium Subscriptions User Saturation Profile -->
+  <!-- Premium Subscription User Saturation Tiers -->
   <section class="executive-surface-card col-span-4" routerLink="/subscriptions" style="cursor: pointer;">
-    <div class="card-title-node">Subscription Premium Tiers</div>
+    <div class="card-title-node">Premium User Growth</div>
     <div class="metric-hero-display text-teal">
       {{ portfolioStore.premiumTierPercentage() }}%
     </div>
-    <p class="metric-subtext-note">VIP tier density profile relative to standard free subscription instances.</p>
+    <p class="metric-subtext-note">Ratio of active premium account tiers relative to basic free tiers.</p>
   </section>
 
   <!-- ==============================================================================
-     ROW 2: DYNAMIC MARKET EXPOSURE MATRIX & NODE MATRIX STATUS
-     ============================================================================== -->
-  <!-- Macro Allocation Exposure Radar Map -->
+       ROW 2: DYNAMIC MARKET EXPOSURE MATRIX & NODE HEALTH ENGINE
+       ============================================================================== -->
+  <!-- Macro Allocation Exposure Map -->
   <section class="executive-surface-card col-span-7" routerLink="/risk-engine" style="cursor: pointer;">
-    <div class="card-title-node">Macro Assets Exposure Mapping</div>
+    <div class="card-title-node">Asset Allocation Mapping</div>
+    <p class="section-desc-text" style="margin-bottom: 12px;">Real-time capital distribution trends across asset pools.</p>
     
     <div class="exposure-list-track">
       @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
         <div class="exposure-progress-row">
           <div class="exposure-meta">
-            <span class="category-name">{{ sector.category.replace('_', ' ') }}</span>
+            <span class="category-name">📁 {{ sector.category.replace('_', ' ') }}</span>
             <span class="percentage-val">{{ sector.percentage }}%</span>
           </div>
           <div class="progress-bar-rail">
@@ -66,9 +67,10 @@
     </div>
   </section>
 
-  <!-- Network Integration API Telemetry Nodes -->
+  <!-- Network Integration API Telemetry Nodes Stack -->
   <section class="executive-surface-card col-span-5" routerLink="/node-monitor" style="cursor: pointer;">
-    <div class="card-title-node">Active Node Core Interfaces</div>
+    <div class="card-title-node">Active Data Feed Streams</div>
+    <p class="section-desc-text" style="margin-bottom: 12px;">Live status updates from data pipelines and pricing APIs.</p>
     
     <div class="node-telemetry-stack">
       @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
@@ -87,11 +89,11 @@
   </section>
 
   <!-- ==============================================================================
-     ROW 3: OPERATIONAL DIRECT ROUTE DEEP-LINKS
-     ============================================================================== -->
+       ROW 3: OPERATIONAL FLOATING ACTION DOCK
+       ============================================================================== -->
   <footer class="col-span-12 command-quick-dock">
     <button class="dock-btn-node" routerLink="/support-hub">
-      🎧 Open Real-Time Client Support Hub
+      🎧 Open Live Client Support Desk
     </button>
   </footer>
 

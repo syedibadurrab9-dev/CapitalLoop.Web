@@ -1,20 +1,27 @@
-<div class="admin-grid-layout">
+<div class="admin-grid-layout full-viewport-horizon">
   
+  <!-- ==============================================================================
+       ROW 1: SUB-HEADER BANNER SHELF NODE
+       ============================================================================== -->
   <header class="col-span-12 system-banner-shelf">
     <div class="banner-meta">
-      <h2>Macro Capital Risk Engine</h2>
-      <p>Real-time asset exposure monitoring and system concentration threshold evaluations.</p>
+      <h2>Risk Engine Insights</h2>
+      <p>Monitor active asset concentrations, sector limits, and safety boundaries in real time.</p>
     </div>
     <div class="banner-telemetry-pill">
-      Risk Threshold Level: <span class="heartbeat-indicator active-safe">OPTIMAL</span>
+      Status: <span class="heartbeat-indicator active-safe">✓ Optimal</span>
     </div>
   </header>
 
-  <section class="executive-surface-card col-span-8">
-    <div class="card-title-node">Aggregated Capital Allocation Vector</div>
-    <p class="section-desc-text">Dynamic percentage distribution of capital assets across major financial sectors.</p>
+  <!-- ==============================================================================
+       ROW 2: SECTOR EXPOSURE MATRIX vs CONFIGURATION PANEL
+       ============================================================================== -->
+  <!-- Main Allocation Bars Runway Area -->
+  <section class="executive-surface-card col-span-8 primary-allocation-card">
+    <div class="card-title-node">Asset Allocation Breakdown</div>
+    <p class="section-desc-text">Current percentage distribution across major financial sectors.</p>
     
-    <div class="risk-bar-matrix-track" style="margin-top: 24px;">
+    <div class="risk-bar-matrix-track">
       @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
         <div class="risk-sector-row">
           
@@ -22,7 +29,7 @@
             <span class="sector-label-text">
               📁 {{ sector.category.replace('_', ' ') }}
             </span>
-            <span class="percentage-metric font-mono" [class.alert-text]="sector.percentage >= 70">
+            <span class="percentage-metric" [class.alert-text]="sector.percentage >= 70">
               {{ sector.percentage }}%
             </span>
           </div>
@@ -39,9 +46,9 @@
           </div>
 
           <div class="rail-bounds-labels">
-            <span>Allocation Pool Space</span>
-            <span class="bound-alert-msg">
-              {{ sector.percentage >= 70 ? '⚠️ EXPOSURE THRESHOLD BREACH' : '✓ Safe Operational Boundaries' }}
+            <span class="pool-space-label">Allocation Trough</span>
+            <span class="bound-alert-msg" [class.breached-msg]="sector.percentage >= 70">
+              {{ sector.percentage >= 70 ? '⚠️ Limit Exceeded' : '✓ Within Safe Limits' }}
             </span>
           </div>
 
@@ -50,39 +57,40 @@
     </div>
   </section>
 
+  <!-- Right Side Rule Constraints Shroud Panel -->
   <aside class="executive-surface-card col-span-4 operational-limits-panel">
-    <div class="card-title-node">System Capital Constraints Configuration</div>
+    <div class="card-title-node">Risk Rules & Guardrails</div>
     
     <div class="limit-parameter-box">
       <div class="parameter-header-row">
-        <strong>Crypto Liquidity Cap</strong>
-        <span class="badge font-mono">Max 15%</span>
+        <strong>Crypto Exposure Cap</strong>
+        <span class="parameter-badge-pill">Max 15%</span>
       </div>
-      <p>Limits digital currency exposure to isolate downstream portfolios from extreme margin volatility.</p>
+      <p>Limits digital asset holding space to isolate portfolios from market margin volatility.</p>
     </div>
 
     <div class="limit-parameter-box">
       <div class="parameter-header-row">
-        <strong>Bullion Hedging Baseline</strong>
-        <span class="badge font-mono">Min 10%</span>
+        <strong>Precious Metals Base</strong>
+        <span class="parameter-badge-pill">Min 10%</span>
       </div>
-      <p>Maintains physical gold/silver reserve minimums to provide currency hedge stability.</p>
+      <p>Maintains physical gold and silver reserve baselines to support currency hedge stability.</p>
     </div>
 
     <div class="limit-parameter-box">
       <div class="parameter-header-row">
-        <strong>Mutual Fund Target Pool</strong>
-        <span class="badge target-badge font-mono">Target 40%</span>
+        <strong>Mutual Funds Target</strong>
+        <span class="parameter-badge-pill target-badge">Target 40%</span>
       </div>
-      <p>Primary target allocation framework designed to ensure structural liquidity depth.</p>
+      <p>Primary target allocation pool designed to secure steady capital liquidity depth.</p>
     </div>
 
-    <hr class="panel-divider-shroud" />
+    <div class="panel-divider-line"></div>
 
     <div class="risk-audit-footer-summary">
-      <h4>Automated Stress Mitigation</h4>
+      <h4>Automated Guardrails</h4>
       <p>
-        If an asset allocation pool violates a risk rule, the transaction engine automatically triggers fallback liquidity pipelines.
+        If an asset allocation pool breaks a risk threshold rule, fallback liquidity protection structures are deployed.
       </p>
     </div>
   </aside>

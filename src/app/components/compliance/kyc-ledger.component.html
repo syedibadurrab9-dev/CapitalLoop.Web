@@ -1,76 +1,75 @@
-<div class="admin-grid-layout">
+<div class="admin-grid-layout full-viewport-horizon" style="display: grid !important; grid-template-columns: repeat(12, 1fr) !important; gap: 28px !important; padding: 36px !important; background-color: #F1F5F9 !important; width: 100% !important; max-width: 100vw !important; height: calc(100vh - 70px) !important; overflow-y: auto !important;">
   
-  <header class="col-span-12 system-banner-shelf">
-    <div class="banner-meta">
-      <h2>Citizen KYC Verification Ledger</h2>
-      <p>Audit citizen registration profiles, review submitted file logs, and update network compliance parameters.</p>
+  <!-- BANNER SHELF -->
+  <header class="col-span-12" style="grid-column: span 12 / span 12 !important; background: #FFFFFF !important; border: 1px solid #E2E8F0 !important; border-radius: 24px !important; padding: 24px 32px !important; display: flex !important; justify-content: space-between !important; align-items: center !important; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02) !important; width: 100% !important;">
+    <div>
+      <h2 style="color: #0F172A !important; font-size: 20px !important; font-weight: 800 !important; margin: 0 0 4px 0 !important; font-family: sans-serif !important;">Identity Verification Ledger</h2>
+      <p style="color: #64748B !important; font-size: 13px !important; margin: 0 !important; font-family: sans-serif !important;">Review submitted user verification profiles, audit document files, and update system status parameters.</p>
     </div>
-    
-    <div class="banner-telemetry-pill font-mono">
-      Awaiting Review Queue: <span class="attention-count-val">{{ portfolioStore.totalPendingKycCount() }} Files</span>
+    <div style="font-size: 13px !important; font-weight: 700 !important; color: #475569 !important; background: #F8FAFC !important; padding: 8px 16px !important; border-radius: 12px !important; border: 1px solid #E2E8F0 !important; font-family: sans-serif !important;">
+      Pending Reviews: <span style="color: #D97706 !important; font-weight: 800 !important;">{{ portfolioStore.totalPendingKycCount() }} files</span>
     </div>
   </header>
 
-  <section class="executive-surface-card col-span-12">
-    <div class="card-title-node">Identity Pipeline Verification Pool</div>
+  <!-- COMPLIANCE LEDGER CARD -->
+  <section class="col-span-12" style="grid-column: span 12 / span 12 !important; background: #FFFFFF !important; border: 1px solid #E2E8F0 !important; border-radius: 24px !important; padding: 28px !important; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02) !important; width: 100% !important; min-height: 520px !important;">
+    <div style="font-size: 12px !important; font-weight: 700 !important; color: #64748B !important; text-transform: uppercase !important; letter-spacing: 0.75px !important; margin-bottom: 16px !important; font-family: sans-serif !important;">Verification Queue</div>
     
-    <div class="admin-table-wrapper" style="margin-top: 16px;">
-      <table class="admin-data-table">
+    <div style="width: 100% !important; overflow-x: auto !important; margin-top: 20px !important; border-radius: 16px !important; border: 1px solid #E2E8F0 !important; background-color: #FFFFFF !important;">
+      <table style="width: 100% !important; border-collapse: collapse !important; text-align: left !important; font-family: sans-serif !important;">
         <thead>
-          <tr>
-            <th>Registered Citizen Profile</th>
-            <th>Submission Date Reference</th>
-            <th>Pipeline Status</th>
-            <th style="text-align: right;">Compliance Decision Actions</th>
+          <tr style="background-color: #F8FAFC !important; border-bottom: 1px solid #E2E8F0 !important;">
+            <th style="padding: 16px 24px !important; font-size: 11px !important; font-weight: 700 !important; color: #64748B !important; text-transform: uppercase !important; letter-spacing: 0.75px !important;">User Account Profile</th>
+            <th style="padding: 16px 24px !important; font-size: 11px !important; font-weight: 700 !important; color: #64748B !important; text-transform: uppercase !important; letter-spacing: 0.75px !important;">Submission Date</th>
+            <th style="padding: 16px 24px !important; font-size: 11px !important; font-weight: 700 !important; color: #64748B !important; text-transform: uppercase !important; letter-spacing: 0.75px !important;">Verification Status</th>
+            <th style="padding: 16px 24px !important; font-size: 11px !important; font-weight: 700 !important; color: #64748B !important; text-transform: uppercase !important; letter-spacing: 0.75px !important; text-align: right !important;">Review Actions</th>
           </tr>
         </thead>
         <tbody>
           @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
-            <tr>
-              <td>
-                <div class="table-user-profile-cell">
-                  <div class="user-avatar-placeholder">📁</div>
-                  <div class="profile-meta">
-                    <strong>{{ user.name }}</strong>
-                    <span class="user-email-label font-mono">{{ user.email }}</span>
+            <tr style="border-bottom: 1px solid #E2E8F0 !important;">
+              <td style="padding: 18px 24px !important; font-size: 14px !important; color: #0F172A !important; vertical-align: middle !important;">
+                <div style="display: flex !important; align-items: center !important; gap: 16px !important;">
+                  <div style="width: 40px !important; height: 40px !important; border-radius: 12px !important; background-color: #F1F5F9 !important; display: flex !important; justify-content: center !important; align-items: center !important; font-size: 18px !important; border: 1px solid #E2E8F0 !important;">📁</div>
+                  <div style="display: flex !important; flex-direction: column !important; gap: 3px !important;">
+                    <strong style="font-size: 14px !important; font-weight: 700 !important; color: #0F172A !important;">{{ user.name }}</strong>
+                    <span style="font-size: 12px !important; color: #64748B !important; font-family: monospace !important;">{{ user.email }}</span>
                   </div>
                 </div>
               </td>
               
-              <td class="font-mono table-timestamp-cell">
+              <td style="padding: 18px 24px !important; font-size: 13px !important; color: #475569 !important; font-weight: 600 !important; vertical-align: middle !important; font-family: monospace !important;">
                 {{ user.submittedAt | date:'mediumDate' }}
               </td>
               
-              <td>
-                <span class="compliance-badge-pill" [ngClass]="user.kycStatus.toLowerCase()">
-                  ● KYC {{ user.kycStatus }}
+              <td style="padding: 18px 24px !important; vertical-align: middle !important;">
+                <span [ngClass]="user.kycStatus.toLowerCase()" style="font-size: 11px !important; font-weight: 700 !important; padding: 6px 14px !important; border-radius: 10px !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; background-color: #FFFBEB; color: #D97706; border: 1px solid #FDE68A;">
+                  ● {{ user.kycStatus }}
                 </span>
               </td>
               
-              <td style="text-align: right;">
-                <div class="table-action-btn-cluster">
-                  
+              <td style="padding: 18px 24px !important; text-align: right !important; vertical-align: middle !important;">
+                <div style="display: flex !important; justify-content: flex-end !important; gap: 10px !important; align-items: center !important;">
                   @if (user.kycStatus !== 'APPROVED') {
-                    <button class="admin-action-btn btn-success btn-table-scale"
-                            (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')">
-                      Approve & Clear
+                    <button (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')" style="border: none !important; padding: 8px 16px !important; font-size: 12px !important; font-weight: 700 !important; border-radius: 10px !important; cursor: pointer !important; background-color: #EFF6FF !important; color: #2563EB !important; border: 1px solid #BFDBFE !important;">
+                      Approve Profile
                     </button>
                   }
-                  
                   @if (user.kycStatus !== 'UNVERIFIED') {
-                    <button class="admin-action-btn btn-danger btn-table-scale"
-                            (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')">
+                    <button (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')" style="border: none !important; padding: 8px 16px !important; font-size: 12px !important; font-weight: 700 !important; border-radius: 10px !important; cursor: pointer !important; background-color: #FEF2F2 !important; color: #DC2626 !important; border: 1px solid #FCA5A5 !important;">
                       Reject Account
                     </button>
                   }
-
                 </div>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-table-placeholder">
-                No compliance or citizen verification pipelines loaded onto active registers.
+              <td colspan="4" style="text-align: center !important; padding: 64px 0 !important;">
+                <div style="display: flex !important; flex-direction: column !important; align-items: center !important; gap: 12px !important;">
+                  <span style="font-size: 32px !important; opacity: 0.7 !important;">📂</span>
+                  <p style="color: #64748B !important; font-size: 14px !important; font-weight: 500 !important; margin: 0 !important;">No compliance or verification requests require review at this time.</p>
+                </div>
               </td>
             </tr>
           }
