@@ -1,17 +1,17 @@
 /* ==============================================================================
    CAPITALLOOP GLOBAL COMPONENT CORE VARIABLES & MATRIX DESIGN TOKENS
    ============================================================================== */
-$bg-main: #090D16;
-$bg-card: #111827;
-$bg-hover: #1F2937;
-$accent-color: #6366F1;
-$accent-hover: #4F46E5;
-$accent-teal: #38BDF8;
-$accent-emerald: #10B981;
-$text-main: #F8FAFC;
-$text-muted: #9CA3AF;
-$text-dark: #6B7280;
-$border-color: #1F2937;
+$bg-main: #F1F5F9;       /* Premium soft light grey slate base canvas */
+$bg-card: #FFFFFF;       /* Pristine crisp paper white container cards */
+$bg-hover: #F8FAFC;      /* Subtle velvet slate grey row tracking highlight */
+$accent-color: #2563EB;  /* Authoritative corporate sapphire brand blue */
+$accent-hover: #1D4ED8;  /* Deepened sapphire interaction tone */
+$accent-teal: #0EA5E9;   /* Clean sea sky blue callouts */
+$accent-emerald: #059669;/* Rich organic moss-emerald green for safe reading */
+$text-main: #0F172A;     /* Deep ink slate for premium contrast readability */
+$text-muted: #475569;    /* Polished charcoal gray for descriptive prose labels */
+$text-dark: #64748B;     /* Subdued matte slate for minor supporting items */
+$border-color: #E2E8F0;  /* Clean structural layout line separation border */
 
 * { 
   box-sizing: border-box; 
@@ -36,58 +36,57 @@ body {
   
   &-track { background: transparent; }
   &-thumb { 
-    background: #334155; 
+    background: #CBD5E1; 
     border-radius: 10px; 
-    &:hover { background: #475569; }
+    &:hover { background: #94A3B8; }
   }
 }
 
 /* Utility Class for Numeric/Technical Values */
 .font-mono {
   font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.1px;
 }
 
 /* ==============================================================================
-   FEDERATED IDENTITY CONSOLE TIER (SSO AUTH CARD)
+   SECURE SIGN IN PLATFORM (SSO AUTH CARD)
    ============================================================================== */
 .auth-container { 
   height: 100vh; 
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  background: radial-gradient(circle at top, #1E1B4B 0%, #090D16 70%); 
+  background: radial-gradient(circle at top, #EFF6FF 0%, #F1F5F9 70%); 
 }
 
 .auth-card { 
   background: $bg-card; 
   padding: 48px 40px; 
-  border-radius: 24px; 
+  border-radius: 28px; 
   border: 1px solid $border-color; 
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.04);
   width: 100%; 
   max-width: 440px; 
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:hover { transform: translateY(-2px); }
   
   .logo-node { 
     font-size: 56px; 
     margin-bottom: 20px; 
-    filter: drop-shadow(0 0 12px $accent-color); 
   }
   
   h2 { 
     font-size: 26px; 
     font-weight: 800; 
     margin-bottom: 10px; 
-    color: #FFFFFF; 
+    color: $text-main; 
     letter-spacing: -0.5px; 
   }
   
   .subtitle { 
-    font-size: 13.5px; 
+    font-size: 14px; 
     color: $text-muted; 
     margin-bottom: 36px; 
     line-height: 1.5; 
@@ -100,27 +99,27 @@ body {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: #FFFFFF;
-  color: #1F2937;
+  background: #0F172A; /* High contrast primary action button anchor */
+  color: #FFFFFF;
   font-weight: 600;
   font-size: 15px;
   padding: 14px 24px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 
   &:hover { 
-    background: #F3F4F6; 
+    background: #1E293B; 
     transform: scale(1.01); 
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15); 
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2); 
   }
   &:active { transform: scale(0.99); }
 }
 
 /* ==============================================================================
-   WORKSPACE VIEWPORT HUB & CROSS-NAV LAYOUT MODULES
+   WORKSPACE VIEWPORT HUB & NAVIGATION CONFIGURATIONS
    ============================================================================== */
 .dashboard-container { 
   display: flex; 
@@ -147,27 +146,27 @@ body {
 .brand-cluster { 
   display: flex; 
   align-items: center; 
-  gap: 14px; 
+  gap: 12px; 
 
   .pulse-node { 
     font-size: 24px; 
-    filter: drop-shadow(0 0 8px $accent-color); 
   }
   
   h1 { 
     font-size: 18px; 
-    font-weight: 700; 
-    color: #FFFFFF; 
-    letter-spacing: -0.3px; 
+    font-weight: 800; 
+    color: $text-main; 
+    letter-spacing: -0.4px; 
 
     .accent-text { 
       color: $accent-color; 
-      font-weight: 500; 
-      font-size: 14px; 
-      background: rgba(99, 102, 241, 0.1); 
+      font-weight: 700; 
+      font-size: 12px; 
+      background: #EFF6FF; 
       padding: 4px 10px; 
-      border-radius: 6px; 
-      margin-left: 6px; 
+      border-radius: 8px; 
+      margin-left: 8px;
+      border: 1px solid #DBEAFE; 
     }
   }
 }
@@ -175,10 +174,10 @@ body {
 .matrix-nav-links {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: $bg-main;
+  gap: 6px;
+  background: #F1F5F9;
   padding: 4px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid $border-color;
 
   .nav-link-node {
@@ -187,18 +186,18 @@ body {
     font-weight: 600;
     text-decoration: none;
     padding: 8px 16px;
-    border-radius: 7px;
+    border-radius: 8px;
     transition: all 0.2s ease;
 
     &:hover {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.03);
+      color: $text-main;
+      background: rgba(15, 23, 42, 0.03);
     }
 
     &.active {
-      color: $accent-teal;
+      color: $accent-color;
       background: $bg-card;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
   }
 }
@@ -207,24 +206,24 @@ body {
   font-size: 11px; 
   font-weight: 700; 
   padding: 4px 10px; 
-  border-radius: 6px; 
-  background: rgba(239, 68, 68, 0.08); 
-  color: #EF4444; 
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px; 
+  background: #FEF2F2; 
+  color: #DC2626; 
+  border: 1px solid #FCA5A5;
 
   &.connected { 
-    background: rgba(16, 185, 129, 0.08); 
-    color: #10B981; 
-    border: 1px solid rgba(16, 185, 129, 0.2); 
+    background: #E6F4EA; 
+    color: $accent-emerald; 
+    border: 1px solid #A7F3D0; 
   }
 }
 
 .disconnect-btn {
   background: transparent;
   color: $text-muted;
-  border: 1px solid #374151;
+  border: 1px solid $border-color;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -234,11 +233,10 @@ body {
     color: #FFFFFF; 
     background: #DC2626; 
     border-color: #DC2626; 
-    box-shadow: 0 0 12px rgba(220, 38, 38, 0.4); 
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15); 
   }
 }
 
-/* 🚀 FIXED VIEWPORT SCRAPE: Forces the child view components to take absolute full width */
 .workspace-viewport, 
 app-chat-desk { 
   display: flex !important; 
@@ -250,7 +248,7 @@ app-chat-desk {
 }
 
 /* ==============================================================================
-   SIDEBAR TRAY MODULES & REAL-TIME STATUS BADGES
+   SIDEBAR CONVERSATIONS TRAY
    ============================================================================== */
 .sidebar-tray { 
   width: 340px; 
@@ -269,14 +267,10 @@ app-chat-desk {
     h2 { 
       font-size: 12px; 
       font-weight: 700; 
-      color: $text-muted; 
+      color: $text-dark; 
       text-transform: uppercase; 
-      letter-spacing: 1px; 
+      letter-spacing: 0.5px; 
       padding: 0;
-    }
-    
-    .connection-status-wrapper {
-      display: inline-flex;
     }
   }
 }
@@ -292,7 +286,7 @@ app-chat-desk {
 
 .empty-tray-msg { 
   padding: 40px 24px; 
-  color: #4B5563; 
+  color: $text-dark; 
   font-size: 13px; 
   text-align: center; 
   font-style: italic; 
@@ -300,17 +294,17 @@ app-chat-desk {
 
 .queue-card { 
   padding: 16px 20px; 
-  border-radius: 12px; 
-  background: #141B2D; 
-  border: 1px solid transparent;
+  border-radius: 14px; 
+  background: #F8FAFC; 
+  border: 1px solid $border-color;
   cursor: pointer; 
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-  &:hover { background: $bg-hover; transform: scale(1.01); }
+  &:hover { background: $bg-hover; transform: scale(1.005); }
   
   &.active { 
-    background: rgba(99, 102, 241, 0.12); 
-    border-color: rgba(99, 102, 241, 0.3); 
+    background: #EFF6FF; 
+    border-color: #BFDBFE; 
     box-shadow: inset 4px 0 0 $accent-color; 
   }
 
@@ -320,7 +314,7 @@ app-chat-desk {
     align-items: center; 
     margin-bottom: 4px; 
 
-    .client-title { font-weight: 700; font-size: 14px; color: #FFFFFF; }
+    .client-title { font-weight: 700; font-size: 14px; color: $text-main; letter-spacing: -0.1px; }
     
     .status-dot { 
       width: 8px; 
@@ -331,32 +325,32 @@ app-chat-desk {
       
       &.online { 
         background: $accent-emerald; 
-        box-shadow: 0 0 8px $accent-emerald; 
+        box-shadow: 0 0 6px $accent-emerald; 
       }
     }
   }
 
-  .client-email-sub { font-size: 11px; color: $text-dark; margin-bottom: 8px; }
+  .client-email-sub { font-size: 11px; color: $text-dark; margin-bottom: 8px; font-weight: 500; }
   .snippet { font-size: 13px; color: $text-muted; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* ==============================================================================
-   CHAT TERMINAL SCROLLER & CORE VIEWPORTS
+   CHAT INTERFACE OPERATIONAL VIEWPORTS
    ============================================================================== */
 .chat-terminal-core { 
-  flex: 1 1 auto; /* 🚀 Stretches aggressively to consume the entire remaining width */
+  flex: 1 1 auto; 
   display: flex; 
   flex-direction: column; 
-  background: #0B0F17; 
+  background: #F8FAFC; 
   height: 100%;
-  min-width: 0; /* Prevents text overflow bubbles from ballooning the layout width */
+  min-width: 0;
 
   .empty-state { 
     flex: 1; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    color: #4B5563; 
+    color: $text-dark; 
     font-weight: 500; 
     padding: 40px; 
     text-align: center; 
@@ -367,8 +361,8 @@ app-chat-desk {
       font-size: 14.5px; 
       border: 1px dashed $border-color; 
       padding: 32px; 
-      border-radius: 16px; 
-      background: rgba(17, 24, 39, 0.2); 
+      border-radius: 20px; 
+      background: $bg-card; 
     }
   }
 }
@@ -382,8 +376,8 @@ app-chat-desk {
   gap: 2px;
   flex-shrink: 0;
 
-  h3 { font-size: 16px; font-weight: 700; color: #FFFFFF; }
-  span { font-size: 12px; color: $text-dark; }
+  h3 { font-size: 16px; font-weight: 700; color: $text-main; letter-spacing: -0.2px; }
+  span { font-size: 12px; color: $text-muted; font-weight: 500; }
 }
 
 .stream-scroller { 
@@ -406,8 +400,8 @@ app-chat-desk {
     .bubble-wrapper { 
       align-items: flex-end; 
       
-      .sender-identity { color: #818CF8; }
-      .message-bubble { background: #4F46E5; color: #FFFFFF; border-top-right-radius: 2px; border-top-left-radius: 16px; }
+      .sender-identity { color: $accent-color; }
+      .message-bubble { background: $accent-color; color: #FFFFFF; border-top-right-radius: 2px; border-top-left-radius: 16px; border: none; }
     }
   }
 }
@@ -420,8 +414,8 @@ app-chat-desk {
   
   .sender-identity { 
     font-size: 11px; 
-    font-weight: 600; 
-    color: #4B5563; 
+    font-weight: 700; 
+    color: $text-dark; 
     text-transform: uppercase; 
     letter-spacing: 0.5px; 
   }
@@ -432,16 +426,16 @@ app-chat-desk {
     font-size: 14.5px; 
     line-height: 1.6; 
     word-break: break-word; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-    background: $border-color; 
-    color: #F8FAFC; 
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02); 
+    background: $bg-card; 
+    color: $text-main; 
     border-top-left-radius: 2px;
+    border: 1px solid $border-color;
   }
 
-  .timestamp-tag { font-size: 11px; color: #4B5563; margin-top: 2px; }
+  .timestamp-tag { font-size: 11px; color: $text-dark; margin-top: 2px; }
 }
 
-/* Interaction Footer Control Shelf */
 .interaction-shelf { 
   padding: 24px 32px; 
   background: $bg-card; 
@@ -449,14 +443,13 @@ app-chat-desk {
   display: flex; 
   gap: 16px; 
   flex-shrink: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   input { 
     flex: 1; 
-    background: $bg-main; 
-    border: 1px solid #273549; 
+    background: #F8FAFC; 
+    border: 1px solid $border-color; 
     border-radius: 14px; 
-    color: #FFFFFF; 
+    color: $text-main; 
     padding: 16px 20px; 
     font-size: 14px; 
     outline: none; 
@@ -464,19 +457,19 @@ app-chat-desk {
 
     &:focus:not(:disabled) { 
       border-color: $accent-color; 
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); 
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); 
     }
 
     &:disabled {
-      background: #0d131f;
-      border-color: #1e293b;
-      color: #4b5563;
+      background: #F1F5F9;
+      color: $text-dark;
       cursor: not-allowed;
     }
   }
 
   .dispatch-btn { 
-    background: $accent-color; 
+    background: #0F172A; /* Bold primary interaction action node color */
     color: #FFFFFF; 
     padding: 0 32px; 
     border: none; 
@@ -484,18 +477,18 @@ app-chat-desk {
     font-weight: 700; 
     font-size: 14px; 
     cursor: pointer; 
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
 
     &:hover:not(:disabled) { 
-      background: $accent-hover; 
+      background: #1E293B; 
       transform: scale(1.02); 
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); 
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1); 
     }
     &:active:not(:disabled) { transform: scale(0.98); }
 
     &:disabled {
-      background: #1e293b;
-      color: #4b5563;
+      background: #E2E8F0;
+      color: $text-dark;
       cursor: not-allowed;
       transform: none !important;
       box-shadow: none !important;
@@ -504,7 +497,7 @@ app-chat-desk {
 }
 
 /* ==============================================================================
-   DYNAMIC USER FINANCIAL CONTEXT OVERLAY PANEL
+   DYNAMIC USER FINANCIAL CONTEXT SIDEBAR
    ============================================================================== */
 .context-sidebar-panel {
   width: 360px;
@@ -523,13 +516,13 @@ app-chat-desk {
     h3 {
       font-size: 15px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: $text-main;
       letter-spacing: -0.2px;
       margin-bottom: 4px;
     }
     p {
       font-size: 12px;
-      color: $text-dark;
+      color: $text-muted;
     }
   }
 }
@@ -550,18 +543,17 @@ app-chat-desk {
 
   .tier-status-indicator {
     padding: 10px 14px;
-    border-radius: 8px;
-    background: $bg-main;
+    border-radius: 10px;
+    background: #F8FAFC;
     border: 1px solid $border-color;
     font-size: 13px;
     font-weight: 700;
     color: $text-muted;
 
     &.premium {
-      color: #F59E0B;
-      background: rgba(245, 158, 11, 0.05);
-      border-color: rgba(245, 158, 11, 0.2);
-      box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
+      color: #D97706;
+      background: #FFFBEB;
+      border-color: #FDE68A;
     }
   }
 
@@ -571,12 +563,13 @@ app-chat-desk {
     font-weight: 700;
     padding: 4px 10px;
     border-radius: 6px;
-    background: rgba(107, 114, 128, 0.1);
+    background: #F1F5F9;
     color: $text-muted;
+    border: 1px solid $border-color;
 
-    &.approved { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-    &.pending { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
-    &.unverified { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+    &.approved { background: #E6F4EA; border-color: #A7F3D0; color: $accent-emerald; }
+    &.pending { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
+    &.unverified { background: #FEF2F2; border-color: #FCA5A5; color: #DC2626; }
   }
 }
 
@@ -602,9 +595,9 @@ app-chat-desk {
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
-  background: #141B2D;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.01);
+  background: #F8FAFC;
+  border-radius: 12px;
+  border: 1px solid $border-color;
 
   .asset-meta-info {
     display: flex;
@@ -615,7 +608,7 @@ app-chat-desk {
     .name {
       font-size: 13px;
       font-weight: 600;
-      color: #FFFFFF;
+      color: $text-main;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -623,7 +616,7 @@ app-chat-desk {
     .category-pill {
       font-size: 10px;
       font-weight: 700;
-      color: $accent-teal;
+      color: $accent-color;
       text-transform: uppercase;
     }
   }
@@ -639,21 +632,22 @@ app-chat-desk {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 16px;
-  background: rgba(99, 102, 241, 0.06);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
+  padding: 18px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 14px;
   margin-top: 8px;
 
   span {
     font-size: 11px;
     font-weight: 700;
     color: $text-muted;
-    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   strong {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 800;
-    color: $accent-teal;
+    color: $accent-color;
   }
 }
