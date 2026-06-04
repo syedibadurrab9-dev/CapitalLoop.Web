@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PortfolioStore } from '../../store/portfolio.store';
 
@@ -6,32 +6,18 @@ import { PortfolioStore } from '../../store/portfolio.store';
   selector: 'app-tier-manager',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './tier-manager.component.html',
-//  styleUrls: ['./tier-manager.component.scss']
+  templateUrl: './tier-manager.component.html', // Pointing cleanly to the dedicated view layer file
+  encapsulation: ViewEncapsulation.None        // Forces global styles.scss grids to flow right to the outer margins
 })
 export class TierManagerComponent {
-  /**
-   * ✅ Injects the central administrative signals engine.
-   * Grants the template reactive tracking over core state baselines and density profiles:
-   * - portfolioStore.usersComplianceQueue()
-   * - portfolioStore.premiumTierPercentage()
-   */
   protected readonly portfolioStore = inject(PortfolioStore);
 
   /**
-   * ✅ Checks whether a user has premium privileges.
-   * Leverages the custom computed signal from the central store to match active user registries.
-   * @param email The registered email identifier of the user to check.
+   * Maps user account email signatures cleanly against the reactive premium Set stream.
+   * @param email The unique account identification address string.
    */
-  protected isUserPremium(email: string): boolean {
-    // Temporarily set the selected user email to utilize the store's computed premium status check
-    const previousSelection = this.portfolioStore.selectedUserEmail();
-    this.portfolioStore.selectedUserEmail.set(email);
-    const premiumStatus = this.portfolioStore.selectedUserIsPremium();
-    
-    // Restore the previous global selection state to protect multi-view background navigation loops
-    this.portfolioStore.selectedUserEmail.set(previousSelection);
-    
-    return premiumStatus;
+  isUserPremium(email: string): boolean {
+    // 🚀 FIXED: Replaced premiumUserEmails array tracking with the production Set lookup mechanism to eliminate TS2339
+    return this.portfolioStore.premiumUserRegistry().has(email);
   }
 }

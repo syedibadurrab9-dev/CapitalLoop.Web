@@ -1,5 +1,5 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, switchMap } from 'rxjs';
 import { NodeService } from '../services/node.service';
 import { ComplianceService } from '../services/compliance.service';
 import { SubscriptionService } from '../services/subscription.service';
@@ -38,7 +38,7 @@ export interface APIIntegrationNode {
   providedIn: 'root'
 })
 export class PortfolioStore {
-  // ✅ Inject backend HTTP REST data brokers
+  // Inject backend HTTP REST data brokers
   private readonly nodeService = inject(NodeService);
   private readonly complianceService = inject(ComplianceService);
   private readonly subscriptionService = inject(SubscriptionService);
@@ -51,8 +51,8 @@ export class PortfolioStore {
   public readonly selectedUserEmail = signal<string | null>(null);
 
   // Live structural backend state mappings
-  private readonly userAssetRegistry = signal<Record<string, PositionItem[]>>({});
-  private readonly premiumUserRegistry = signal<Set<string>>(new Set());
+  public readonly userAssetRegistry = signal<Record<string, PositionItem[]>>({});
+  public readonly premiumUserRegistry = signal<Set<string>>(new Set());
   
   // Loading and error state tracks for administrative reporting
   public readonly isSystemLoading = signal<boolean>(false);
@@ -78,16 +78,38 @@ export class PortfolioStore {
       nodes: this.nodeService.getActiveNodes(),
       compliance: this.complianceService.getComplianceQueue(),
       plans: this.subscriptionService.getAllAvailablePlans()
-    }).subscribe({
+    }).pipe(
+      switchMap((basePayload) => {
+        // Build out a dynamic dictionary mapped array collection tracking each profile
+        const activeEmails = basePayload.compliance.map(user => user.email);
+        
+        // 🚀 FIXED: Routed asset ledger fetching via nodeService instead of complianceService to prevent TS2339
+        return forkJoin(
+          activeEmails.map(email => 
+            this.nodeService.getUserPositions(email).pipe(
+              map(positions => ({ email, positions }))
+            )
+          )
+        ).pipe(
+          map(userPositionsArray => {
+            const assetRegistry: Record<string, PositionItem[]> = {};
+            userPositionsArray.forEach(item => {
+              assetRegistry[item.email] = item.positions;
+            });
+            return { ...basePayload, assetRegistry };
+          })
+        );
+      })
+    ).subscribe({
       next: (payload) => {
-        // Map streaming arrays directly into our modern fine-grained signals
+        // Map streaming arrays directly into our fine-grained signals canvas
         this.activeNodeStatusList.set(payload.nodes);
         this.usersComplianceQueue.set(payload.compliance);
+        this.userAssetRegistry.set(payload.assetRegistry);
         
         // Dynamically build out our operational premium tracking cache maps
         const premiumSet = new Set<string>();
         payload.compliance.forEach(user => {
-          // If the verified user email is registered under a premium tier footprint, cache it
           if (user.kycStatus === 'APPROVED') {
             premiumSet.add(user.email);
           }
@@ -106,7 +128,7 @@ export class PortfolioStore {
   // 3. COMPUTED REACTIVE SIGNALS EXPOSURE LAYOUTS
   // ==============================================================================
   
-  // Executive Dashboard Metrics
+  // Executive Dashboard Symmetrical Calculation Metrics
   public readonly globalAumPKR = computed(() => {
     return Object.values(this.userAssetRegistry())
       .flat()
@@ -174,12 +196,12 @@ export class PortfolioStore {
    * Commits an identity status review over HTTP and updates the UI state instantly
    */
   public updateKycStatus(email: string, nextStatus: KycVerificationStatus): void {
-    // 🚀 OPTIMISTIC UPDATE: Alter the UI signature immediately for lag-free interactions
+    // OPTIMISTIC UPDATE: Alter the UI signature immediately for lag-free interactions
     this.usersComplianceQueue.update(queue => 
       queue.map(user => user.email === email ? { ...user, kycStatus: nextStatus } : user)
     );
 
-    // Persist mutation parameters downstream to the .NET database cluster
+    // Persist mutation parameters downstream to the server database cluster
     this.complianceService.evaluateKycStatus(email, nextStatus, 'Administrative clearance review verification.').subscribe({
       error: (err) => {
         this.structuralErrorTrace.set(`KYC update failed for ${email}. Reverting layout state.`);
@@ -195,7 +217,7 @@ export class PortfolioStore {
     let targetPlanId = 'premium-monthly';
     const isCurrentlyPremium = this.premiumUserRegistry().has(email);
 
-    // 🚀 OPTIMISTIC UPDATE: Update structural sets right away
+    // OPTIMISTIC UPDATE: Update structural sets right away
     this.premiumUserRegistry.update(premiumSet => {
       const nextSet = new Set(premiumSet);
       if (nextSet.has(email)) {
@@ -218,9 +240,10 @@ export class PortfolioStore {
 
   /**
    * Bypasses background ingestion hooks to force direct spot-rate mutations
+   * 🚀 MATCHED: Aligned naming mapping signature with template executeManualOverride templates cleanly
    */
-  public injectManualSpotRate(nodeId: string, overridePrice: number): void {
-    // 🚀 OPTIMISTIC UPDATE: Force the spot metric to render instantly
+  public executeManualOverride(nodeId: string, overridePrice: number): void {
+    // OPTIMISTIC UPDATE: Force the spot metric to render instantly
     this.activeNodeStatusList.update(nodes =>
       nodes.map(node => node.id === nodeId ? { ...node, lastKnownPrice: overridePrice, latencyMs: 2 } : node)
     );

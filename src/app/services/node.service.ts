@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
-import { APIIntegrationNode } from '../store/portfolio.store';
+import { APIIntegrationNode, PositionItem } from '../store/portfolio.store';
 
 export interface NodeHealthSnapshot {
   nodeId: string;
@@ -37,6 +37,19 @@ export class NodeService {
    */
   public getActiveNodes(): Observable<APIIntegrationNode[]> {
     return this.http.get<APIIntegrationNode[]>(this.baseApiUrl, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * 🚀 ADDED: Fetches a targeted user's declared asset allocations and position items 
+   * Resolves the previous TS2339 compiler blocker inside PortfolioStore pipelines safely.
+   * @param email The target customer profile lookup email index string
+   */
+  public getUserPositions(email: string): Observable<PositionItem[]> {
+    return this.http.get<PositionItem[]>(`${this.baseApiUrl}/positions/${email}`, {
       headers: this.getRequestHeaders()
     }).pipe(
       catchError(this.handleError)
