@@ -1,60 +1,43 @@
-<!-- Main Application Viewport Scaffold Wrapper -->
-<div class="dashboard-container">
+<div class="flex flex-col min-h-screen bg-slate-950 text-slate-100 font-sans antialiased">
 
-  @if (authService.isLoggedIn()) {
-    <header class="matrix-header">
+  @if (isLoggedInSignal()) {
+    
+    <div class="admin-grid-layout full-viewport-horizon">
       
-      <!-- Left Panel: Brand Core Cluster Nodes -->
-      <div class="brand-cluster">
-        <div class="pulse-node">♾️</div>
-        <h1>CapitalLoop <span class="accent-text">Admin Station</span></h1>
+      <div class="col-span-3 lg:col-span-2 h-screen flex flex-col bg-slate-900 border-r border-slate-800">
         
-        <!-- Live Connection State Tracking Link Telemetry Badge -->
-        @if (chatStore.connectionStatus() === 'Connected') {
-          <span class="system-badge connected font-mono">
-            ● SYSTEM LIVE
-          </span>
-        } @else if (chatStore.connectionStatus() === 'Connecting') {
-          <span class="system-badge font-mono" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2);">
-            ⏳ SYNCING...
-          </span>
-        } @else {
-          <span class="system-badge font-mono">
-            ● LINK OFFLINE
-          </span>
-        }
+        <div class="telemetry-bar px-4 pt-3 pb-1 bg-slate-950/40 border-b border-slate-800/40 flex items-center justify-between">
+          <span class="text-[10px] font-mono font-bold tracking-wider text-slate-500 uppercase">Subnet Link:</span>
+          
+          @if (chatStore.connectionStatus() === 'Connected') {
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold font-mono bg-emerald-950/50 text-emerald-400 border border-emerald-900/50 uppercase tracking-wider">
+              <span class="w-1 h-1 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span>Live
+            </span>
+          } @else if (chatStore.connectionStatus() === 'Connecting') {
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold font-mono bg-amber-950/50 text-amber-400 border border-amber-900/50 uppercase tracking-wider">
+              <span class="w-1 h-1 rounded-full bg-amber-400 mr-1.5 animate-pulse"></span>Syncing
+            </span>
+          } @else {
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold font-mono bg-rose-950/50 text-rose-400 border border-rose-900/50 uppercase tracking-wider">
+              <span class="w-1 h-1 rounded-full bg-rose-500 mr-1.5"></span>Offline
+            </span>
+          }
+        </div>
+
+        <app-sidebar class="w-full flex-1"></app-sidebar>
       </div>
 
-      <!-- Main Operational Center Navigation Layout Matrix -->
-      <nav class="matrix-nav-links">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link-node">Executive Analytics</a>
-        <a routerLink="/support-hub" routerLinkActive="active" class="nav-link-node">Support Desk</a>
-        <a routerLink="/compliance" routerLinkActive="active" class="nav-link-node">KYC Ledger</a>
-        <a routerLink="/node-monitor" routerLinkActive="active" class="nav-link-node">Node Monitor</a>
-        <a routerLink="/risk-engine" routerLinkActive="active" class="nav-link-node">Risk Engine</a>
-        <a routerLink="/subscriptions" routerLinkActive="active" class="nav-link-node">Tier Manager</a>
-      </nav>
-      
-      <!-- Administrative Identity Lifecycle Section -->
-      <div class="operator-profile">
-        <button class="disconnect-btn" (click)="authService.logout()">
-          Shutdown Station
-        </button>
-      </div>
-    </header>
+      <main class="col-span-9 lg:col-span-10 h-screen overflow-y-auto bg-slate-950 text-slate-100 flex flex-col animate-fade-in">
+        <div class="flex-1 w-full max-w-[100vw] overflow-hidden">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
 
-    <!-- 🚀 THE CRITICAL FULLSCREEN FIX: 
-         We apply a direct style override onto the parent element layout container.
-         This forces any loaded child component layout view wrapper matching your router rules 
-         to instantly spread and fill 100% of the horizontal monitor width. -->
-    <main class="workspace-viewport" style="display: flex; flex: 1 1 auto; width: 100%; max-width: 100vw; height: calc(100vh - 70px); overflow: hidden;">
-      <router-outlet></router-outlet>
-    </main>
+    </div>
 
   } @else {
     
-    <!-- AUTH UNPROTECTED ROUTE OUTLET PORT: Absolute Full Screen Scaling Mode -->
-    <main class="auth-viewport-wrapper" style="width: 100%; height: 100vh; overflow: hidden; display: flex; flex-direction: column;">
+    <main class="flex flex-col w-full h-screen overflow-hidden bg-slate-950">
       <router-outlet></router-outlet>
     </main>
 

@@ -1,123 +1,58 @@
-/* Header Console Baseline Additions */
-.system-banner-shelf {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #1F2937;
-  padding-bottom: 16px;
-  margin-bottom: 8px;
+// ==============================================================================
+// CAPITALLOOP MONETIZATION DECK LAYOUT MODIFIER [CL-503]
+// Extends Tailwind CSS utilities with specialized layout presentation mechanics
+// ==============================================================================
 
-  h2 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.5px; }
-  p { font-size: 13px; color: #9CA3AF; margin-top: 4px; }
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.banner-telemetry-pill {
-  background: #090D16;
-  border: 1px solid #273549;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #F8FAFC;
-
-  .saturation-percentage {
-    color: #38BDF8;
-    margin-left: 4px;
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
-  }
-}
-
-.section-desc-text { font-size: 13px; color: #6B7280; line-height: 1.4; }
-.font-mono { font-family: monospace, monospace; }
-
-/* Table Profile Cell Alignments */
-.table-user-profile-cell {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-
-  .user-avatar-placeholder {
-    font-size: 18px;
-    background: #141B2D;
-    border: 1px solid #273549;
-    padding: 8px;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+// --- OPTIMIZED HIGH-DENSITY LEDGER RESPONSIVE VIEWPORTS ---
+.overflow-x-auto {
+  // Configures customized low-profile trackbars inside data-heavy tables
+  &::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
   }
 
-  .profile-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    
-    strong { color: #FFFFFF; font-size: 14px; }
-    .user-email-label { font-size: 11px; color: #6B7280; }
+  &::-webkit-scrollbar-track {
+    background: #f8fafc; // Clean slate-50 track layout match
+    border-radius: 8px;
   }
-}
 
-/* Compliance Badge Pill Styling Overrides */
-.compliance-badge-pill {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1; // slate-300 structural indicator boundary
+    border-radius: 8px;
 
-  &.approved { background: rgba(16, 185, 129, 0.08); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2); }
-  &.pending { background: rgba(245, 158, 11, 0.08); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2); }
-  &.unverified { background: rgba(156, 163, 175, 0.08); color: #9CA3AF; border: 1px solid rgba(156, 163, 175, 0.2); }
-}
-
-/* Dynamic Tier Custom Badge Markers */
-.tier-status-tag {
-  display: inline-flex;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: #090D16;
-  border: 1px solid #1F2937;
-  color: #9CA3AF;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-
-  &.premium-active {
-    background: rgba(234, 179, 8, 0.08);
-    border-color: rgba(234, 179, 8, 0.3);
-    color: #FBBF24;
-    text-shadow: 0 0 6px rgba(234, 179, 8, 0.2);
-  }
-}
-
-/* Administrative Grid Action Buttons Scale Modifications */
-.btn-table-scale {
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: 700;
-  border-radius: 8px;
-  min-width: 160px;
-  
-  &.btn-danger-toggle {
-    border-color: rgba(220, 38, 38, 0.3);
-    color: #FCA5A5;
-    
     &:hover {
-      background: rgba(220, 38, 38, 0.1);
-      color: #EF4444;
-      border-color: #EF4444;
+      background: #94a3b8; // Darkens cleanly during direct cursor pointer holds
     }
   }
 }
 
-.empty-table-placeholder {
-  text-align: center;
-  padding: 32px !important;
-  color: #4B5563;
-  font-style: italic;
+// --- INTERACTIVE ROW ANIMATION SPEED MAPS ---
+tbody tr {
+  // Smoothes row highlight transitions when scanning large user matrices
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // Subtle tabular layout isolation layer boundary
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// --- HARDWARE-ACCELERATED TOGGLE ACTION SPEED MATRIX ---
+button {
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+// --- TEXT ENFORCEMENT RULES FOR COMPACT DATA DENSITY ---
+.whitespace-nowrap {
+  text-overflow: ellipsis;
 }

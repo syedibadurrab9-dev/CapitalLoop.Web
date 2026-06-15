@@ -1,0 +1,30 @@
+// =============================================================================
+// 🛡️ UNAUTHORIZED FAULT VIEW CANVAS LAYOUT
+// =============================================================================
+
+.unauthorized-container {
+  /* Locks the canvas to freeze underlying layout scrolling layers */
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  
+  /* Forces a sub-pixel layout refresh for crisp rendering of mono error text descriptions */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.content-card {
+  /* Elevates the error sheet to give it depth over dark layout fields */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  
+  /* GPU acceleration boundary to maintain 60 FPS transitions */
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.metadata-box {
+  /* Prevents tracking parameters from expanding past containment zones */
+  word-break: break-all;
+}

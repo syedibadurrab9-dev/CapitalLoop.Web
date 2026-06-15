@@ -1,0 +1,83 @@
+<aside class="sidebar-frame bg-slate-900 text-slate-100 w-64 h-screen flex flex-col border-r border-slate-800 shadow-xl select-none">
+  <div class="brand-logo px-6 h-16 border-b border-slate-800 flex items-center gap-3">
+    <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-slate-900 text-lg shadow-md shadow-emerald-500/20">
+      CL
+    </div>
+    <div class="flex flex-col">
+      <span class="font-bold text-sm tracking-wider uppercase text-emerald-400">CapitalLoop</span>
+      <span class="text-xxs text-slate-400 tracking-widest uppercase font-semibold">Enterprise Hub</span>
+    </div>
+  </div>
+
+  <div class="user-badge p-4 mx-3 my-4 bg-slate-800/40 border border-slate-800/60 rounded-xl flex items-center gap-3" 
+       *ngIf="currentUserProfileSignal() as profile">
+    <div class="avatar w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center font-bold text-emerald-400 border border-slate-600/50">
+      {{ profile.name.substring(0, 2).toUpperCase() }}
+    </div>
+    <div class="profile-details flex flex-col overflow-hidden">
+      <span class="text-xs font-semibold truncate text-slate-200" [title]="profile.name">
+        {{ profile.name }}
+      </span>
+      <span class="text-xxs font-medium text-slate-400 truncate tracking-wide">
+        {{ profile.email }}
+      </span>
+      <div class="flex items-center gap-1.5 mt-1">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-xxs font-semibold text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+          {{ profile.tier.replace('-', ' ') }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+    
+    <div>
+      <span class="text-xxs font-bold text-slate-500 tracking-widest uppercase px-3 block mb-2">Core System</span>
+      <a routerLink="/dashboard" routerLinkActive="active-route" class="nav-link">
+        <span class="icon">📊</span>
+        <span class="label">Control Dashboard</span>
+      </a>
+      <a routerLink="/node-monitor" routerLinkActive="active-route" class="nav-link">
+        <span class="icon">🖥️</span>
+        <span class="label">Infrastructure Tickers</span>
+      </a>
+    </div>
+
+    <div *clHasTier="['agent-backoffice']" class="pt-4 space-y-1">
+      <span class="text-xxs font-bold text-blue-400 tracking-widest uppercase px-3 block mb-2">Operations Panel</span>
+      <a routerLink="/subscriptions/override" routerLinkActive="active-route" class="nav-link hover:text-blue-400">
+        <span class="icon">🔧</span>
+        <span class="label">Tier Management</span>
+      </a>
+      <a routerLink="/support-hub" routerLinkActive="active-route" class="nav-link hover:text-blue-400">
+        <span class="icon">💬</span>
+        <span class="label">Live Chat Desk</span>
+      </a>
+    </div>
+
+    <div *clHasTier="['advisor-wealth']" class="pt-4 space-y-1">
+      <span class="text-xxs font-bold text-purple-400 tracking-widest uppercase px-3 block mb-2">Wealth Advisory</span>
+      <a routerLink="/risk-engine" routerLinkActive="active-route" class="nav-link hover:text-purple-400">
+        <span class="icon">🎯</span>
+        <span class="label">HNW Portfolio Matrix</span>
+      </a>
+    </div>
+
+    <div *clHasTier="['tax-consultant-tier']" class="pt-4 space-y-1">
+      <span class="text-xxs font-bold text-amber-500 tracking-widest uppercase px-3 block mb-2">FBR Audit Desk</span>
+      <a routerLink="/compliance/kyc-ledger" routerLinkActive="active-route" class="nav-link hover:text-amber-400">
+        <span class="icon">🏛️</span>
+        <span class="label">Tax Compliance Portal</span>
+      </a>
+    </div>
+
+  </nav>
+
+  <div class="sidebar-footer p-3 border-t border-slate-800 bg-slate-950/30">
+    <button (click)="onLogout()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 border border-transparent hover:border-rose-900/30 text-xs font-semibold tracking-wide transition-all duration-150">
+      <span class="text-sm">🚪</span>
+      <span>Terminate Session</span>
+    </button>
+  </div>
+</aside>

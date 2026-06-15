@@ -1,5 +1,7 @@
-import { Injectable, computed, signal, inject } from '@angular/core';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { inject, computed } from '@angular/core';
+import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { forkJoin, map, switchMap, pipe, tap, of } from 'rxjs';
 import { NodeService } from '../services/node.service';
 import { ComplianceService } from '../services/compliance.service';
 import { SubscriptionService } from '../services/subscription.service';
@@ -34,228 +36,255 @@ export interface APIIntegrationNode {
   isHealthy: boolean;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-export class PortfolioStore {
-  // Inject backend HTTP REST data brokers
-  private readonly nodeService = inject(NodeService);
-  private readonly complianceService = inject(ComplianceService);
-  private readonly subscriptionService = inject(SubscriptionService);
+// --- STORE STATE DEFINITION SCHEMA ---
+export interface PortfolioState {
+  usersComplianceQueue: UserComplianceNode[];
+  activeNodeStatusList: APIIntegrationNode[];
+  selectedUserEmail: string | null;
+  userAssetRegistry: Record<string, PositionItem[]>;
+  premiumUserRegistry: Set<string>;
+  isSystemLoading: boolean;
+  structuralErrorTrace: string | null;
+}
 
-  // ==============================================================================
-  // 1. CORE REAL-TIME WRITABLE SIGNALS STATE BASELINE
-  // ==============================================================================
-  public readonly usersComplianceQueue = signal<UserComplianceNode[]>([]);
-  public readonly activeNodeStatusList = signal<APIIntegrationNode[]>([]);
-  public readonly selectedUserEmail = signal<string | null>(null);
+const initialState: PortfolioState = {
+  usersComplianceQueue: [],
+  activeNodeStatusList: [],
+  selectedUserEmail: null,
+  userAssetRegistry: {},
+  premiumUserRegistry: new Set<string>(),
+  isSystemLoading: false,
+  structuralErrorTrace: null
+};
 
-  // Live structural backend state mappings
-  public readonly userAssetRegistry = signal<Record<string, PositionItem[]>>({});
-  public readonly premiumUserRegistry = signal<Set<string>>(new Set());
-  
-  // Loading and error state tracks for administrative reporting
-  public readonly isSystemLoading = signal<boolean>(false);
-  public readonly structuralErrorTrace = signal<string | null>(null);
-
-  constructor() {
-    // Automatically trigger initial database seed orchestration on startup
-    this.hydrateStoreFromBackend();
-  }
-
-  // ==============================================================================
-  // 2. ORCHESTRATION LAYER: BULK HYDRATION INITIALIZATION
-  // ==============================================================================
-  
-  /**
-   * Pulls production state baselines simultaneously from all backend APIs
-   */
-  public hydrateStoreFromBackend(): void {
-    this.isSystemLoading.set(true);
-    this.structuralErrorTrace.set(null);
-
-    forkJoin({
-      nodes: this.nodeService.getActiveNodes(),
-      compliance: this.complianceService.getComplianceQueue(),
-      plans: this.subscriptionService.getAllAvailablePlans()
-    }).pipe(
-      switchMap((basePayload) => {
-        // Build out a dynamic dictionary mapped array collection tracking each profile
-        const activeEmails = basePayload.compliance.map(user => user.email);
-        
-        // 🚀 FIXED: Routed asset ledger fetching via nodeService instead of complianceService to prevent TS2339
-        return forkJoin(
-          activeEmails.map(email => 
-            this.nodeService.getUserPositions(email).pipe(
-              map(positions => ({ email, positions }))
-            )
-          )
-        ).pipe(
-          map(userPositionsArray => {
-            const assetRegistry: Record<string, PositionItem[]> = {};
-            userPositionsArray.forEach(item => {
-              assetRegistry[item.email] = item.positions;
-            });
-            return { ...basePayload, assetRegistry };
-          })
-        );
-      })
-    ).subscribe({
-      next: (payload) => {
-        // Map streaming arrays directly into our fine-grained signals canvas
-        this.activeNodeStatusList.set(payload.nodes);
-        this.usersComplianceQueue.set(payload.compliance);
-        this.userAssetRegistry.set(payload.assetRegistry);
-        
-        // Dynamically build out our operational premium tracking cache maps
-        const premiumSet = new Set<string>();
-        payload.compliance.forEach(user => {
-          if (user.kycStatus === 'APPROVED') {
-            premiumSet.add(user.email);
-          }
-        });
-        this.premiumUserRegistry.set(premiumSet);
-        this.isSystemLoading.set(false);
-      },
-      error: (err) => {
-        this.structuralErrorTrace.set(err.message || 'Fatal store initialization handshake failure.');
-        this.isSystemLoading.set(false);
-      }
-    });
-  }
+// ==============================================================================
+// 📊 ENTERPRISE CAPITALLOOP HIGH-PERFORMANCE NGRX SIGNAL STORE MATRIX
+// ==============================================================================
+export const PortfolioStore = signalStore(
+  { providedIn: 'root' },
+  withState(initialState),
 
   // ==============================================================================
   // 3. COMPUTED REACTIVE SIGNALS EXPOSURE LAYOUTS
   // ==============================================================================
-  
-  // Executive Dashboard Symmetrical Calculation Metrics
-  public readonly globalAumPKR = computed(() => {
-    return Object.values(this.userAssetRegistry())
-      .flat()
-      .reduce((sum, item) => sum + item.holdingValuePKR, 0);
-  });
+  withComputed((state) => ({
+    globalAumPKR: computed(() => {
+      return Object.values(state.userAssetRegistry())
+        .flat()
+        .reduce((sum, item) => sum + item.holdingValuePKR, 0);
+    }),
 
-  public readonly totalPendingKycCount = computed(() => {
-    return this.usersComplianceQueue().filter(u => u.kycStatus === 'PENDING').length;
-  });
+    totalPendingKycCount: computed(() => {
+      return state.usersComplianceQueue().filter(u => u.kycStatus === 'PENDING').length;
+    }),
 
-  public readonly totalApprovedKycCount = computed(() => {
-    return this.usersComplianceQueue().filter(u => u.kycStatus === 'APPROVED').length;
-  });
+    totalApprovedKycCount: computed(() => {
+      return state.usersComplianceQueue().filter(u => u.kycStatus === 'APPROVED').length;
+    }),
 
-  public readonly premiumTierPercentage = computed(() => {
-    const queue = this.usersComplianceQueue();
-    if (queue.length === 0) return 0;
-    const premiumCount = queue.filter(u => this.premiumUserRegistry().has(u.email)).length;
-    return Math.round((premiumCount / queue.length) * 100);
-  });
+    premiumTierPercentage: computed(() => {
+      const queue = state.usersComplianceQueue();
+      if (queue.length === 0) return 0;
+      const premiumCount = queue.filter(u => state.premiumUserRegistry().has(u.email)).length;
+      return Math.round((premiumCount / queue.length) * 100);
+    }),
 
-  // Dynamic Macro Market Exposure Grid Calculations
-  public readonly sectorExposurePercentages = computed(() => {
-    const allAssets = Object.values(this.userAssetRegistry()).flat();
-    const total = allAssets.reduce((sum, item) => sum + item.holdingValuePKR, 0);
-    
-    const categories: AssetSectorCategory[] = ['MUTUAL_FUNDS', 'STOCKS', 'GOLD_SILVER', 'FOREIGN_CURRENCY', 'DIGITAL_ASSETS'];
-    if (total === 0) return categories.map(c => ({ category: c, percentage: 0 }));
+    sectorExposurePercentages: computed(() => {
+      const allAssets = Object.values(state.userAssetRegistry()).flat();
+      const total = allAssets.reduce((sum, item) => sum + item.holdingValuePKR, 0);
+      const categories: AssetSectorCategory[] = ['MUTUAL_FUNDS', 'STOCKS', 'GOLD_SILVER', 'FOREIGN_CURRENCY', 'DIGITAL_ASSETS'];
+      
+      if (total === 0) return categories.map(c => ({ category: c, percentage: 0 }));
 
-    return categories.map(cat => {
-      const catTotal = allAssets.filter(a => a.category === cat).reduce((sum, item) => sum + item.holdingValuePKR, 0);
-      return {
-        category: cat,
-        percentage: Math.round((catTotal / total) * 100)
-      };
-    });
-  });
+      return categories.map(cat => {
+        const catTotal = allAssets.filter(a => a.category === cat).reduce((sum, item) => sum + item.holdingValuePKR, 0);
+        return {
+          category: cat,
+          percentage: Math.round((catTotal / total) * 100)
+        };
+      });
+    }),
 
-  // Dynamic Selected Contextual Escalation Support Getters
-  public readonly selectedUserAssets = computed(() => {
-    const email = this.selectedUserEmail();
-    return email ? (this.userAssetRegistry()[email] || []) : [];
-  });
+    selectedUserAssets: computed(() => {
+      const email = state.selectedUserEmail();
+      return email ? (state.userAssetRegistry()[email] || []) : [];
+    }),
 
-  public readonly selectedUserTotalPKR = computed(() => {
-    return this.selectedUserAssets().reduce((sum, item) => sum + item.holdingValuePKR, 0);
-  });
+    selectedUserTotalPKR: computed(() => {
+      const email = state.selectedUserEmail();
+      const assets = email ? (state.userAssetRegistry()[email] || []) : [];
+      return assets.reduce((sum, item) => sum + item.holdingValuePKR, 0);
+    }),
 
-  public readonly selectedUserKycStatus = computed<KycVerificationStatus>(() => {
-    const email = this.selectedUserEmail();
-    const user = this.usersComplianceQueue().find(u => u.email === email);
-    return user ? user.kycStatus : 'UNVERIFIED';
-  });
+    selectedUserKycStatus: computed<KycVerificationStatus>(() => {
+      const email = state.selectedUserEmail();
+      const user = state.usersComplianceQueue().find(u => u.email === email);
+      return user ? user.kycStatus : 'UNVERIFIED';
+    }),
 
-  public readonly selectedUserIsPremium = computed(() => {
-    const email = this.selectedUserEmail();
-    return email ? this.premiumUserRegistry().has(email) : false;
-  });
+    selectedUserIsPremium: computed(() => {
+      const email = state.selectedUserEmail();
+      return email ? state.premiumUserRegistry().has(email) : false;
+    })
+  })),
 
   // ==============================================================================
   // 4. ASYNC MUTATOR ACTIONS & OPTIMISTIC BACKEND WRITERS
   // ==============================================================================
-  
-  /**
-   * Commits an identity status review over HTTP and updates the UI state instantly
-   */
-  public updateKycStatus(email: string, nextStatus: KycVerificationStatus): void {
-    // OPTIMISTIC UPDATE: Alter the UI signature immediately for lag-free interactions
-    this.usersComplianceQueue.update(queue => 
-      queue.map(user => user.email === email ? { ...user, kycStatus: nextStatus } : user)
-    );
+  withMethods((state, nodeService = inject(NodeService), complianceService = inject(ComplianceService), subscriptionService = inject(SubscriptionService)) => ({
+    
+    setSelectedUserEmail: (email: string | null): void => {
+      patchState(state, { selectedUserEmail: email });
+    },
 
-    // Persist mutation parameters downstream to the server database cluster
-    this.complianceService.evaluateKycStatus(email, nextStatus, 'Administrative clearance review verification.').subscribe({
-      error: (err) => {
-        this.structuralErrorTrace.set(`KYC update failed for ${email}. Reverting layout state.`);
-        this.hydrateStoreFromBackend(); // Rollback local state by re-fetching truth values on failure
-      }
-    });
-  }
+    /**
+     * Pulls production state baselines simultaneously from all backend APIs using rxMethod wrapper
+     */
+    loadComplianceQueue: rxMethod<void>(
+      pipe(
+        tap(() => patchState(state, { isSystemLoading: true, structuralErrorTrace: null })),
+        switchMap(() =>
+          forkJoin({
+            nodes: nodeService.getActiveNodes(),
+            compliance: complianceService.getComplianceQueue(),
+            plans: subscriptionService.getAllAvailablePlans()
+          }).pipe(
+            switchMap((basePayload) => {
+              // 🚀 FIXED: Defensive check to normalize object schemas into arrays before looping maps
+              const localizedComplianceArray: UserComplianceNode[] = Array.isArray(basePayload.compliance)
+                ? basePayload.compliance
+                : (basePayload.compliance ? [basePayload.compliance as unknown as UserComplianceNode] : []);
 
-  /**
-   * Flips subscription tiers and balances system plan allocations live
-   */
-  public togglePremiumStatus(email: string): void {
-    let targetPlanId = 'premium-monthly';
-    const isCurrentlyPremium = this.premiumUserRegistry().has(email);
+              const activeEmails = localizedComplianceArray.map(user => user.email);
 
-    // OPTIMISTIC UPDATE: Update structural sets right away
-    this.premiumUserRegistry.update(premiumSet => {
-      const nextSet = new Set(premiumSet);
+              // Edge Case Isolation: If the compliance array returns empty, drop a clear, blank registry shortcut
+              if (activeEmails.length === 0) {
+                return of({ 
+                  nodes: basePayload.nodes || [], 
+                  compliance: [], 
+                  assetRegistry: {} 
+                });
+              }
+
+              return forkJoin(
+                activeEmails.map(email => 
+                  nodeService.getUserPositions(email).pipe(
+                    map(positions => ({ email, positions }))
+                  )
+                )
+              ).pipe(
+                map(userPositionsArray => {
+                  const assetRegistry: Record<string, PositionItem[]> = {};
+                  userPositionsArray.forEach(item => {
+                    assetRegistry[item.email] = item.positions || [];
+                  });
+                  return { 
+                    nodes: basePayload.nodes || [],
+                    compliance: localizedComplianceArray, 
+                    assetRegistry 
+                  };
+                })
+              );
+            })
+          )
+        ),
+        tap({
+          next: (payload) => {
+            const premiumSet = new Set<string>();
+            payload.compliance.forEach(user => {
+              if (user.kycStatus === 'APPROVED') premiumSet.add(user.email);
+            });
+
+            patchState(state, {
+              activeNodeStatusList: payload.nodes,
+              usersComplianceQueue: payload.compliance,
+              userAssetRegistry: payload.assetRegistry,
+              premiumUserRegistry: premiumSet,
+              isSystemLoading: false
+            });
+          },
+          error: (err) => {
+            patchState(state, {
+              structuralErrorTrace: err.message || 'Fatal store initialization handshake failure.',
+              isSystemLoading: false
+            });
+          }
+        })
+      )
+    ),
+
+    /**
+     * Commits identity status review updates with optimistic UI updates
+     */
+    updateKycStatus: (email: string, nextStatus: KycVerificationStatus): void => {
+      const originalQueue = state.usersComplianceQueue();
+      
+      // OPTIMISTIC UPDATE: Instant rendering transition
+      patchState(state, {
+        usersComplianceQueue: originalQueue.map(user => 
+          user.email === email ? { ...user, kycStatus: nextStatus } : user
+        )
+      });
+
+      complianceService.evaluateKycStatus(email, nextStatus, 'Administrative clearance review verification.').subscribe({
+        error: (err) => {
+          patchState(state, { 
+            structuralErrorTrace: `KYC update failed for ${email}. Reverting layout state.`,
+            usersComplianceQueue: originalQueue // Safe structural rollback
+          });
+        }
+      });
+    },
+
+    /**
+     * Flips user subscription tiers optimistically
+     */
+    togglePremiumStatus: (email: string): void => {
+      const originalSet = state.premiumUserRegistry();
+      let targetPlanId = 'premium-monthly';
+      const nextSet = new Set(originalSet);
+
       if (nextSet.has(email)) {
         nextSet.delete(email);
         targetPlanId = 'standard-free';
       } else {
         nextSet.add(email);
       }
-      return nextSet;
-    });
 
-    // Sync billing state modifications directly with the API
-    this.subscriptionService.overrideUserSubscription(email, targetPlanId).subscribe({
-      error: (err) => {
-        this.structuralErrorTrace.set(`Licensing modification failed for ${email}. Rolling back components.`);
-        this.hydrateStoreFromBackend(); // Rollback layout indicators safely
-      }
-    });
-  }
+      // OPTIMISTIC UPDATE: Structural cache set allocation
+      patchState(state, { premiumUserRegistry: nextSet });
 
-  /**
-   * Bypasses background ingestion hooks to force direct spot-rate mutations
-   * 🚀 MATCHED: Aligned naming mapping signature with template executeManualOverride templates cleanly
-   */
-  public executeManualOverride(nodeId: string, overridePrice: number): void {
-    // OPTIMISTIC UPDATE: Force the spot metric to render instantly
-    this.activeNodeStatusList.update(nodes =>
-      nodes.map(node => node.id === nodeId ? { ...node, lastKnownPrice: overridePrice, latencyMs: 2 } : node)
-    );
+      subscriptionService.overrideUserSubscription(email, targetPlanId).subscribe({
+        error: (err) => {
+          patchState(state, {
+            structuralErrorTrace: `Licensing modification failed for ${email}. Rolling back components.`,
+            premiumUserRegistry: originalSet // Rollback state
+          });
+        }
+      });
+    },
 
-    // Fire the hardware intercept command via HTTP REST to the broker architecture
-    this.nodeService.dispatchPriceOverride(nodeId, overridePrice).subscribe({
-      error: (err) => {
-        this.structuralErrorTrace.set(`Emergency manual override failed for Node ${nodeId}.`);
-        this.nodeService.getActiveNodes().subscribe({
-          next: (freshNodes) => this.activeNodeStatusList.set(freshNodes)
-        });
-      }
-    });
-  }
-}
+    /**
+     * Emergency Broker Platform Override Mutator
+     */
+    executeManualOverride: (nodeId: string, overridePrice: number): void => {
+      const originalNodes = state.activeNodeStatusList();
+
+      // OPTIMISTIC UPDATE: Push spot rates to view instantly
+      patchState(state, {
+        activeNodeStatusList: originalNodes.map(node => 
+          node.id === nodeId ? { ...node, lastKnownPrice: overridePrice, latencyMs: 2 } : node
+        )
+      });
+
+      nodeService.dispatchPriceOverride(nodeId, overridePrice).subscribe({
+        error: (err) => {
+          patchState(state, {
+            structuralErrorTrace: `Emergency manual override failed for Node ${nodeId}.`,
+            activeNodeStatusList: originalNodes // Revert on hardware rejection
+          });
+        }
+      });
+    }
+  }))
+);

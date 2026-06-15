@@ -1,0 +1,29 @@
+// =============================================================================
+// 🎛️ SIDEBAR CANVAS STRUCTURAL ISOLATION
+// =============================================================================
+
+.sidebar-frame {
+  /* Locks the administrative frame to ensure zero viewport height scaling lag */
+  height: 100vh;
+  max-height: 100vh;
+  min-height: 100vh;
+  
+  /* GPU acceleration boundary to provide fluid layout page transitions */
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+// 🗂️ OPTIMIZED TYPOGRAPHY OVERRIDES FOR INTENSE METADATA TRAFFIC
+.user-badge {
+  /* Provides sub-pixel anti-aliasing context optimization for small user labels */
+  -webkit-font-smoothing: subpixel-antialiased;
+  
+  .avatar {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+}
+
+nav {
+  /* Enforces native smooth-scrolling gestures on remote touch screen tablets */
+  -webkit-overflow-scrolling: touch;
+}

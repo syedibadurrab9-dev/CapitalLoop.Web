@@ -1,0 +1,48 @@
+<div class="unauthorized-container min-w-full min-h-screen bg-slate-950 flex items-center justify-center p-6 select-none animate-fade-in">
+  <div class="content-card max-w-md w-full bg-slate-900 border border-slate-800/80 rounded-2xl p-8 text-center shadow-2xl shadow-black/50">
+    
+    <div class="icon-avatar mx-auto w-16 h-16 rounded-full bg-rose-950/40 border border-rose-900/50 flex items-center justify-center text-3xl text-rose-500 mb-6 shadow-lg shadow-rose-950/20 animate-pulse">
+      🛡️
+    </div>
+
+    <h1 class="text-xl font-bold tracking-wide text-slate-100 mb-2">
+      Access Privilege Restriction
+    </h1>
+    <p class="text-xxs font-mono font-semibold tracking-widest uppercase text-rose-400 bg-rose-950/30 border border-rose-900/40 py-1 px-3 rounded-md inline-block mb-6">
+      Error Code: HTTP_403_FORBIDDEN
+    </p>
+
+    <p class="text-xs text-slate-400 leading-relaxed mb-8">
+      Your active database profile tier claims lack the required operational credentials to pass clearance checkpoints for this gateway route. This incident has been logged by the security subsystem.
+    </p>
+
+    <div class="metadata-box border-t border-b border-slate-800/60 bg-slate-950/30 rounded-xl p-4 mb-8 text-left space-y-2.5" 
+         *ngIf="currentUserProfileSignal() as profile">
+      <div class="flex justify-between items-center text-xxs">
+        <span class="text-slate-500 font-medium">Operator ID:</span>
+        <span class="text-slate-300 font-semibold font-mono truncate max-w-[200px]" [title]="profile.email">
+          {{ profile.email }}
+        </span>
+      </div>
+      <div class="flex justify-between items-center text-xxs">
+        <span class="text-slate-500 font-medium">Assigned Subsystem Tier:</span>
+        <span class="text-rose-400 font-bold uppercase tracking-wider bg-rose-950/20 border border-rose-900/30 px-1.5 py-0.5 rounded">
+          {{ profile.tier.replace('-', ' ') }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <button (click)="onNavigateHome()" 
+              class="w-full bg-slate-800 hover:bg-slate-700 active:bg-slate-750 text-emerald-400 hover:text-emerald-300 text-xs font-semibold tracking-wide py-3 px-4 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-all duration-150 shadow-md">
+        ↩️ Return to Core Workspace Dashboard
+      </button>
+      
+      <button (click)="onLogout()" 
+              class="w-full bg-transparent hover:bg-rose-950/10 text-slate-400 hover:text-rose-400 text-xs font-medium tracking-wide py-2.5 px-4 rounded-xl border border-transparent hover:border-rose-900/20 transition-all duration-150">
+        🚪 Terminate Active Session
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PortfolioStore } from '../../store/portfolio.store';
@@ -10,19 +10,37 @@ import { PortfolioStore } from '../../store/portfolio.store';
     CommonModule,
     FormsModule
   ],
-  templateUrl: './node-monitor.component.html',
-  // 🚀 FIXED: Added ViewEncapsulation.None to allow table components to stretch full-width seamlessly 
-  encapsulation: ViewEncapsulation.None
+  templateUrl: './node-monitor.component.html'
 })
-export class NodeMonitorComponent {
+export class NodeMonitorComponent implements OnInit {
   /**
-   * Injects the central administrative signals engine.
+   * 🎛️ Injects the central administrative signals engine.
    * Gives the template fine-grained reactive access to the live node state array.
    */
   protected readonly portfolioStore = inject(PortfolioStore);
 
   /**
-   * Processes emergency administrative price modification injections.
+   * ⚡ Lifecycle Initializer Hook
+   * Pulls fresh health latency statuses and spot values on module initialization
+   */
+  public ngOnInit(): void {
+    this.refreshIntegrationNodes();
+  }
+
+  /**
+   * 🔄 Data Sync Runner
+   * Refreshes the telemetry registry safely by triggering the central state thunk
+   */
+  private refreshIntegrationNodes(): void {
+    if (typeof this.portfolioStore.loadComplianceQueue === 'function') {
+      this.portfolioStore.loadComplianceQueue();
+    } else {
+      console.warn('[NODE MONITOR WARNING]: loadComplianceQueue action missing from state engine workspace.');
+    }
+  }
+
+  /**
+   * ⚠️ Processes emergency administrative price modification injections.
    * Bypasses the active webhook pipelines to alter pricing calculations instantly.
    * @param nodeId The target broker platform integration key identifier.
    * @param inputRef HTMLInputElement reference used to pull values and handle form flushing.
@@ -31,7 +49,7 @@ export class NodeMonitorComponent {
     const rawValue = inputRef.value;
     if (!nodeId || !rawValue) return;
 
-    // Convert raw input text string parameters to explicit float values
+    // Convert raw input text string parameters to explicit numeric float representations
     const calculatedPrice = parseFloat(rawValue);
 
     if (isNaN(calculatedPrice) || calculatedPrice <= 0) {
@@ -39,7 +57,7 @@ export class NodeMonitorComponent {
       return;
     }
 
-    // 🚀 FIXED: Changed from injectManualSpotRate to executeManualOverride to match your store's method signature
+    // Commits the price modification optimistically via your unified NgRx SignalStore action
     this.portfolioStore.executeManualOverride(nodeId, calculatedPrice);
 
     // Clear input forms cleanly to prevent accidental replay loops

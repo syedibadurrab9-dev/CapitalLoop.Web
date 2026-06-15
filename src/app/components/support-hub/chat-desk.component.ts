@@ -1,6 +1,7 @@
 import { Component, inject, ViewChild, ElementRef, AfterViewChecked, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { patchState } from '@ngrx/signals';
 import { ChatStore } from '../../store/chat.store';
 import { PortfolioStore } from '../../store/portfolio.store';
 
@@ -13,7 +14,7 @@ import { PortfolioStore } from '../../store/portfolio.store';
   ],
   templateUrl: './chat-desk.component.html'
 })
-export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Implemented OnInit contract
+export class ChatDeskComponent implements OnInit, AfterViewChecked {
   // Injecting real-time messaging pipeline and central portfolio ledger stores
   protected readonly chatStore = inject(ChatStore);
   protected readonly portfolioStore = inject(PortfolioStore);
@@ -24,7 +25,7 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
 
   constructor() {
     /**
-     * Fine-grained view listener effect:
+     * ⚡ Reactive View Stream Scroller Listener
      * Automatically schedules a layout scroll alignment recalculation 
      * every single time a new message packet hits your active stream array.
      */
@@ -37,11 +38,15 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
   }
 
   /**
-   * ✅ NEW: Dispatches connection signals over the state gateway immediately 
+   * 🛡️ Real-Time SignalR Operational Initializer Hook
+   * Dispatches connection signals over the state gateway immediately 
    * when the administration console tray initializes.
    */
   public ngOnInit(): void {
-    this.chatStore.initSignalR();
+    // Only establish a fresh socket pipeline connection if the hub is completely offline
+    if (this.chatStore.connectionStatus() === 'Disconnected') {
+      this.chatStore.initSignalR();
+    }
   }
 
   /**
@@ -61,7 +66,11 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     if (!email) return;
     const normalizedEmail = email.trim().toLowerCase();
 
-    this.portfolioStore.selectedUserEmail.set(normalizedEmail);
+    // =============================================================================
+    // 🔒 FIXED: Aligned state mutations with modern NgRx patchState parameters
+    // =============================================================================
+    patchState(this.portfolioStore, { selectedUserEmail: normalizedEmail });
+    
     this.chatStore.loadActiveThreadStream(normalizedEmail);
   }
 
@@ -93,7 +102,7 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     // Direct verified, lowercase parameters to your SignalR messaging handler
     this.chatStore.transmitAgentMessage(normalizedEmail, targetText);
     
-    // Clear the plain-text input box instantly
+    // Clear the plain-text input box instantly to prevent replay double-posts
     inputRef.value = '';
     this.shouldScrollToBottom = true;
   }

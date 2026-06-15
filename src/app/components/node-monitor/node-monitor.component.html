@@ -1,101 +1,137 @@
-<div class="admin-grid-layout full-viewport-horizon">
+<div class="flex flex-col flex-1 w-full h-full p-6 space-y-6 overflow-y-auto bg-slate-50">
   
-  <header class="col-span-12 system-banner-shelf">
-    <div class="banner-meta">
-      <h2>Data Feed Monitor</h2>
-      <p>Live status overview of transaction microservices and external pricing network integrations.</p>
+  <!-- ==============================================================================
+       HEADER BANNER SHELF NODE [CL-201]
+       ============================================================================== -->
+  <header class="flex flex-col justify-between gap-4 p-6 bg-white border rounded-2xl border-slate-200 md:flex-row md:items-center shadow-xs">
+    <div class="space-y-1">
+      <h2 class="text-xl font-bold tracking-tight text-slate-900">Data Feed Monitor</h2>
+      <p class="text-xs font-medium text-slate-500">
+        Live status overview of transaction microservices, index metrics, and external pricing network integrations.
+      </p>
     </div>
     
-    <div class="banner-telemetry-pill">
-      Network Status: <span class="heartbeat-indicator active-safe">✓ Connected</span>
+    <div>
+      <span class="inline-flex items-center px-4 py-2 text-xs font-bold rounded-xl font-mono tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+        NETWORK STATUS: <span class="ml-1.5 text-emerald-600 font-extrabold flex items-center gap-1">✓ CONNECTED</span>
+      </span>
     </div>
   </header>
 
-  <section class="executive-surface-card col-span-7 feed-analytics-card">
-    <div class="card-title-node">Active Network Streams</div>
+  <!-- ==============================================================================
+       TWO-COLUMN CONFIGURATION MATRIX LAYOUT
+       ============================================================================== -->
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
     
-    <div class="admin-table-wrapper">
-      <table class="admin-data-table">
-        <thead>
-          <tr>
-            <th>Integration Channel</th>
-            <th>Current Valuation Price</th>
-            <th>Ping Latency</th>
-            <th>Channel State</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
-            <tr [class.faulted-row-bg]="!node.isHealthy">
-              <td>
-                <div class="table-node-name">
-                  <strong>{{ node.name }}</strong>
-                  <span class="system-id-code">ID Code: {{ node.id }}</span>
-                </div>
-              </td>
-              
-              <td class="font-mono text-emerald">
-                Rs. {{ node.lastKnownPrice.toLocaleString() }}
-              </td>
-              
-              <td class="font-mono">
-                <span class="latency-badge" 
-                      [ngClass]="{
-                        'latency-low': node.latencyMs <= 20,
-                        'latency-mid': node.latencyMs > 20 && node.latencyMs <= 60,
-                        'latency-high': node.latencyMs > 60
-                      }">
-                  {{ node.latencyMs }} ms
-                </span>
-              </td>
-              
-              <td>
-                <span class="status-pill-badge" [class.live-state]="node.isHealthy">
-                  {{ node.isHealthy ? 'Operational' : 'Link Faulted' }}
-                </span>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="executive-surface-card col-span-5 manual-override-panel">
-    <div class="card-title-node">Manual Rate Adjustment</div>
-    <p class="panel-warning-text">
-      ⚠️ **Notice:** Applying an override bypasses active integration data webhooks and forces a manual price across all customer metrics instantly.
-    </p>
-
-    <div class="override-form-group">
-      <label class="form-input-label">Target Network Pipeline</label>
-      <select class="admin-form-field" #selectedNodeId>
-        @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
-          <option [value]="node.id">{{ node.name }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="override-form-group">
-      <label class="form-input-label">Adjusted Value (PKR)</label>
-      <div class="input-currency-addon-wrap">
-        <span class="currency-prefix">Rs.</span>
-        <input type="number" 
-               class="admin-form-field field-with-prefix" 
-               #overridePriceValue
-               placeholder="Enter absolute pricing offset amount..." />
+    <!-- Left Column: Active Network Streams Array -->
+    <section class="flex flex-col bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden lg:col-span-7">
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/50">
+        <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase">Active Network Streams</h3>
       </div>
-    </div>
-
-    <footer class="override-action-shelf">
-      <button class="admin-action-btn btn-danger wide-btn"
-              [disabled]="!overridePriceValue.value"
-              (click)="executeManualOverride(selectedNodeId.value, overridePriceValue)">
-        Apply System Price Overrides
-      </button>
       
-      <p class="audit-trail-footer-note">All system pricing modifications are logged securely alongside your session identifier.</p>
-    </footer>
-  </section>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[550px]">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-2xs font-bold uppercase tracking-wider text-slate-500 select-none">
+              <th class="px-6 py-3.5 font-bold">Integration Channel</th>
+              <th class="px-6 py-3.5 font-bold">Current Valuation Price</th>
+              <th class="px-6 py-3.5 font-bold">Ping Latency</th>
+              <th class="px-6 py-3.5 font-bold">Channel State</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-150">
+            @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+              <tr class="hover:bg-slate-50/70 transition-colors duration-150"
+                  [ngClass]="{'bg-rose-50/40 hover:bg-rose-50/60': !node.isHealthy}">
+                
+                <!-- Channel Identity Meta -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight text-slate-900">{{ node.name }}</span>
+                    <span class="text-xs font-medium font-mono text-slate-400 tracking-tight">ID: {{ node.id }}</span>
+                  </div>
+                </td>
+                
+                <!-- Live Spot Asset Pricing -->
+                <td class="px-6 py-4 whitespace-nowrap text-xs font-bold font-mono text-emerald-600">
+                  Rs. {{ node.lastKnownPrice.toLocaleString() }}
+                </td>
+                
+                <!-- Color-Coded Health Latency Indicators -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-md text-2xs font-bold font-mono border"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-700 border-emerald-200': node.latencyMs <= 20,
+                          'bg-amber-50 text-amber-700 border-amber-200': node.latencyMs > 20 && node.latencyMs <= 60,
+                          'bg-rose-50 text-rose-700 border-rose-200': node.latencyMs > 60
+                        }">
+                    {{ node.latencyMs }} ms
+                  </span>
+                </td>
+                
+                <!-- Status Badge -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-2xs font-extrabold font-mono uppercase tracking-wider border"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-700 border-emerald-200': node.isHealthy,
+                          'bg-rose-50 text-rose-700 border-rose-200': !node.isHealthy
+                        }">
+                    {{ node.isHealthy ? 'Operational' : 'Link Faulted' }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
 
+    <!-- Right Column: Administrative Manual Rate Adjustment Panels -->
+    <section class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs lg:col-span-5 space-y-5">
+      <div class="space-y-1">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">Manual Rate Adjustment</h3>
+        <div class="p-3 text-xs font-medium rounded-xl border leading-relaxed bg-amber-50/50 text-amber-800 border-amber-200/60">
+          ⚠️ <strong>Notice:</strong> Applying an override bypasses automated background webhooks and pushes pricing changes across all metrics instantly.
+        </div>
+      </div>
+
+      <!-- Action Fields Form Area -->
+      <div class="space-y-4">
+        <div class="flex flex-col space-y-1.5">
+          <label class="text-2xs font-bold tracking-wider text-slate-400 uppercase select-none">Target Network Pipeline</label>
+          <select class="w-full h-10 px-3 text-xs font-semibold text-slate-800 bg-white border border-slate-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" 
+                  #selectedNodeId>
+            @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+              <option [value]="node.id">{{ node.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex flex-col space-y-1.5">
+          <label class="text-2xs font-bold tracking-wider text-slate-400 uppercase select-none">Adjusted Value (PKR)</label>
+          <div class="relative flex items-center w-full">
+            <span class="absolute left-3.5 text-xs font-bold text-slate-400 select-none font-sans">Rs.</span>
+            <input type="number" 
+                   class="w-full h-10 pl-10 pr-4 text-xs font-bold font-mono text-slate-800 border border-slate-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors placeholder:text-slate-400" 
+                   #overridePriceValue
+                   placeholder="Enter absolute spot value..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Execution Segment -->
+      <div class="pt-2 space-y-3">
+        <button class="flex items-center justify-center w-full h-11 px-4 text-xs font-bold tracking-tight text-white bg-rose-600 hover:bg-rose-700 active:scale-98 disabled:opacity-40 disabled:pointer-events-none rounded-xl shadow-sm cursor-pointer transition-all duration-150"
+                [disabled]="!overridePriceValue.value"
+                (click)="executeManualOverride(selectedNodeId.value, overridePriceValue)">
+          Apply System Price Overrides
+        </button>
+        
+        <p class="text-3xs font-medium text-center text-slate-400 leading-normal">
+          All system pricing modifications are logged securely alongside your session identifier for audit trail visibility.
+        </p>
+      </div>
+    </section>
+
+  </div>
 </div>

@@ -1,15 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-import { provideOAuthClient } from 'angular-oauth2-oidc';
-
 import { AppComponent } from './app/app';
-import { routes } from './app/app.routes';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(),
-    provideOAuthClient() // 🚀 Native OIDC Engine Engine Hooked
-  ]
-}).catch((err: unknown) => console.error(err));
+// 🚀 Bootstrapping the application using the centralized config provider
+// This ensures that APP_INITIALIZER runs the AuthService handshake BEFORE the UI mounts.
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error('[BOOTSTRAP PANIC CRITICAL ERROR]:', err));

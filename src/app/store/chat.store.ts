@@ -1,6 +1,6 @@
 import { signalStore, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 import { inject, computed } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { AuthService } from '../services/auth.service';
 import { ChatService } from '../services/chat.service';
 
@@ -42,102 +42,207 @@ export const ChatStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
   
+  // ==============================================================================
+  // REACTIVE COMPUTED TELEMETRY COMPUTATIONS
+  // ==============================================================================
   withComputed((store) => ({
+    /**
+     * 👥 Active Sidebar Threads Array
+     * Builds a scrollable queue preview with robust string truncation safety limits.
+     */
     activeThreads: computed<SupportThreadView[]>(() => {
-      return Object.values(store.usersMap()).map((user) => {
-        const hasMessages = user.messages.length > 0;
-        const lastMsg = hasMessages ? user.messages[user.messages.length - 1].message : '';
-        return {
-          email: user.email,
-          clientName: user.name,
-          isOnline: user.isOnline,
-          lastMessageSnippet: lastMsg.length > 36 ? `${lastMsg.substring(0, 36)}...` : lastMsg || 'Opened channel pipeline...'
-        };
-      });
+      return Object.values(store.usersMap())
+        .filter(user => !!user)
+        .map((user) => {
+          const messages = user.messages || []; 
+          const hasMessages = messages.length > 0;
+          
+          const lastMsg = hasMessages ? (messages[messages.length - 1].message || '') : '';
+          
+          return {
+            email: user.email,
+            clientName: user.name,
+            isOnline: user.isOnline,
+            lastMessageSnippet: lastMsg.length > 36 
+              ? `${lastMsg.substring(0, 36)}...` 
+              : lastMsg || 'Opened channel pipeline...'
+          };
+        });
     }),
 
+    /**
+     * 💬 Center-Lane Isolated Message Log Stream
+     * Maps underlying payload structures into layout bubbles with dynamic indexing IDs.
+     */
     activeMessageStream: computed<TransmittedMessageView[]>(() => {
       const activeEmail = store.selectedUserEmail();
       if (!activeEmail) return [];
 
       const session = store.usersMap()[activeEmail.toLowerCase()];
-      if (!session) return [];
+      if (!session || !session.messages) return []; 
 
-      return session.messages.map((msg, index) => ({
-        id: `${activeEmail.toLowerCase()}_${msg.timestamp.getTime()}_${index}`,
-        senderName: session.name,
-        isAgentSender: msg.isAgent,
-        text: msg.message,
-        timestamp: msg.timestamp
-      }));
+      return session.messages.map((msg, index) => {
+        return {
+          id: `${activeEmail.toLowerCase()}_${msg.timestamp.getTime()}_${index}`,
+          senderName: session.name,
+          isAgentSender: msg.isAgent,
+          text: msg.message || '',
+          timestamp: msg.timestamp
+        };
+      });
     })
   })),
 
+  // ==============================================================================
+  // REAL-TIME SIGNALR HUB CONNECTIVITY METHODS
+  // ==============================================================================
   withMethods((store) => {
     let hubConnection: HubConnection | null = null;
     const authService = inject(AuthService);
     const chatService = inject(ChatService);
 
     return {
+      /**
+       * 📡 WebSocket Link Initialization
+       * Resolves api targets dynamically based on your home or office LAN subnet profiles.
+       */
       initSignalR(): void {
         const token = authService.appToken();
         if (!token) return;
 
+        // Prevent building duplicate connection sockets if one is actively open
+        if (store.connectionStatus() === 'Connected' || store.connectionStatus() === 'Connecting') {
+          return;
+        }
+
         patchState(store, { connectionStatus: 'Connecting' });
 
+        // 🚀 FIXED: Pointing to the absolute route segment mapped inside Program.cs
+        const targetHubUrl = `${authService.getApiBaseUrl()}/hubs/support`;
+
         hubConnection = new HubConnectionBuilder()
-          .withUrl('http://10.20.0.81:5156/support-hub', {
+          .withUrl(targetHubUrl, {
+            // 🚀 CRITICAL: Sends the validation token payload over the query string block
             accessTokenFactory: () => token
           })
+          .configureLogging(LogLevel.Information) // Enforces console visibility for debugging raw handshakes
           .withAutomaticReconnect()
           .build();
 
-        // 1. Event: User status changes or joins channel
+        // --- LIFECYCLE MONITORING HOOKS ---
+        hubConnection.onclose(() => patchState(store, { connectionStatus: 'Disconnected' }));
+        hubConnection.onreconnecting(() => patchState(store, { connectionStatus: 'Connecting' }));
+        hubConnection.onreconnected(() => patchState(store, { connectionStatus: 'Connected' }));
+
+        // ------------------------------------------------------------------------
+        // EVENT 1: User status changes or registers onto the communication lane
+        // ------------------------------------------------------------------------
         hubConnection.on('UserStatusChanged', (email: string, name: string, isOnline: boolean) => {
           if (!email) return;
-          const normalizedEmail = email.trim().toLowerCase(); // ✅ Normalize case
+          const normalizedEmail = email.trim().toLowerCase(); 
 
           patchState(store, (state) => {
-            const currentMap = { ...state.usersMap };
-            if (!currentMap[normalizedEmail]) {
-              currentMap[normalizedEmail] = { email: normalizedEmail, name, messages: [], isOnline };
-            } else {
-              currentMap[normalizedEmail] = { ...currentMap[normalizedEmail], isOnline };
-            }
-            return { usersMap: currentMap };
+            const existingUser = state.usersMap[normalizedEmail] || { email: normalizedEmail, name, messages: [], isOnline };
+            return { 
+              usersMap: {
+                ...state.usersMap,
+                [normalizedEmail]: { ...existingUser, isOnline }
+              } 
+            };
           });
         });
 
-        // 2. Event: Incoming messaging packet from mobile client
-        hubConnection.on('ReceiveClientMessage', (email: string, name: string, payload: string) => {
+        // ------------------------------------------------------------------------
+        // EVENT 2: Incoming messaging payload packets from mobile client channel
+        // ------------------------------------------------------------------------
+        hubConnection.on('ReceiveClientMessage', (...args: any[]) => {
+          const email = args[0];
+          let name = 'System User';
+          let rawPayload: any = '';
+
+          if (args.length === 2) {
+            rawPayload = args[1];
+          } else if (args.length >= 3) {
+            name = args[1];
+            rawPayload = args[2];
+          }
+
           if (!email) return;
-          const normalizedEmail = email.trim().toLowerCase(); // ✅ Normalize case
+          const normalizedEmail = email.trim().toLowerCase(); 
+
+          let finalPayloadStr = '';
+          if (typeof rawPayload === 'string') {
+            finalPayloadStr = rawPayload;
+          } else if (typeof rawPayload === 'object' && rawPayload !== null) {
+            finalPayloadStr = rawPayload.text || rawPayload.message || rawPayload.content || JSON.stringify(rawPayload);
+          } else {
+            finalPayloadStr = String(rawPayload || '');
+          }
 
           patchState(store, (state) => {
-            const currentMap = { ...state.usersMap };
-            if (!currentMap[normalizedEmail]) {
-              currentMap[normalizedEmail] = { email: normalizedEmail, name, messages: [], isOnline: true };
-            }
+            const existingUser = state.usersMap[normalizedEmail] || { email: normalizedEmail, name, messages: [], isOnline: true };
             
-            currentMap[normalizedEmail].messages = [
-              ...currentMap[normalizedEmail].messages,
-              { isAgent: false, message: payload, timestamp: new Date() }
-            ];
-
-            return { usersMap: currentMap };
+            return { 
+              usersMap: {
+                ...state.usersMap,
+                [normalizedEmail]: {
+                  ...existingUser,
+                  isOnline: true,
+                  messages: [
+                    ...(existingUser.messages || []),
+                    { isAgent: false, message: finalPayloadStr, timestamp: new Date() }
+                  ]
+                }
+              } 
+            };
           });
         });
 
-        // 3. Event: Server echoes back an agent reply
-        hubConnection.on('ReceiveAgentMessage', (agentEmail: string, payload: string) => {
-          // Handled via local optimistic updates, hooks into synchronized tabs if multi-agent
+        // ------------------------------------------------------------------------
+        // EVENT 3: Multi-Agent Window Echo Synchronization
+        // ------------------------------------------------------------------------
+        hubConnection.on('ReceiveAgentMessage', (targetClientEmail: string, payload: string) => {
+          if (!targetClientEmail) return;
+          const normalizedClientEmail = targetClientEmail.trim().toLowerCase();
+
+          patchState(store, (state) => {
+            const existingUser = state.usersMap[normalizedClientEmail];
+            if (!existingUser) return { usersMap: state.usersMap };
+
+            const messages = existingUser.messages || [];
+            const isDuplicate = messages.some(m => m.isAgent && m.message === payload && (new Date().getTime() - m.timestamp.getTime() < 3000));
+            if (isDuplicate) return { usersMap: state.usersMap };
+
+            return {
+              usersMap: {
+                ...state.usersMap,
+                [normalizedClientEmail]: {
+                  ...existingUser,
+                  messages: [
+                    ...messages,
+                    { isAgent: true, message: payload, timestamp: new Date() }
+                  ]
+                }
+              }
+            };
+          });
         });
 
+        // Start socket pipeline connection routine
         hubConnection.start()
-          .then(() => patchState(store, { connectionStatus: 'Connected' }))
-          .catch(() => patchState(store, { connectionStatus: 'Faulted' }));
+          .then(() => {
+            console.log('📡 [SignalR_CONNECTED]: Live support desk hub linked up cleanly.');
+            patchState(store, { connectionStatus: 'Connected' });
+          })
+          .catch((err) => {
+            console.error('[SIGNALR_START_FAULT]: Handshake failed over network path.', err);
+            patchState(store, { connectionStatus: 'Faulted' });
+          });
       },
 
+      /**
+       * 🔄 Historical Database Log Restorer
+       */
       loadActiveThreadStream(email: string): void {
         if (!email) return;
         const normalizedEmail = email.trim().toLowerCase();
@@ -147,63 +252,79 @@ export const ChatStore = signalStore(
         chatService.getChatHistoryLog(normalizedEmail).subscribe({
           next: (historyLog) => {
             patchState(store, (state) => {
-              const currentMap = { ...state.usersMap };
-              
-              const formattedMessages = historyLog.map(log => ({
-                isAgent: log.isAgentSender,
-                message: log.text,
-                timestamp: new Date(log.timestamp)
-              }));
+              const formattedMessages = historyLog.map((log: any) => {
+                const extractedText = log.text ?? log.message ?? log.content ?? '';
 
-              if (currentMap[normalizedEmail]) {
-                currentMap[normalizedEmail] = {
-                  ...currentMap[normalizedEmail],
-                  messages: formattedMessages
+                return {
+                  isAgent: !!log.isAgentSender,
+                  message: typeof extractedText === 'string' ? extractedText : JSON.stringify(extractedText),
+                  timestamp: log.timestamp ? new Date(log.timestamp) : new Date()
                 };
-              } else {
-                currentMap[normalizedEmail] = {
-                  email: normalizedEmail,
-                  name: historyLog[0]?.senderName || 'System User',
-                  messages: formattedMessages,
-                  isOnline: false
-                };
-              }
+              });
 
-              return { usersMap: currentMap };
+              const existingUser = state.usersMap[normalizedEmail] || {
+                email: normalizedEmail,
+                name: historyLog[0]?.senderName || 'System User',
+                messages: [],
+                isOnline: false
+              };
+
+              return { 
+                usersMap: {
+                  ...state.usersMap,
+                  [normalizedEmail]: {
+                    ...existingUser,
+                    messages: formattedMessages
+                  }
+                } 
+              };
             });
 
             chatService.markThreadAsRead(normalizedEmail).subscribe();
           },
-          error: (err) => console.error('[REST_TRANSCRIPT_FETCH_FAULT]', err)
+          error: (err) => console.error('[REST_TRANSCRIPT_FETCH_FAULT]:', err)
         });
       },
 
+      /**
+       * 📤 Optimistic Response Dispatcher
+       */
       transmitAgentMessage(clientEmail: string, text: string): void {
         if (!hubConnection || !clientEmail) return;
         const normalizedEmail = clientEmail.trim().toLowerCase();
 
-        // Optimistic UI push matching lowercase storage key bounds
         patchState(store, (state) => {
-          const currentMap = { ...state.usersMap };
-          if (currentMap[normalizedEmail]) {
-            currentMap[normalizedEmail].messages = [
-              ...currentMap[normalizedEmail].messages,
-              { isAgent: true, message: text, timestamp: new Date() }
-            ];
-          }
-          return { usersMap: currentMap };
+          const existingUser = state.usersMap[normalizedEmail];
+          if (!existingUser) return { usersMap: state.usersMap };
+
+          return { 
+            usersMap: {
+              ...state.usersMap,
+              [normalizedEmail]: {
+                ...existingUser,
+                messages: [
+                  ...(existingUser.messages || []),
+                  { isAgent: true, message: text, timestamp: new Date() }
+                ]
+              }
+            } 
+          };
         });
 
         hubConnection.invoke('SendAgentReplyToClient', normalizedEmail, text)
           .catch((err: any) => {
-            console.error('[REPLY_TRANSMISSION_FAULT] Reverting...', err);
+            console.error('[REPLY_TRANSMISSION_FAULT]: Reverting local storage buffers...', err);
             this.loadActiveThreadStream(normalizedEmail);
           });
       },
 
+      /**
+       * 🛑 Graceful Subsystem Demolition
+       */
       destroyStore(): void {
         if (hubConnection) {
           hubConnection.stop();
+          hubConnection = null;
         }
       }
     };

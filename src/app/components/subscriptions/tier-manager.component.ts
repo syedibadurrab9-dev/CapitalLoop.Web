@@ -1,4 +1,4 @@
-import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PortfolioStore } from '../../store/portfolio.store';
 
@@ -6,18 +6,39 @@ import { PortfolioStore } from '../../store/portfolio.store';
   selector: 'app-tier-manager',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './tier-manager.component.html', // Pointing cleanly to the dedicated view layer file
-  encapsulation: ViewEncapsulation.None        // Forces global styles.scss grids to flow right to the outer margins
+  templateUrl: './tier-manager.component.html'
 })
-export class TierManagerComponent {
+export class TierManagerComponent implements OnInit {
+  // 📥 Injects the centralized Signal State Store to manage account licensing maps
   protected readonly portfolioStore = inject(PortfolioStore);
 
   /**
-   * Maps user account email signatures cleanly against the reactive premium Set stream.
+   * ⚡ Lifecycle Initializer Hook
+   * Pulls fresh user validation profiles and licensing pools automatically on screen mounting
+   */
+  public ngOnInit(): void {
+    this.hydrateLicensingLedger();
+  }
+
+  /**
+   * 🔄 Account Registry Hydration Dispatcher
+   * Forces the store to synchronize licensing matrices down from your backend gateway services
+   */
+  private hydrateLicensingLedger(): void {
+    if (typeof this.portfolioStore.loadComplianceQueue === 'function') {
+      // Fires the unified store rxMethod to poll fresh data across your active network profile
+      this.portfolioStore.loadComplianceQueue();
+    } else {
+      console.warn('[TIER MANAGER WARNING]: loadComplianceQueue driver is missing from your state provider.');
+    }
+  }
+
+  /**
+   * 🥇 Reactive Subscription Set Inspector
+   * Maps user account email signatures cleanly against the modern NgRx Signal Store Set object wrapper.
    * @param email The unique account identification address string.
    */
-  isUserPremium(email: string): boolean {
-    // 🚀 FIXED: Replaced premiumUserEmails array tracking with the production Set lookup mechanism to eliminate TS2339
+  public isUserPremium(email: string): boolean {
     return this.portfolioStore.premiumUserRegistry().has(email);
   }
 }

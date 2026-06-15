@@ -1,98 +1,114 @@
-<div class="admin-grid-layout full-viewport-horizon">
+<div class="flex flex-col flex-1 w-full h-full p-6 space-y-6 overflow-y-auto bg-slate-50">
   
-  <!-- ==============================================================================
-       ROW 1: SUB-HEADER BANNER SHELF NODE
-       ============================================================================== -->
-  <header class="col-span-12 system-banner-shelf">
-    <div class="banner-meta">
-      <h2>Risk Engine Insights</h2>
-      <p>Monitor active asset concentrations, sector limits, and safety boundaries in real time.</p>
+  <header class="flex flex-col justify-between gap-4 p-6 bg-white border rounded-2xl border-slate-200 md:flex-row md:items-center shadow-xs">
+    <div class="space-y-1">
+      <h2 class="text-xl font-bold tracking-tight text-slate-900">Risk Engine Insights</h2>
+      <p class="text-xs font-medium text-slate-500">
+        Monitor active asset concentrations, sector exposure thresholds, and safety boundaries in real time.
+      </p>
     </div>
-    <div class="banner-telemetry-pill">
-      Status: <span class="heartbeat-indicator active-safe">✓ Optimal</span>
+    
+    <div>
+      <span class="inline-flex items-center px-4 py-2 text-xs font-bold rounded-xl font-mono tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+        STATUS: <span class="ml-1.5 text-emerald-600 font-extrabold flex items-center gap-1">✓ OPTIMAL</span>
+      </span>
     </div>
   </header>
 
-  <!-- ==============================================================================
-       ROW 2: SECTOR EXPOSURE MATRIX vs CONFIGURATION PANEL
-       ============================================================================== -->
-  <!-- Main Allocation Bars Runway Area -->
-  <section class="executive-surface-card col-span-8 primary-allocation-card">
-    <div class="card-title-node">Asset Allocation Breakdown</div>
-    <p class="section-desc-text">Current percentage distribution across major financial sectors.</p>
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
     
-    <div class="risk-bar-matrix-track">
-      @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
-        <div class="risk-sector-row">
-          
-          <div class="risk-sector-meta">
-            <span class="sector-label-text">
-              📁 {{ sector.category.replace('_', ' ') }}
-            </span>
-            <span class="percentage-metric" [class.alert-text]="sector.percentage >= 70">
-              {{ sector.percentage }}%
-            </span>
-          </div>
-
-          <div class="risk-rail-track">
-            <div class="risk-fill-gauge"
-                 [style.width.%]="sector.percentage"
-                 [ngClass]="{
-                   'gauge-normal': sector.percentage < 40,
-                   'gauge-warning': sector.percentage >= 40 && sector.percentage < 70,
-                   'gauge-critical': sector.percentage >= 70
-                 }">
+    <section class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs lg:col-span-8 space-y-6">
+      <div class="space-y-1">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">Asset Allocation Breakdown</h3>
+        <p class="text-xs font-medium text-slate-500">Current percentage distribution across major financial sectors.</p>
+      </div>
+      
+      <div class="space-y-5">
+        @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
+          <div class="p-4 border border-slate-150 rounded-xl bg-slate-50/40 space-y-2.5">
+            
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-800 capitalize">
+                📁 {{ sector.category.replace('_', ' ').toLowerCase() }}
+              </span>
+              <span class="font-mono font-black text-sm" 
+                    [ngClass]="{'text-rose-600': sector.percentage >= 70, 'text-slate-900': sector.percentage < 70}">
+                {{ sector.percentage }}%
+              </span>
             </div>
-          </div>
 
-          <div class="rail-bounds-labels">
-            <span class="pool-space-label">Allocation Trough</span>
-            <span class="bound-alert-msg" [class.breached-msg]="sector.percentage >= 70">
-              {{ sector.percentage >= 70 ? '⚠️ Limit Exceeded' : '✓ Within Safe Limits' }}
-            </span>
-          </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500" 
+                   [style.width.%]="sector.percentage"
+                   [ngClass]="{
+                     'bg-indigo-500': sector.percentage < 40,
+                     'bg-amber-500': sector.percentage >= 40 && sector.percentage < 70,
+                     'bg-rose-500': sector.percentage >= 70
+                   }">
+              </div>
+            </div>
 
+            <div class="flex items-center justify-between text-3xs font-bold uppercase tracking-wider text-slate-400 select-none">
+              <span>Allocation Trough</span>
+              <span class="font-extrabold tracking-normal" 
+                    [ngClass]="{'text-rose-600 font-black animate-pulse': sector.percentage >= 70, 'text-emerald-600': sector.percentage < 70}">
+                {{ sector.percentage >= 70 ? '⚠️ Limit Exceeded' : '✓ Within Safe Limits' }}
+              </span>
+            </div>
+
+          </div>
+        }
+      </div>
+    </section>
+
+    <aside class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs lg:col-span-4 space-y-4">
+      <div class="border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">Risk Rules & Guardrails</h3>
+      </div>
+      
+      <div class="p-3.5 border border-slate-150 rounded-xl space-y-1">
+        <div class="flex items-center justify-between gap-2">
+          <strong class="text-xs font-bold text-slate-800">Crypto Exposure Cap</strong>
+          <span class="inline-flex items-center px-2 py-0.5 rounded font-mono text-3xs font-extrabold bg-slate-100 text-slate-600 border border-slate-200">
+            MAX 15%
+          </span>
         </div>
-      }
-    </div>
-  </section>
-
-  <!-- Right Side Rule Constraints Shroud Panel -->
-  <aside class="executive-surface-card col-span-4 operational-limits-panel">
-    <div class="card-title-node">Risk Rules & Guardrails</div>
-    
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Crypto Exposure Cap</strong>
-        <span class="parameter-badge-pill">Max 15%</span>
+        <p class="text-xs font-medium text-slate-500 leading-normal">
+          Limits digital asset holding space to isolate portfolios from market margin volatility.
+        </p>
       </div>
-      <p>Limits digital asset holding space to isolate portfolios from market margin volatility.</p>
-    </div>
 
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Precious Metals Base</strong>
-        <span class="parameter-badge-pill">Min 10%</span>
+      <div class="p-3.5 border border-slate-150 rounded-xl space-y-1">
+        <div class="flex items-center justify-between gap-2">
+          <strong class="text-xs font-bold text-slate-800">Precious Metals Base</strong>
+          <span class="inline-flex items-center px-2 py-0.5 rounded font-mono text-3xs font-extrabold bg-slate-100 text-slate-600 border border-slate-200">
+            MIN 10%
+          </span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 leading-normal">
+          Maintains physical gold and silver reserve baselines to support currency hedge stability.
+        </p>
       </div>
-      <p>Maintains physical gold and silver reserve baselines to support currency hedge stability.</p>
-    </div>
 
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Mutual Funds Target</strong>
-        <span class="parameter-badge-pill target-badge">Target 40%</span>
+      <div class="p-3.5 border border-slate-150 rounded-xl space-y-1">
+        <div class="flex items-center justify-between gap-2">
+          <strong class="text-xs font-bold text-slate-800">Mutual Funds Target</strong>
+          <span class="inline-flex items-center px-2 py-0.5 rounded font-mono text-3xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+            TARGET 40%
+          </span>
+        </div>
+        <p class="text-xs font-medium text-slate-500 leading-normal">
+          Primary target allocation pool designed to secure steady capital liquidity depth.
+        </p>
       </div>
-      <p>Primary target allocation pool designed to secure steady capital liquidity depth.</p>
-    </div>
 
-    <div class="panel-divider-line"></div>
+      <div class="pt-2 border-t border-slate-100 space-y-1">
+        <h4 class="text-xs font-bold text-slate-900">Automated Guardrails</h4>
+        <p class="text-xs font-medium text-slate-500 leading-relaxed">
+          If an asset allocation pool breaks a risk threshold rule, fallback liquidity protection structures are automatically deployed downstream.
+        </p>
+      </div>
+    </aside>
 
-    <div class="risk-audit-footer-summary">
-      <h4>Automated Guardrails</h4>
-      <p>
-        If an asset allocation pool breaks a risk threshold rule, fallback liquidity protection structures are deployed.
-      </p>
-    </div>
-  </aside>
-
+  </div>
 </div>

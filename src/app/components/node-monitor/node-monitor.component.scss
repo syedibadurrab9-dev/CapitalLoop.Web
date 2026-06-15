@@ -1,127 +1,20 @@
-/* Core Header Banner Assembly */
-.system-banner-shelf {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #1F2937;
-  padding-bottom: 16px;
-  margin-bottom: 8px;
-
-  h2 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.5px; }
-  p { font-size: 13px; color: #9CA3AF; margin-top: 4px; }
-}
-
-.banner-telemetry-pill {
-  background: #090D16;
-  border: 1px solid #273549;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #F8FAFC;
-
-  .heartbeat-indicator.active {
-    color: #10B981;
-    margin-left: 4px;
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+// --- FORM FIELD OPTIMIZATIONS FOR MONOSPACED NUMERICS ---
+input[type="number"] {
+  // Cleans up the native desktop increment spin triggers to maintain design fidelity
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
-}
-
-/* Custom Telemetry Table Typography Items */
-.table-node-name {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  strong { color: #FFFFFF; font-size: 13px; }
-  .system-id-code { font-size: 11px; color: #6B7280; font-family: monospace; }
-}
-
-.font-mono { font-family: monospace, monospace; font-size: 14px; font-weight: 600; }
-
-/* Micro Latency Pings Custom Styling Overrides */
-.latency-badge {
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 700;
-
-  &.latency-low { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-  &.latency-mid { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
-  &.latency-high { background: rgba(220, 38, 38, 0.1); color: #EF4444; }
-}
-
-/* Internal Connection Status Indicators */
-.status-pill-badge {
-  color: #EF4444;
-  font-size: 12px;
-  font-weight: 600;
   
-  &.live-state { color: #10B981; }
+  // 🏛️ STANDARD AND CROSS-BROWSER APPEARANCE GATEWAYS
+  -webkit-appearance: none; // Safari, Chrome, Edge legacy support
+  -moz-appearance: textfield; // Firefox native structural override
+  appearance: none;           // Standard unprefixed property for modern compatibility
 }
 
-/* Error Row Alert Shrouds */
-.faulted-row-bg td {
-  background: rgba(220, 38, 38, 0.03) !important;
-  border-bottom-color: rgba(220, 38, 38, 0.15) !important;
-}
-
-/* Override Input Control Mechanics */
-.panel-warning-text {
-  font-size: 12px;
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  color: #D97706;
-  padding: 12px;
-  border-radius: 8px;
-  line-height: 1.6;
-  margin: 14px 0 20px 0;
-}
-
-.override-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  .form-input-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #9CA3AF;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-}
-
-/* Curreny Pre-fixed Multi-Element Input Wrapping Anchor */
-.input-currency-addon-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  .currency-prefix {
-    position: absolute;
-    left: 16px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #6B7280;
-    font-family: monospace;
-    pointer-events: none;
-  }
-
-  .field-with-prefix {
-    padding-left: 48px;
-    font-family: monospace;
-    font-size: 15px;
-    font-weight: 600;
-  }
-}
-
-.wide-btn { width: 100%; padding: 14px; font-size: 14px; }
-
-.audit-trail-footer-note {
-  font-size: 11px;
-  color: #4B5563;
-  text-align: center;
-  margin-top: 10px;
-  line-height: 1.4;
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none; // Strips out native OS dropdown arrows to allow custom Tailwind icons
 }

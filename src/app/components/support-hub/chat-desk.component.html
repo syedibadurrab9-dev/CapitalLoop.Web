@@ -1,144 +1,190 @@
-<div class="workspace-viewport">
+<div class="flex w-full h-full overflow-hidden select-none bg-slate-100">
 
-  <aside class="sidebar-tray">
+  <aside class="flex flex-col w-80 h-full border-r border-slate-200 bg-white shrink-0">
     
-    <div class="hub-telemetry-header">
-      <h2>Active Chats</h2>
-      
-      <div class="connection-status-wrapper">
-        @if (chatStore.connectionStatus() === 'Connected') {
-          <span class="hub-pill status-online font-mono" style="background: #E6F4EA; color: #059669; border: 1px solid #A7F3D0; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            ● Online
-          </span>
-        } @else if (chatStore.connectionStatus() === 'Connecting') {
-          <span class="hub-pill status-syncing font-mono" style="background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            ⏳ Connecting...
-          </span>
-        } @else {
-          <span class="hub-pill status-offline font-mono" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            ● Offline
-          </span>
-        }
+    <div class="p-4 border-b border-slate-200 space-y-3 bg-slate-50/50">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-bold tracking-tight text-slate-900 uppercase">Active Chats</h2>
+        
+        <div class="flex items-center">
+          @if (chatStore.connectionStatus() === 'Connected') {
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-3xs font-extrabold font-mono uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+              <span class="w-1 h-1 mr-1 rounded-full bg-emerald-500 animate-pulse"></span> Online
+            </span>
+          } @else if (chatStore.connectionStatus() === 'Connecting') {
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-3xs font-extrabold font-mono uppercase bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs">
+              ⏳ Connecting...
+            </span>
+          } @else {
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-3xs font-extrabold font-mono uppercase bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
+              ● Offline
+            </span>
+          }
+        </div>
       </div>
     </div>
     
-    <div class="conversations-list">
+    <div class="flex-1 overflow-y-auto divide-y divide-slate-100">
       @for (chat of chatStore.activeThreads(); track chat.email) {
-        <div class="queue-card" 
-             [class.active]="portfolioStore.selectedUserEmail() === chat.email"
-             (click)="selectClientUser(chat.email)">
+        <div (click)="selectClientUser(chat.email)"
+             class="p-4 space-y-1.5 cursor-pointer transition-all duration-150 relative select-none"
+             [ngClass]="{
+               'bg-blue-50/60 border-l-4 border-blue-600 pl-3': portfolioStore.selectedUserEmail() === chat.email,
+               'hover:bg-slate-50/80 border-l-4 border-transparent': portfolioStore.selectedUserEmail() !== chat.email
+             }">
           
-          <div class="queue-header">
-            <span class="client-title">{{ chat.clientName }}</span>
-            <span class="status-dot" [class.online]="chat.isOnline"></span>
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-slate-900 truncate tracking-tight">{{ chat.clientName }}</span>
+            <span class="w-2 h-2 rounded-full shrink-0 transition-colors duration-150"
+                  [ngClass]="chat.isOnline ? 'bg-emerald-500 shadow-xs' : 'bg-slate-300'">
+            </span>
           </div>
           
-          <div class="client-email-sub font-mono">{{ chat.email }}</div>
-          <div class="snippet">{{ chat.lastMessageSnippet }}</div>
+          <div class="text-3xs font-bold font-mono text-slate-400 truncate tracking-tight">{{ chat.email }}</div>
+          <p class="text-xs font-medium text-slate-500 truncate leading-snug">{{ chat.lastMessageSnippet }}</p>
         </div>
       } @empty {
-        <div class="empty-tray-msg">No active customer conversations running right now.</div>
+        <div class="p-8 text-center text-xs font-semibold text-slate-400 select-none">
+          No active customer conversations running right now.
+        </div>
       }
     </div>
   </aside>
 
-  <section class="chat-terminal-core">
+  <section class="flex flex-col flex-1 h-full bg-slate-50 min-w-0">
     @if (portfolioStore.selectedUserEmail()) {
       
-      <div class="active-chat-header">
-        <h3>{{ getActiveThreadName() }}</h3>
-        <span>Connected securely over live messaging gateway</span>
-      </div>
+      <header class="flex flex-col justify-center h-16 px-6 bg-white border-b border-slate-200 shrink-0">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">{{ getActiveThreadName() }}</h3>
+        <span class="text-3xs font-bold tracking-wide text-slate-400 uppercase">Connected securely over live messaging gateway</span>
+      </header>
 
-      <div class="stream-scroller" #streamContainer>
+      <div class="flex-1 p-6 overflow-y-auto space-y-4" #streamContainer>
         @for (msg of chatStore.activeMessageStream(); track msg.id) {
-          <div class="message-row" [class.self-alignment]="msg.isAgentSender">
-            <div class="bubble-wrapper">
-              <span class="sender-identity">
+          <div class="flex w-full" [ngClass]="msg.isAgentSender ? 'justify-end' : 'justify-start'">
+            <div class="flex flex-col max-w-[70%] space-y-1" [ngClass]="msg.isAgentSender ? 'items-end' : 'items-start'">
+              
+              <span class="text-3xs font-bold text-slate-400 px-1 select-none">
                 {{ msg.isAgentSender ? 'System Support' : msg.senderName }}
               </span>
-              <div class="message-bubble">
+              
+              <div class="px-4 py-2.5 rounded-2xl text-xs font-medium leading-relaxed shadow-3xs text-wrap break-words border"
+                   [ngClass]="{
+                     'bg-blue-600 text-white border-blue-700 rounded-tr-xs': msg.isAgentSender,
+                     'bg-white text-slate-800 border-slate-200 rounded-tl-xs': !msg.isAgentSender
+                   }">
                 {{ msg.text }}
               </div>
-              <span class="timestamp-tag font-mono">{{ msg.timestamp | date:'shortTime' }}</span>
+              
+              <span class="text-3xs font-semibold font-mono text-slate-400 px-1 select-none">
+                {{ msg.timestamp | date:'shortTime' }}
+              </span>
             </div>
           </div>
         }
       </div>
 
-      <footer class="interaction-shelf" [style.opacity]="chatStore.connectionStatus() === 'Connected' ? '1' : '0.5'">
-        <input type="text" 
-               #replyInput
-               [disabled]="chatStore.connectionStatus() !== 'Connected'"
-               [placeholder]="chatStore.connectionStatus() === 'Connected' ? 'Type your message here...' : 'Connection broken. Awaiting reconnection...'" 
-               (input)="0"
-               (keyup.enter)="chatStore.connectionStatus() === 'Connected' && replyInput.value.trim() && dispatchResponse(replyInput)" />
-        <button class="dispatch-btn" 
-                [disabled]="chatStore.connectionStatus() !== 'Connected' || !replyInput.value.trim()" 
-                (click)="dispatchResponse(replyInput)">
-          Send Message
-        </button>
+      <footer class="p-4 bg-white border-t border-slate-200 shrink-0 transition-opacity duration-200" 
+              [style.opacity]="chatStore.connectionStatus() === 'Connected' ? '1' : '0.5'">
+        <div class="flex items-center gap-3">
+          <input type="text" 
+                 #replyInput
+                 [disabled]="chatStore.connectionStatus() !== 'Connected'"
+                 [placeholder]="chatStore.connectionStatus() === 'Connected' ? 'Type your message here...' : 'Connection broken. Awaiting automatic reconnection profile...'" 
+                 (input)="0"
+                 (keyup.enter)="chatStore.connectionStatus() === 'Connected' && replyInput.value.trim() && dispatchResponse(replyInput)"
+                 class="flex-1 h-11 px-4 text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:bg-white focus:outline-none disabled:opacity-50 transition-all placeholder:text-slate-400 shadow-inner" />
+          
+          <button [disabled]="chatStore.connectionStatus() !== 'Connected' || !replyInput.value.trim()" 
+                  (click)="dispatchResponse(replyInput)"
+                  class="h-11 px-5 text-xs font-bold tracking-tight text-white bg-blue-600 hover:bg-blue-700 active:scale-97 disabled:opacity-40 disabled:pointer-events-none rounded-xl shadow-xs cursor-pointer transition-all shrink-0">
+            Send Message
+          </button>
+        </div>
       </footer>
 
     } @else {
-      <div class="empty-state">
-        <p>
-          👋 **Welcome to CapitalLoop Support Desk** <br />
-          Please select an active customer chat request from the left sidebar queue to load their conversation stream history and open their financial user profiles.
-        </p>
+      <div class="flex flex-col items-center justify-center flex-1 p-8 text-center select-none bg-slate-50/50">
+        <div class="max-w-md space-y-4 p-8 border border-dashed border-slate-200 bg-white rounded-3xl shadow-3xs">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto rounded-2xl bg-blue-50 text-blue-600 font-bold text-xl border border-blue-100 shadow-2xs">
+            🎧
+          </div>
+          <div class="space-y-1.5">
+            <h4 class="text-sm font-bold tracking-tight text-slate-900">CapitalLoop Support Desk Terminal</h4>
+            <p class="text-xs font-medium leading-relaxed text-slate-500">
+              Please select an active customer chat request from the left queue sidebar to load their live conversation stream history and view their current asset holding records.
+            </p>
+          </div>
+        </div>
       </div>
     }
   </section>
 
   @if (portfolioStore.selectedUserEmail()) {
-    <aside class="context-sidebar-panel">
+    <aside class="flex flex-col w-80 h-full border-l border-slate-200 bg-white shrink-0 animate-fade-in">
       
-      <div class="panel-section-header">
-        <h3>User Profile Details</h3>
-        <p>Account verification stats and tier positions.</p>
-      </div>
+      <div class="p-4 border-b border-slate-200 space-y-3.5 bg-slate-50/40">
+        <div class="space-y-0.5">
+          <h3 class="text-xs font-bold tracking-wider text-slate-400 uppercase select-none">User Profile Details</h3>
+          <p class="text-3xs font-medium text-slate-400 leading-normal">Account classification levels and compliance statuses.</p>
+        </div>
 
-      <div class="context-data-block">
-        <label>Membership Tier Status</label>
-        <div class="tier-status-indicator" [class.premium]="portfolioStore.selectedUserIsPremium()">
-          {{ portfolioStore.selectedUserIsPremium() ? '🥇 Premium Tier Account' : 'Standard Basic Account' }}
+        <div class="space-y-2">
+          <div class="flex flex-col space-y-1">
+            <span class="text-3xs font-bold tracking-wider text-slate-400 uppercase select-none">Membership Tier</span>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-2xs font-bold tracking-tight border shadow-3xs"
+                  [ngClass]="{
+                    'bg-cyan-50 text-cyan-700 border-cyan-200 font-extrabold': portfolioStore.selectedUserIsPremium(),
+                    'bg-slate-100 text-slate-600 border-slate-200': !portfolioStore.selectedUserIsPremium()
+                  }">
+              {{ portfolioStore.selectedUserIsPremium() ? '🥇 Premium VIP Workspace' : 'Standard Freemium Basic' }}
+            </span>
+          </div>
+
+          <div class="flex flex-col space-y-1">
+            <span class="text-3xs font-bold tracking-wider text-slate-400 uppercase select-none">Identity Verification</span>
+            <span class="inline-flex items-center w-max px-2.5 py-0.5 rounded-full text-3xs font-extrabold font-mono uppercase tracking-wider border"
+                  [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200': portfolioStore.selectedUserKycStatus().toUpperCase() === 'APPROVED',
+                    'bg-amber-50 text-amber-700 border-amber-200': portfolioStore.selectedUserKycStatus().toUpperCase() === 'PENDING',
+                    'bg-rose-50 text-rose-700 border-rose-200': portfolioStore.selectedUserKycStatus().toUpperCase() === 'UNVERIFIED'
+                  }">
+              KYC {{ portfolioStore.selectedUserKycStatus() }}
+            </span>
+          </div>
         </div>
       </div>
 
-      <div class="context-data-block">
-        <label>Identity Verification</label>
-        <span class="compliance-badge" 
-              [ngClass]="portfolioStore.selectedUserKycStatus().toLowerCase()">
-          KYC {{ portfolioStore.selectedUserKycStatus() }}
-        </span>
+      <div class="p-4 border-b border-slate-200 bg-slate-50/10">
+        <h3 class="text-xs font-bold tracking-wider text-slate-400 uppercase select-none">Asset Holding Allocation</h3>
+        <p class="text-3xs font-medium text-slate-400 leading-normal">Current logged positions inside user portfolio.</p>
       </div>
 
-      <div class="panel-divider"></div>
-
-      <div class="panel-section-header">
-        <h3>Asset Holding Allocation</h3>
-        <p>Current logged positions inside user portfolio.</p>
-      </div>
-
-      <div class="sidebar-asset-scroll-track">
+      <div class="flex-1 overflow-y-auto divide-y divide-slate-100 px-4">
         @for (asset of portfolioStore.selectedUserAssets(); track asset.id) {
-          <div class="sidebar-asset-row">
-            <div class="asset-meta-info">
-              <span class="name" [title]="asset.name">{{ asset.name }}</span>
-              <span class="category-pill font-mono">{{ asset.category.replace('_', ' ') }}</span>
+          <div class="py-3 flex items-center justify-between gap-3 text-xs">
+            <div class="flex flex-col min-w-0 space-y-0.5">
+              <span class="font-bold text-slate-800 truncate tracking-tight" [title]="asset.name">{{ asset.name }}</span>
+              <span class="inline-flex w-max px-1.5 py-0.5 rounded-md text-3xs font-bold font-mono tracking-wide bg-slate-100 text-slate-500 border border-slate-200 uppercase scale-95 origin-left">
+                {{ asset.category.replace('_', ' ') }}
+              </span>
             </div>
-            <div class="asset-value-metric font-mono">
+            <div class="font-bold font-mono text-slate-900 shrink-0 text-right">
               Rs. {{ asset.holdingValuePKR.toLocaleString() }}
             </div>
           </div>
         } @empty {
-          <div class="empty-tray-msg" style="padding: 12px 0;">No reported asset positions logged on this profile.</div>
+          <div class="py-8 text-center text-xs font-semibold text-slate-400 select-none">
+            No active portfolio assets logged on this profile.
+          </div>
         }
       </div>
 
-      <div class="sidebar-networth-footer">
-        <span>Total Net Balance (PKR)</span>
-        <strong class="font-mono">Rs. {{ portfolioStore.selectedUserTotalPKR().toLocaleString() }}</strong>
+      <div class="p-4 bg-slate-50 border-t border-slate-200 shrink-0 flex flex-col space-y-1">
+        <span class="text-3xs font-bold tracking-wider text-slate-400 uppercase select-none">Total Net Balance (PKR)</span>
+        <strong class="text-base font-black font-mono text-slate-900 tracking-tight">
+          Rs. {{ portfolioStore.selectedUserTotalPKR().toLocaleString() }}
+        </strong>
       </div>
 
     </aside>

@@ -1,99 +1,116 @@
-<div class="admin-grid-layout full-viewport-horizon">
-  
-  <!-- ==============================================================================
-       ROW 1: HIGH-LEVEL EXECUTIVE METRIC TILES
-       ============================================================================== -->
-  <!-- Assets Under Management (AUM) Totalizer -->
-  <section class="executive-surface-card col-span-4">
-    <div class="card-title-node">Assets Under Management</div>
-    <div class="metric-hero-display text-emerald">
-      Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
-    </div>
-    <p class="metric-subtext-note">Cumulative value of all synchronized manual and automated positions.</p>
-  </section>
+<div class="flex flex-col flex-1 w-full h-full p-6 space-y-6 overflow-y-auto bg-slate-50">
 
-  <!-- Identity Compliance Funnel Tracking Node -->
-  <section class="executive-surface-card col-span-4" routerLink="/compliance" style="cursor: pointer;">
-    <div class="card-title-node">Identity Verification Pipeline</div>
-    <div class="metric-split-row">
-      <div class="split-segment">
-        <span class="value text-warning">{{ portfolioStore.totalPendingKycCount() }}</span>
-        <span class="label">Pending Review</span>
-      </div>
-      <div class="split-segment border-left">
-        <span class="value text-muted">{{ portfolioStore.totalApprovedKycCount() }}</span>
-        <span class="label">Approved Profiles</span>
-      </div>
-    </div>
-    <p class="metric-subtext-note">Click to review incoming registration files and verification documents.</p>
-  </section>
-
-  <!-- Premium Subscription User Saturation Tiers -->
-  <section class="executive-surface-card col-span-4" routerLink="/subscriptions" style="cursor: pointer;">
-    <div class="card-title-node">Premium User Growth</div>
-    <div class="metric-hero-display text-teal">
-      {{ portfolioStore.premiumTierPercentage() }}%
-    </div>
-    <p class="metric-subtext-note">Ratio of active premium account tiers relative to basic free tiers.</p>
-  </section>
-
-  <!-- ==============================================================================
-       ROW 2: DYNAMIC MARKET EXPOSURE MATRIX & NODE HEALTH ENGINE
-       ============================================================================== -->
-  <!-- Macro Allocation Exposure Map -->
-  <section class="executive-surface-card col-span-7" routerLink="/risk-engine" style="cursor: pointer;">
-    <div class="card-title-node">Asset Allocation Mapping</div>
-    <p class="section-desc-text" style="margin-bottom: 12px;">Real-time capital distribution trends across asset pools.</p>
+  <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
     
-    <div class="exposure-list-track">
-      @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
-        <div class="exposure-progress-row">
-          <div class="exposure-meta">
-            <span class="category-name">📁 {{ sector.category.replace('_', ' ') }}</span>
-            <span class="percentage-val">{{ sector.percentage }}%</span>
-          </div>
-          <div class="progress-bar-rail">
-            <div class="progress-bar-fill" 
-                 [style.width.%]="sector.percentage"
-                 [ngClass]="{
-                   'bg-indigo': sector.percentage < 40,
-                   'bg-teal': sector.percentage >= 40 && sector.percentage < 70,
-                   'bg-danger': sector.percentage >= 70
-                 }">
+    <section class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2">
+      <h3 class="text-xs font-bold tracking-wider text-slate-400 uppercase select-none">Assets Under Management</h3>
+      <div class="text-2xl font-black tracking-tight text-emerald-600 font-sans">
+        Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
+      </div>
+      <p class="text-xs font-medium leading-relaxed text-slate-500">
+        Cumulative value of all synchronized manual and automated positions inside CapitalLoop.
+      </p>
+    </section>
+
+    <section routerLink="/compliance" 
+             class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-3 cursor-pointer hover:border-blue-300 hover:shadow-xs transition-all duration-150 group">
+      <h3 class="text-xs font-bold tracking-wider text-slate-400 uppercase select-none group-hover:text-blue-600 transition-colors">Identity Verification Pipeline</h3>
+      <div class="grid grid-cols-2 divide-x divide-slate-150">
+        <div class="flex flex-col space-y-0.5">
+          <span class="text-xl font-extrabold font-mono text-amber-500">{{ portfolioStore.totalPendingKycCount() }}</span>
+          <span class="text-3xs font-bold tracking-wider text-slate-400 uppercase">Pending Review</span>
+        </div>
+        <div class="flex flex-col pl-4 space-y-0.5">
+          <span class="text-xl font-extrabold font-mono text-slate-600">{{ portfolioStore.totalApprovedKycCount() }}</span>
+          <span class="text-3xs font-bold tracking-wider text-slate-400 uppercase">Approved Profiles</span>
+        </div>
+      </div>
+      <p class="text-xs font-medium leading-relaxed text-slate-500">
+        Click to review incoming onboarding files, multi-part photos, and smart CNIC entries.
+      </p>
+    </section>
+
+    <section routerLink="/subscriptions" 
+             class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-xs transition-all duration-150 group">
+      <h3 class="text-xs font-bold tracking-wider text-slate-400 uppercase select-none group-hover:text-blue-600 transition-colors">Premium User Growth</h3>
+      <div class="text-2xl font-black tracking-tight text-cyan-600 font-sans">
+        {{ portfolioStore.premiumTierPercentage() }}%
+      </div>
+      <p class="text-xs font-medium leading-relaxed text-slate-500">
+        Ratio of active premium account workspaces relative to unverified free baseline accounts.
+      </p>
+    </section>
+  </div>
+
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-12">
+    
+    <section routerLink="/risk-engine" 
+             class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs lg:col-span-7 cursor-pointer hover:border-slate-300 transition-all duration-150 flex flex-col justify-between">
+      <div class="space-y-1">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">Asset Allocation Mapping</h3>
+        <p class="text-xs font-medium text-slate-500">Real-time capital distribution trends across underlying asset pools.</p>
+      </div>
+      
+      <div class="mt-5 space-y-4 flex-1 justify-center flex flex-col">
+        @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-semibold tracking-tight">
+              <span class="text-slate-700 capitalize font-medium">📁 {{ sector.category.replace('_', ' ').toLowerCase() }}</span>
+              <span class="font-bold font-mono text-slate-900">{{ sector.percentage }}%</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500" 
+                   [style.width.%]="sector.percentage"
+                   [ngClass]="{
+                     'bg-indigo-500': sector.percentage < 40,
+                     'bg-cyan-500': sector.percentage >= 40 && sector.percentage < 70,
+                     'bg-rose-500': sector.percentage >= 70
+                   }">
+              </div>
             </div>
           </div>
-        </div>
-      }
-    </div>
-  </section>
+        }
+      </div>
+    </section>
 
-  <!-- Network Integration API Telemetry Nodes Stack -->
-  <section class="executive-surface-card col-span-5" routerLink="/node-monitor" style="cursor: pointer;">
-    <div class="card-title-node">Active Data Feed Streams</div>
-    <p class="section-desc-text" style="margin-bottom: 12px;">Live status updates from data pipelines and pricing APIs.</p>
-    
-    <div class="node-telemetry-stack">
-      @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
-        <div class="node-status-line">
-          <div class="node-identity">
-            <span class="indicator-dot" [class.live]="node.isHealthy"></span>
-            <span class="node-name">{{ node.name }}</span>
+    <section routerLink="/node-monitor" 
+             class="p-6 bg-white border border-slate-200 rounded-2xl shadow-xs lg:col-span-5 cursor-pointer hover:border-slate-300 transition-all duration-150 flex flex-col justify-between">
+      <div class="space-y-1">
+        <h3 class="text-sm font-bold tracking-tight text-slate-900">Active Data Feed Streams</h3>
+        <p class="text-xs font-medium text-slate-500">Live health latency diagnostics from broker data feeds and pricing APIs.</p>
+      </div>
+      
+      <div class="mt-5 divide-y divide-slate-100 flex-1 justify-center flex flex-col">
+        @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
+          <div class="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+            <div class="flex items-center gap-2.5">
+              <span class="relative flex h-2 w-2">
+                @if (node.isHealthy) {
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                } @else {
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                }
+              </span>
+              <span class="text-xs font-bold text-slate-800 tracking-tight">{{ node.name }}</span>
+            </div>
+            
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-900 font-mono">
+              Rs. {{ node.lastKnownPrice.toLocaleString() }}
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-3xs font-extrabold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wide">
+                {{ node.latencyMs }}ms
+              </span>
+            </div>
           </div>
-          <div class="node-value-metric">
-            Rs. {{ node.lastKnownPrice.toLocaleString() }}
-            <span class="latency-pill">{{ node.latencyMs }}ms</span>
-          </div>
-        </div>
-      }
-    </div>
-  </section>
+        }
+      </div>
+    </section>
+  </div>
 
-  <!-- ==============================================================================
-       ROW 3: OPERATIONAL FLOATING ACTION DOCK
-       ============================================================================== -->
-  <footer class="col-span-12 command-quick-dock">
-    <button class="dock-btn-node" routerLink="/support-hub">
-      🎧 Open Live Client Support Desk
+  <footer class="w-full pt-2">
+    <button routerLink="/support-hub" 
+            class="flex items-center justify-center w-full h-11 px-4 text-xs font-bold tracking-tight text-white bg-blue-600 hover:bg-blue-700 active:scale-99 rounded-xl shadow-xs transition-all duration-150 cursor-pointer">
+      🎧 Open Live Client Support Desk (SignalR Agent Terminal)
     </button>
   </footer>
 
