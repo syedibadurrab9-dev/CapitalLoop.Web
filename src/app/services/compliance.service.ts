@@ -8,9 +8,27 @@ export interface ComplianceAuditTrailLog {
   logId: string;
   targetEmail: string;
   reviewerAgentEmail: string;
-  actionPerformed: 'KYC_APPROVE' | 'KYC_REJECT' | 'DOCUMENT_RE-REQUEST';
+  actionPerformed: 'KYC_APPROVE' | 'KYC_REJECT' | 'DOCUMENT_RE-REQUEST' | 'ADMIN_OPERATOR_PROVISIONED' | 'ADMIN_OPERATOR_REACTIVATED' | 'ADMIN_OPERATOR_DEACTIVATED';
   comments?: string;
   timestamp: Date;
+}
+
+export interface AdminOperatorNode {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  licenseNumber?: string;
+  isActive: boolean;
+  onboardedUtc: string;
+  onboardedBy: string;
+}
+
+export interface ProvisionOperatorPayload {
+  name: string;
+  email: string;
+  role: string;
+  licenseNumber?: string;
 }
 
 @Injectable({
@@ -21,7 +39,7 @@ export class ComplianceService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for citizen validation pipelines
-  private readonly baseApiUrl = 'http://10.20.0.81:5156/api/compliance';
+  private readonly baseApiUrl = 'http://localhost:5156/api/compliance';
 
   /**
    * Helper utility to assemble authenticated bearer token headers
@@ -80,6 +98,39 @@ export class ComplianceService {
     const token = this.authService.appToken();
     // Appends the operational authorization signature as a query variable for file stream access
     return `${this.baseApiUrl}/documents/preview/${fileName}?token=${token}`;
+  }
+
+  /**
+   * Fetches the live registry of all authorized institutional admin operators and SECP consultants
+   */
+  public getAdminOperators(): Observable<AdminOperatorNode[]> {
+    return this.http.get<AdminOperatorNode[]>(`${this.baseApiUrl}/operators`, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Provisions and authorizes a new administrative operator with designated institutional role
+   */
+  public provisionOperator(payload: ProvisionOperatorPayload): Observable<any> {
+    return this.http.post<any>(`${this.baseApiUrl}/operators`, payload, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Toggles the active/suspended clearance status of an operator
+   */
+  public toggleOperator(email: string): Observable<any> {
+    return this.http.post<any>(`${this.baseApiUrl}/operators/toggle`, { email }, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /**

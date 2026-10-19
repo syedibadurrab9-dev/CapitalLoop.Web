@@ -1,96 +1,188 @@
 <div class="admin-grid-layout full-viewport-horizon">
   
   <!-- ==============================================================================
-       ROW 1: SUB-HEADER BANNER SHELF NODE
+       HEADER BANNER SHELF
        ============================================================================== -->
   <header class="col-span-12 system-banner-shelf">
     <div class="banner-meta">
-      <h2>Risk Engine Insights</h2>
-      <p>Monitor active asset concentrations, sector limits, and safety boundaries in real time.</p>
+      <h2>SECP Risk Engine & Devaluation Stress-Testing Portal</h2>
+      <p>Macroeconomic PKR currency shock simulations (-5% to -50%) and 2026 SECP Sandbox rebalancing.</p>
     </div>
-    <div class="banner-telemetry-pill">
-      Status: <span class="heartbeat-indicator active-safe">✓ Optimal</span>
+
+    <div class="banner-controls">
+      <!-- Investor Scope Filter -->
+      <div class="scope-selector-wrap">
+        <label for="scopeSelect">Scope:</label>
+        <select 
+          id="scopeSelect" 
+          class="scope-select" 
+          [ngModel]="selectedUserFilter()" 
+          (ngModelChange)="onUserFilterChange($event)"
+        >
+          <option value="GLOBAL_AUM">🌐 Global Platform AUM</option>
+          @for (email of userOptions(); track email) {
+            <option [value]="email">👤 {{ email }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Risk Dial Pill -->
+      <div class="risk-dial-pill" [ngClass]="'risk-' + compositeRiskLevel().toLowerCase()">
+        Composite Risk: <strong>{{ compositeRiskLevel() }}</strong>
+      </div>
     </div>
   </header>
 
   <!-- ==============================================================================
-       ROW 2: SECTOR EXPOSURE MATRIX vs CONFIGURATION PANEL
+       ROW 1: KEY STRESS-TEST TELEMETRY DECK
        ============================================================================== -->
-  <!-- Main Allocation Bars Runway Area -->
-  <section class="executive-surface-card col-span-8 primary-allocation-card">
-    <div class="card-title-node">Asset Allocation Breakdown</div>
-    <p class="section-desc-text">Current percentage distribution across major financial sectors.</p>
-    
-    <div class="risk-bar-matrix-track">
-      @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
-        <div class="risk-sector-row">
-          
-          <div class="risk-sector-meta">
-            <span class="sector-label-text">
-              📁 {{ sector.category.replace('_', ' ') }}
-            </span>
-            <span class="percentage-metric" [class.alert-text]="sector.percentage >= 70">
-              {{ sector.percentage }}%
-            </span>
-          </div>
+  <section class="col-span-12 telemetry-kpi-deck">
+    <div class="kpi-card">
+      <span class="kpi-label">Base Net Worth (PKR)</span>
+      <span class="kpi-val">{{ baseTotalPKR() | number:'1.0-0' }} PKR</span>
+      <span class="kpi-sub">Equivalent: ${{ baseTotalUSD() | number:'1.2-2' }}</span>
+    </div>
 
-          <div class="risk-rail-track">
-            <div class="risk-fill-gauge"
-                 [style.width.%]="sector.percentage"
-                 [ngClass]="{
-                   'gauge-normal': sector.percentage < 40,
-                   'gauge-warning': sector.percentage >= 40 && sector.percentage < 70,
-                   'gauge-critical': sector.percentage >= 70
-                 }">
-            </div>
-          </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Simulated USD / PKR</span>
+      <span class="kpi-val highlight">{{ stressedUsdRate() | number:'1.2-2' }}</span>
+      <span class="kpi-sub">Baseline: {{ baseUsdRate }} PKR ({{ simulatedDevaluationPct() }}% deval)</span>
+    </div>
 
-          <div class="rail-bounds-labels">
-            <span class="pool-space-label">Allocation Trough</span>
-            <span class="bound-alert-msg" [class.breached-msg]="sector.percentage >= 70">
-              {{ sector.percentage >= 70 ? '⚠️ Limit Exceeded' : '✓ Within Safe Limits' }}
-            </span>
-          </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Stressed Net Worth (PKR)</span>
+      <span class="kpi-val" [class.profit-val]="stressedTotalPKR() >= baseTotalPKR()">
+        {{ stressedTotalPKR() | number:'1.0-0' }} PKR
+      </span>
+      <span class="kpi-sub">Stressed USD: ${{ stressedTotalUSD() | number:'1.2-2' }}</span>
+    </div>
 
-        </div>
-      }
+    <div class="kpi-card">
+      <span class="kpi-label">Purchasing Power Erosion</span>
+      <span class="kpi-val loss-val">-${{ usdPurchasingPowerLoss() | number:'1.2-2' }}</span>
+      <span class="kpi-sub">Real USD equivalent lost</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">Hedge Resilience Score</span>
+      <span class="kpi-val" [ngClass]="resilienceScore() >= 80 ? 'profit-val' : 'loss-val'">
+        {{ resilienceScore() }}%
+      </span>
+      <span class="kpi-sub">Purchasing power preserved</span>
     </div>
   </section>
 
-  <!-- Right Side Rule Constraints Shroud Panel -->
-  <aside class="executive-surface-card col-span-4 operational-limits-panel">
-    <div class="card-title-node">Risk Rules & Guardrails</div>
-    
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Crypto Exposure Cap</strong>
-        <span class="parameter-badge-pill">Max 15%</span>
+  <!-- ==============================================================================
+       ROW 2: SCENARIO SELECTOR & SLIDER RUNWAY
+       ============================================================================== -->
+  <section class="col-span-12 executive-surface-card scenario-card">
+    <div class="scenario-header">
+      <div>
+        <h3 class="card-title-node">Macroeconomic Currency Shock Scenarios</h3>
+        <p class="section-desc-text">Select a historical/stress scenario or adjust the custom devaluation slider.</p>
       </div>
-      <p>Limits digital asset holding space to isolate portfolios from market margin volatility.</p>
+      <div class="scenario-buttons-row">
+        @for (scen of predefinedScenarios; track scen.id) {
+          <button 
+            type="button" 
+            class="scenario-pill-btn" 
+            [class.active]="simulatedDevaluationPct() === scen.devaluationPercentage"
+            (click)="selectScenario(scen)"
+          >
+            {{ scen.name }}
+          </button>
+        }
+      </div>
     </div>
 
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Precious Metals Base</strong>
-        <span class="parameter-badge-pill">Min 10%</span>
+    <!-- Custom Slider -->
+    <div class="slider-control-shelf">
+      <div class="slider-info-row">
+        <span>Custom PKR Devaluation Intensity:</span>
+        <strong class="slider-val-badge">-{{ simulatedDevaluationPct() }}%</strong>
       </div>
-      <p>Maintains physical gold and silver reserve baselines to support currency hedge stability.</p>
+      <input 
+        type="range" 
+        min="0" 
+        max="50" 
+        step="1" 
+        class="deval-range-slider"
+        [ngModel]="simulatedDevaluationPct()" 
+        (ngModelChange)="onDevaluationChange($event)"
+      />
+      <div class="slider-ticks">
+        <span>0% (Status Quo)</span>
+        <span>-15% (IMF Target)</span>
+        <span>-30% (Severe Shock)</span>
+        <span>-50% (Extreme Crisis)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==============================================================================
+       ROW 3: SECTOR STRESS MATRIX vs SECP REBALANCING PLAN
+       ============================================================================== -->
+  <!-- Left Side: Sector Exposure Stress Matrix -->
+  <section class="col-span-7 executive-surface-card">
+    <div class="card-title-node">Sector-Wise Stress Sensitivity Matrix</div>
+    <p class="section-desc-text">Impact of currency devaluation across dollar-hedged, export, and nominal holdings.</p>
+
+    <div class="matrix-table-wrap">
+      <table class="stress-table">
+        <thead>
+          <tr>
+            <th>Sector Category</th>
+            <th>Weight</th>
+            <th>Base PKR</th>
+            <th>Stressed PKR</th>
+            <th>Nominal Delta</th>
+            <th>Hedge Mechanism</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of sectorStressMatrix(); track row.category) {
+            <tr>
+              <td class="font-bold">{{ row.category.replace('_', ' ') }}</td>
+              <td>{{ row.weightPct }}%</td>
+              <td>{{ row.basePKR | number:'1.0-0' }}</td>
+              <td class="font-bold">{{ row.stressedPKR | number:'1.0-0' }}</td>
+              <td [class.delta-pos]="row.nominalDeltaPKR > 0" [class.delta-zero]="row.nominalDeltaPKR === 0">
+                {{ row.nominalDeltaPKR > 0 ? '+' : '' }}{{ row.nominalDeltaPKR | number:'1.0-0' }}
+              </td>
+              <td>
+                <span class="hedge-badge" [ngClass]="row.hedgeType.toLowerCase()">
+                  {{ row.hedgeType.replace('_', ' ') }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Right Side: SECP Rebalancing Action Plan -->
+  <aside class="col-span-5 executive-surface-card rebalancing-card">
+    <div class="card-title-node">SECP Rebalancing Action Plan</div>
+    <p class="section-desc-text">Automated guidance to protect portfolio solvency under current shock parameters.</p>
+
+    <div class="recommendations-list">
+      @for (rec of rebalancingRecommendations(); track rec) {
+        <div class="recommendation-item" [class.rec-warning]="rec.includes('BREACH') || rec.includes('DEFICIT')">
+          <div class="rec-icon">
+            {{ rec.includes('BREACH') ? '⚠️' : (rec.includes('DEFICIT') ? '🛡️' : '✅') }}
+          </div>
+          <div class="rec-content">
+            {{ rec }}
+          </div>
+        </div>
+      }
     </div>
 
-    <div class="limit-parameter-box">
-      <div class="parameter-header-row">
-        <strong>Mutual Funds Target</strong>
-        <span class="parameter-badge-pill target-badge">Target 40%</span>
-      </div>
-      <p>Primary target allocation pool designed to secure steady capital liquidity depth.</p>
-    </div>
-
-    <div class="panel-divider-line"></div>
-
-    <div class="risk-audit-footer-summary">
-      <h4>Automated Guardrails</h4>
+    <div class="secp-summary-box">
+      <h4>2026 SECP Sandbox Compliance Mandate</h4>
       <p>
-        If an asset allocation pool breaks a risk threshold rule, fallback liquidity protection structures are deployed.
+        Regulation requires continuous portfolio stress testing against PKR volatility. Investors with resilience scores under 70% must be flagged for mandatory asset rebalancing during annual compliance audit.
       </p>
     </div>
   </aside>

@@ -1,8 +1,10 @@
-import { Component, inject, ViewChild, ElementRef, AfterViewChecked, OnInit, effect } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, AfterViewChecked, OnInit, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatStore } from '../../store/chat.store';
 import { PortfolioStore } from '../../store/portfolio.store';
+
+export type ConsultantLicenseType = 'SECP_ADVISOR' | 'FBR_TAX_PRACTITIONER';
 
 @Component({
   selector: 'app-chat-desk',
@@ -13,7 +15,7 @@ import { PortfolioStore } from '../../store/portfolio.store';
   ],
   templateUrl: './chat-desk.component.html'
 })
-export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Implemented OnInit contract
+export class ChatDeskComponent implements OnInit, AfterViewChecked {
   // Injecting real-time messaging pipeline and central portfolio ledger stores
   protected readonly chatStore = inject(ChatStore);
   protected readonly portfolioStore = inject(PortfolioStore);
@@ -22,12 +24,20 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
   @ViewChild('streamContainer') private readonly streamContainer!: ElementRef;
   private shouldScrollToBottom = false;
 
+  // Regulatory Consultant Verification State (SECP / FBR Accreditation)
+  public readonly isConsultantVerified = signal<boolean>(false);
+  public readonly consultantLicense = signal<string>('SECP-ADV-8492');
+  public readonly consultantName = signal<string>('Syed Ibad (Senior Advisory Partner)');
+  public readonly consultantType = signal<ConsultantLicenseType>('SECP_ADVISOR');
+  public readonly showVerificationModal = signal<boolean>(false);
+  public readonly verificationError = signal<string | null>(null);
+
+  // Modal form inputs
+  public licenseInput: string = 'SECP-ADV-8492';
+  public nameInput: string = 'Syed Ibad';
+  public typeInput: ConsultantLicenseType = 'SECP_ADVISOR';
+
   constructor() {
-    /**
-     * Fine-grained view listener effect:
-     * Automatically schedules a layout scroll alignment recalculation 
-     * every single time a new message packet hits your active stream array.
-     */
     effect(() => {
       const messages = this.chatStore.activeMessageStream();
       if (messages.length > 0) {
@@ -36,17 +46,10 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     });
   }
 
-  /**
-   * ✅ NEW: Dispatches connection signals over the state gateway immediately 
-   * when the administration console tray initializes.
-   */
   public ngOnInit(): void {
     this.chatStore.initSignalR();
   }
 
-  /**
-   * Fires every time Angular finishes verifying presentation layouts
-   */
   public ngAfterViewChecked(): void {
     if (this.shouldScrollToBottom) {
       this.scrollToBottom();
@@ -54,9 +57,6 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     }
   }
 
-  /**
-   * Intercepts left-sidebar click events to select a client user.
-   */
   protected selectClientUser(email: string): void {
     if (!email) return;
     const normalizedEmail = email.trim().toLowerCase();
@@ -65,9 +65,6 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     this.chatStore.loadActiveThreadStream(normalizedEmail);
   }
 
-  /**
-   * Helper utility reading current context headers
-   */
   protected getActiveThreadName(): string {
     const currentEmail = this.portfolioStore.selectedUserEmail();
     if (!currentEmail) return 'Selected Client Chat Channel';
@@ -79,10 +76,45 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     return activeThread ? activeThread.clientName : 'Selected Client Chat Channel';
   }
 
-  /**
-   * Dispatches an administrative text block over the SignalR pipeline.
-   */
+  public openVerificationModal(): void {
+    this.verificationError.set(null);
+    this.showVerificationModal.set(true);
+  }
+
+  public closeVerificationModal(): void {
+    this.showVerificationModal.set(false);
+  }
+
+  public verifyCredentials(): void {
+    const lic = this.licenseInput.trim().toUpperCase();
+    const name = this.nameInput.trim();
+
+    if (!name) {
+      this.verificationError.set('Consultant legal name is required.');
+      return;
+    }
+
+    // Must match SECP-ADV-XXXX or FBR-TP-XXXX
+    const regex = /^(SECP-ADV|FBR-TP)-\d{4,6}$/;
+    if (!regex.test(lic)) {
+      this.verificationError.set('Invalid license format. Must follow standard: SECP-ADV-XXXX or FBR-TP-XXXX.');
+      return;
+    }
+
+    this.consultantLicense.set(lic);
+    this.consultantName.set(`${name} (Accredited Advisor)`);
+    this.consultantType.set(this.typeInput);
+    this.isConsultantVerified.set(true);
+    this.verificationError.set(null);
+    this.showVerificationModal.set(false);
+  }
+
   protected dispatchResponse(inputRef: HTMLInputElement): void {
+    if (!this.isConsultantVerified()) {
+      this.openVerificationModal();
+      return;
+    }
+
     const targetText = inputRef.value?.trim();
     const rawDestinationEmail = this.portfolioStore.selectedUserEmail();
 
@@ -90,17 +122,16 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked { // ✅ Impl
     
     const normalizedEmail = rawDestinationEmail.trim().toLowerCase();
 
-    // Direct verified, lowercase parameters to your SignalR messaging handler
-    this.chatStore.transmitAgentMessage(normalizedEmail, targetText);
+    // Attach regulatory verification stamp
+    const badgeLabel = this.consultantType() === 'SECP_ADVISOR' ? 'SECP Advisor' : 'FBR Tax Practitioner';
+    const stampedMessage = `[Verified ${badgeLabel} #${this.consultantLicense()}] ${targetText}`;
+
+    this.chatStore.transmitAgentMessage(normalizedEmail, stampedMessage);
     
-    // Clear the plain-text input box instantly
     inputRef.value = '';
     this.shouldScrollToBottom = true;
   }
 
-  /**
-   * Shifts scroll window heights downward to focus incoming traffic cleanly
-   */
   private scrollToBottom(): void {
     try {
       if (this.streamContainer?.nativeElement) {

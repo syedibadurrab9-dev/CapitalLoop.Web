@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PortfolioStore } from '../../store/portfolio.store';
@@ -11,16 +11,14 @@ import { PortfolioStore } from '../../store/portfolio.store';
     RouterLink
   ],
   templateUrl: './dashboard.component.html'
-//  styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
-  /**
-   * ✅ Injects the central administration signal store state engine.
-   * This grants our template instant reactive access to:
-   * - globalAumPKR()
-   * - totalPendingKycCount()
-   * - activeNodeStatusList()
-   * - sectorExposurePercentages()
-   */
+export class DashboardComponent implements OnInit {
   protected readonly portfolioStore = inject(PortfolioStore);
+
+  public ngOnInit(): void {
+    // Automatically trigger store hydration to guarantee fresh telemetry upon entering the station
+    if (this.portfolioStore.usersComplianceQueue().length === 0) {
+      this.portfolioStore.hydrateStoreFromBackend();
+    }
+  }
 }

@@ -1,14 +1,15 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from './auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  
-  // Extract your administrative system JWT from your existing OAuth session context
-  const token = authService.getAccessToken();
+  // Do not attach internal authorization headers to external authentication providers (e.g. Google OIDC discovery)
+  if (req.url.startsWith('https://accounts.google.com') || req.url.startsWith('https://oauth2.googleapis.com')) {
+    return next(req);
+  }
 
-  // If a valid administrative token footprint exists, inject it securely into the pipeline headers
+  // Extract administrative system JWT directly from storage
+  const token = localStorage.getItem('cl_app_token');
+
+  // If a valid administrative token exists, attach Bearer header
   if (token) {
     req = req.clone({
       setHeaders: {
@@ -17,6 +18,5 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // Pass the updated request down the downstream network handshake line
   return next(req);
 };

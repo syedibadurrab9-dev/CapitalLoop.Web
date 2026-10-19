@@ -1,7 +1,7 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { forkJoin, map, switchMap, of, tap, catchError } from 'rxjs';
 import { NodeService } from '../services/node.service';
-import { ComplianceService } from '../services/compliance.service';
+import { ComplianceService, AdminOperatorNode } from '../services/compliance.service';
 import { SubscriptionService } from '../services/subscription.service';
 
 // --- SYSTEM COMPLIANCE INTERFACES ---
@@ -13,6 +13,8 @@ export interface UserComplianceNode {
   kycStatus: KycVerificationStatus;
   documentUrl?: string;
   submittedAt: Date;
+  documentType?: string;
+  documentNumber?: string;
 }
 
 // --- PORTFOLIO POSITION INTERFACES ---
@@ -53,6 +55,7 @@ export class PortfolioStore {
   // Live structural backend state mappings
   public readonly userAssetRegistry = signal<Record<string, PositionItem[]>>({});
   public readonly premiumUserRegistry = signal<Set<string>>(new Set());
+  public readonly adminOperatorsList = signal<AdminOperatorNode[]>([]);
   
   // Loading and error state tracks for administrative reporting
   public readonly isSystemLoading = signal<boolean>(false);
@@ -77,7 +80,8 @@ export class PortfolioStore {
     forkJoin({
       nodes: this.nodeService.getActiveNodes(),
       compliance: this.complianceService.getComplianceQueue(),
-      plans: this.subscriptionService.getAllAvailablePlans()
+      plans: this.subscriptionService.getAllAvailablePlans(),
+      operators: this.complianceService.getAdminOperators().pipe(catchError(() => of([])))
     }).pipe(
       switchMap((basePayload) => {
         // Build out a dynamic dictionary mapped array collection tracking each profile
@@ -106,6 +110,7 @@ export class PortfolioStore {
         this.activeNodeStatusList.set(payload.nodes);
         this.usersComplianceQueue.set(payload.compliance);
         this.userAssetRegistry.set(payload.assetRegistry);
+        this.adminOperatorsList.set(payload.operators);
         
         // Dynamically build out our operational premium tracking cache maps
         const premiumSet = new Set<string>();
@@ -256,6 +261,37 @@ export class PortfolioStore {
           next: (freshNodes) => this.activeNodeStatusList.set(freshNodes)
         });
       }
+    });
+  }
+
+  /**
+   * Provisions and authorizes a new administrative operator with designated institutional role
+   */
+  public provisionOperator(name: string, email: string, role: string, licenseNumber?: string) {
+    return this.complianceService.provisionOperator({ name, email, role, licenseNumber }).pipe(
+      tap(() => this.refreshOperators())
+    );
+  }
+
+  /**
+   * Toggles the active/suspended clearance status of an operator
+   */
+  public toggleOperator(email: string): void {
+    this.complianceService.toggleOperator(email).subscribe({
+      next: () => this.refreshOperators(),
+      error: (err) => {
+        this.structuralErrorTrace.set(`Failed to toggle operator status: ${err.message}`);
+      }
+    });
+  }
+
+  /**
+   * Refreshes the active Admin Operator directory
+   */
+  public refreshOperators(): void {
+    this.complianceService.getAdminOperators().subscribe({
+      next: (ops) => this.adminOperatorsList.set(ops),
+      error: (err) => console.warn('Could not refresh operators:', err)
     });
   }
 }

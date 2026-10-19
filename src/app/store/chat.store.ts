@@ -86,7 +86,7 @@ export const ChatStore = signalStore(
         patchState(store, { connectionStatus: 'Connecting' });
 
         hubConnection = new HubConnectionBuilder()
-          .withUrl('http://10.20.0.81:5156/support-hub', {
+          .withUrl('http://localhost:5156/support-hub', {
             accessTokenFactory: () => token
           })
           .withAutomaticReconnect()

@@ -4,7 +4,7 @@ export const authConfig: AuthConfig = {
   issuer: 'https://accounts.google.com',
   strictDiscoveryDocumentValidation: false,
   redirectUri: window.location.origin + '/login',
-  clientId: '13131396392-40lscdfkt1896c3s52p7hbvs9gtg6vah.apps.googleusercontent.com',
+  clientId: '451325656019-drjb9j6j2g8hcq99697c3dv2m4nhdbu0.apps.googleusercontent.com',
   scope: 'openid profile email',
   responseType: 'code', // Keep Code Flow enabled
   showDebugInformation: true,

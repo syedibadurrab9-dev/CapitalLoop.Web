@@ -8,6 +8,8 @@ export interface AdminUserSessionProfile {
   name: string;
   email: string;
   isPremiumUser: boolean;
+  role?: string;
+  licenseNumber?: string;
 }
 
 @Injectable({
@@ -21,12 +23,15 @@ export class AuthService {
   // Exposing application level atomic session signals
   public readonly appToken = signal<string | null>(localStorage.getItem('cl_app_token'));
   public readonly userTier = signal<string | null>(localStorage.getItem('cl_user_tier'));
+  public readonly operatorRole = signal<string | null>(localStorage.getItem('cl_operator_role'));
+  public readonly operatorLicense = signal<string | null>(localStorage.getItem('cl_operator_license'));
   
-  // ✅ NEW: Explicit tracking signal to prevent component rendering race conditions
+  // Tracking signals for clearance and state
+  public readonly clearanceDenied = signal<{ email: string; reason: string } | null>(null);
   public readonly isExchangingCode = signal<boolean>(false);
 
   // ==============================================================================
-  // ✅ UPDATED: CRITICAL SECURITY GATING SIGNALS
+  // ✅ CRITICAL SECURITY GATING SIGNALS
   // ==============================================================================
   
   /**
@@ -51,10 +56,18 @@ export class AuthService {
       return {
         name: parsedClaims.name || parsedClaims['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'System Administrator',
         email: parsedClaims.email || parsedClaims['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
-        isPremiumUser: true 
+        isPremiumUser: true,
+        role: parsedClaims.role || parsedClaims['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || this.operatorRole() || 'SuperAdmin',
+        licenseNumber: parsedClaims.license || this.operatorLicense() || 'SECP-ADV-8492'
       };
     } catch {
-      return { name: 'System Administrator', email: '', isPremiumUser: true };
+      return {
+        name: 'System Administrator',
+        email: '',
+        isPremiumUser: true,
+        role: this.operatorRole() || 'SuperAdmin',
+        licenseNumber: this.operatorLicense() || 'SECP-ADV-8492'
+      };
     }
   });
 
@@ -66,7 +79,6 @@ export class AuthService {
     const authCode = urlParams.get('code');
 
     if (authCode) {
-      // ✅ Toggle exchange tracking state flag immediately before firing HTTP requests
       this.isExchangingCode.set(true);
       this.exchangeAuthCodeWithBackend(authCode);
     } else {
@@ -80,6 +92,10 @@ export class AuthService {
 
   public get currentUserValue(): AdminUserSessionProfile | null {
     return this.currentUserProfile();
+  }
+
+  public clearClearanceError(): void {
+    this.clearanceDenied.set(null);
   }
 
   private exchangeAuthCodeWithBackend(code: string): void {
@@ -100,35 +116,53 @@ export class AuthService {
       codeVerifier: codeVerifier || ''
     };
 
-    this.http.post<any>('http://10.20.0.81:5156/api/auth/google-sso', payload)
+    this.http.post<any>('http://localhost:5156/api/auth/google-sso', payload)
       .subscribe({
         next: (res) => {
-          localStorage.setItem('cl_app_token', res.token);
-          localStorage.setItem('cl_user_tier', res.tier);
-          this.appToken.set(res.token);
-          this.userTier.set(res.tier);
-
           // Clear URL query parameters to keep the browser address bar clean
           window.history.replaceState({}, document.title, window.location.pathname);
           this.isExchangingCode.set(false);
 
           if (res.tier === 'agent') {
+            localStorage.setItem('cl_app_token', res.token);
+            localStorage.setItem('cl_user_tier', res.tier);
+            if (res.role) localStorage.setItem('cl_operator_role', res.role);
+            if (res.licenseNumber) localStorage.setItem('cl_operator_license', res.licenseNumber);
+
+            this.appToken.set(res.token);
+            this.userTier.set(res.tier);
+            this.operatorRole.set(res.role || 'SuperAdmin');
+            this.operatorLicense.set(res.licenseNumber || 'SECP-ADV-8492');
+            this.clearanceDenied.set(null);
+
             this.router.navigate(['/dashboard']);
           } else {
             console.warn('⚠️ Gating Failure: Accessed via non-agent parameters.');
-            this.logout();
+            localStorage.removeItem('cl_app_token');
+            localStorage.removeItem('cl_user_tier');
+            this.appToken.set(null);
+            this.userTier.set(null);
+            this.clearanceDenied.set({
+              email: res.email || 'Current Google Account',
+              reason: 'This account authenticated successfully with Google, but is not provisioned with administrative operator clearance in Capital Loop.'
+            });
+            this.router.navigate(['/login']);
           }
         },
         error: (err) => {
           console.error('[BACKEND_EXCHANGE_FAULT] API is unreachable or token invalid.', err);
-          // ✅ Clear exchange state flag and boot out clean to prevent landing on empty dashboards
           this.isExchangingCode.set(false);
+          this.clearanceDenied.set({
+            email: 'Authentication Service',
+            reason: 'Google identity exchange handshake failed with backend server.'
+          });
           this.logout();
         }
       });
   }
 
   public login(): void {
+    this.clearanceDenied.set(null);
     this.oauthService.initCodeFlow();
   }
 
@@ -136,8 +170,13 @@ export class AuthService {
     this.oauthService.logOut();
     localStorage.removeItem('cl_app_token');
     localStorage.removeItem('cl_user_tier');
+    localStorage.removeItem('cl_operator_role');
+    localStorage.removeItem('cl_operator_license');
     this.appToken.set(null);
     this.userTier.set(null);
+    this.operatorRole.set(null);
+    this.operatorLicense.set(null);
+    this.clearanceDenied.set(null);
     sessionStorage.clear();
     
     // Clear dynamic address bar codes to prevent looping conditions if kicked out mid-flight

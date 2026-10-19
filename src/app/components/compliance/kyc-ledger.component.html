@@ -2,8 +2,8 @@
   
   <header class="col-span-12 system-banner-shelf">
     <div class="banner-meta">
-      <h2>Identity Verification Ledger</h2>
-      <p>Review submitted user verification profiles, audit document files, and update system status parameters.</p>
+      <h2>SECP & NADRA Identity Compliance Ledger</h2>
+      <p>Regulatory oversight ledger for Pakistani investor CNIC/Passport verification, sovereign storage audit, and SECP compliance trail.</p>
     </div>
     
     <div class="banner-telemetry-pill">
@@ -12,13 +12,14 @@
   </header>
 
   <section class="executive-surface-card col-span-12 ledger-analytics-card">
-    <div class="card-title-node">Verification Queue</div>
+    <div class="card-title-node">Verification Queue & Compliance Review</div>
     
     <div class="admin-table-wrapper">
       <table class="admin-data-table">
         <thead>
           <tr>
             <th>User Account Profile</th>
+            <th>SECP Document Identification</th>
             <th>Submission Date</th>
             <th>Verification Status</th>
             <th style="text-align: right;">Review Actions</th>
@@ -36,6 +37,13 @@
                   </div>
                 </div>
               </td>
+
+              <td>
+                <div class="doc-meta-cell">
+                  <span class="doc-type-badge">{{ user.documentType || 'Smart_CNIC' }}</span>
+                  <span class="font-mono doc-number-val">{{ user.documentNumber || '35201-XXXXXXX-X' }}</span>
+                </div>
+              </td>
               
               <td class="font-mono table-timestamp-cell">
                 {{ user.submittedAt ? (user.submittedAt | date:'mediumDate') : 'Pending' }}
@@ -49,16 +57,21 @@
               
               <td style="text-align: right;">
                 <div class="table-action-btn-cluster">
+                  <button class="admin-action-btn btn-table-scale btn-audit-trace"
+                          (click)="inspectAuditTrail(user)">
+                    Audit Trail
+                  </button>
+
                   @if (user.kycStatus !== 'APPROVED') {
                     <button class="admin-action-btn btn-success btn-table-scale" 
-                            (click)="portfolioStore.updateKycStatus(user.email, 'APPROVED')">
-                      Approve Profile
+                            (click)="updateStatus(user, 'APPROVED')">
+                      Approve
                     </button>
                   }
                   @if (user.kycStatus !== 'UNVERIFIED') {
                     <button class="admin-action-btn btn-danger btn-table-scale" 
-                            (click)="portfolioStore.updateKycStatus(user.email, 'UNVERIFIED')">
-                      Reject Account
+                            (click)="updateStatus(user, 'UNVERIFIED')">
+                      Reject
                     </button>
                   }
                 </div>
@@ -66,7 +79,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-table-placeholder">
+              <td colspan="5" class="empty-table-placeholder">
                 <div class="empty-state-content">
                   <span class="empty-icon">📂</span>
                   <p>No compliance or verification requests require review at this time.</p>
@@ -78,5 +91,60 @@
       </table>
     </div>
   </section>
+
+  <!-- SECP Audit Trail Modal Overlay -->
+  @if (selectedUserForAudit()) {
+    <div class="audit-modal-backdrop" (click)="closeAuditModal()">
+      <div class="audit-modal-dialog" (click)="$event.stopPropagation()">
+        <div class="audit-modal-header">
+          <div>
+            <h3>SECP Regulatory Audit Trail</h3>
+            <p class="font-mono text-muted">{{ selectedUserForAudit()!.name }} ({{ selectedUserForAudit()!.email }})</p>
+          </div>
+          <button class="modal-close-btn" (click)="closeAuditModal()">&times;</button>
+        </div>
+
+        <div class="audit-modal-body">
+          @if (isAuditLoading()) {
+            <div class="audit-loading">
+              <span>Loading SECP immutable audit ledger...</span>
+            </div>
+          } @else if (auditLogs().length > 0) {
+            <div class="audit-timeline">
+              @for (log of auditLogs(); track log.logId) {
+                <div class="audit-timeline-item">
+                  <div class="timeline-indicator"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-header">
+                      <span class="action-pill" [ngClass]="log.actionPerformed.toLowerCase()">
+                        {{ log.actionPerformed }}
+                      </span>
+                      <span class="timeline-time font-mono">{{ log.timestamp | date:'short' }}</span>
+                    </div>
+                    <div class="timeline-meta">
+                      <strong>Reviewer:</strong> <span class="font-mono">{{ log.reviewerAgentEmail }}</span>
+                    </div>
+                    @if (log.comments) {
+                      <div class="timeline-comments">
+                        {{ log.comments }}
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="audit-empty-state">
+              <p>No regulatory audit entries recorded for this investor profile yet.</p>
+            </div>
+          }
+        </div>
+
+        <div class="audit-modal-footer">
+          <button class="admin-action-btn btn-secondary" (click)="closeAuditModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  }
 
 </div>

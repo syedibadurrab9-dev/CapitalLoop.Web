@@ -2,77 +2,239 @@
   
   <header class="col-span-12 system-banner-shelf">
     <div class="banner-meta">
-      <h2>Subscription Premium Tier Manager</h2>
-      <p>Configure user account classification levels, grant premium licenses, and track VIP tier density profiles.</p>
+      <h2>Access & Operator Governance Console</h2>
+      <p>Provision institutional administrative operators, enforce SECP/FBR accreditations, and govern investor licensing tiers.</p>
     </div>
     
-    <div class="banner-telemetry-pill">
-      Premium User Density: <span class="attention-count-val">{{ portfolioStore.premiumTierPercentage() }}%</span>
+    <div class="banner-telemetry-pill" style="display: flex; gap: 1rem; align-items: center;">
+      <span>Operators: <strong class="attention-count-val">{{ portfolioStore.adminOperatorsList().length }}</strong></span>
+      <span style="opacity: 0.3;">|</span>
+      <span>VIP Investor Density: <strong class="attention-count-val">{{ portfolioStore.premiumTierPercentage() }}%</strong></span>
     </div>
   </header>
 
-  <section class="executive-surface-card col-span-12 ledger-analytics-card">
-    <div class="card-title-node">System Accounts Licensing Ledger</div>
-    <p class="section-desc-text">Manage administrative properties, audit active compliance standing, and toggle advanced feature access flags.</p>
-    
-    <div class="admin-table-wrapper">
-      <table class="admin-data-table">
-        <thead>
-          <tr>
-            <th>Registered User Profile</th>
-            <th>Compliance Standing</th>
-            <th>Current Licensing Tier</th>
-            <th style="text-align: right;">Administrative Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
+  <!-- Interactive Station Navigation Tabs -->
+  <div class="col-span-12" style="display: flex; gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+    <button class="admin-action-btn"
+            [style.background]="activeTab() === 'OPERATORS' ? '#2563eb' : 'rgba(255,255,255,0.05)'"
+            [style.color]="activeTab() === 'OPERATORS' ? '#ffffff' : '#94a3b8'"
+            (click)="activeTab.set('OPERATORS')">
+      🛡️ Institutional Operators Directory ({{ portfolioStore.adminOperatorsList().length }})
+    </button>
+    <button class="admin-action-btn"
+            [style.background]="activeTab() === 'INVESTORS' ? '#2563eb' : 'rgba(255,255,255,0.05)'"
+            [style.color]="activeTab() === 'INVESTORS' ? '#ffffff' : '#94a3b8'"
+            (click)="activeTab.set('INVESTORS')">
+      👥 Investor Account Tiers ({{ portfolioStore.usersComplianceQueue().length }})
+    </button>
+  </div>
+
+  @if (activeTab() === 'OPERATORS') {
+
+    <!-- Section 1: Onboard New Admin Operator Form -->
+    <section class="executive-surface-card col-span-12" style="padding: 1.5rem; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; margin-bottom: 1.5rem;">
+      <div class="card-title-node" style="font-size: 1.1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 0.5rem;">
+        ➕ Onboard New Administrative Operator
+      </div>
+      <p class="section-desc-text" style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.25rem;">
+        Grant privileged access to SECP compliance ledgers, risk stress engines, or accredited investor support channels. The operator will be authorized immediately via Google OAuth 2.0 PKCE.
+      </p>
+
+      @if (onboardSuccess()) {
+        <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.875rem;">
+          ✅ {{ onboardSuccess() }}
+        </div>
+      }
+
+      @if (onboardError()) {
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.875rem;">
+          ⚠️ {{ onboardError() }}
+        </div>
+      }
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) 180px; gap: 1rem; align-items: flex-end;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 0.35rem; font-weight: 600;">Full Legal Name</label>
+          <input type="text" [(ngModel)]="operatorName" placeholder="e.g. Farhan Tariq"
+                 style="width: 100%; padding: 0.6rem 0.85rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 0.875rem;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 0.35rem; font-weight: 600;">Google Account Email</label>
+          <input type="email" [(ngModel)]="operatorEmail" placeholder="e.g. operator@capitalloop.com"
+                 style="width: 100%; padding: 0.6rem 0.85rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 0.875rem;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 0.35rem; font-weight: 600;">Institutional Role</label>
+          <select [(ngModel)]="operatorRole"
+                  style="width: 100%; padding: 0.6rem 0.85rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 0.875rem;">
+            <option value="ComplianceOfficer">SECP Compliance Officer</option>
+            <option value="InvestmentAdvisor">Accredited Investment Advisor</option>
+            <option value="RiskAnalyst">Macro Risk Analyst</option>
+            <option value="SuperAdmin">Super Administrator</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; color: #64748b; margin-bottom: 0.35rem; font-weight: 600;">SECP / FBR License #</label>
+          <input type="text" [(ngModel)]="operatorLicense" placeholder="SECP-ADV-XXXX"
+                 style="width: 100%; padding: 0.6rem 0.85rem; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 0.875rem;" />
+        </div>
+
+        <div>
+          <button class="admin-action-btn btn-success" style="width: 100%; padding: 0.65rem 1rem; font-weight: 600;"
+                  [disabled]="isSubmitting()" (click)="submitOnboardOperator()">
+            {{ isSubmitting() ? 'Authorizing...' : 'Authorize Operator' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Active Operators Registry Table -->
+    <section class="executive-surface-card col-span-12 ledger-analytics-card">
+      <div class="card-title-node">Active Institutional Operators Registry</div>
+      <p class="section-desc-text">List of authorized platform supervisors, regulatory compliance auditors, and licensed wealth consultants.</p>
+      
+      <div class="admin-table-wrapper">
+        <table class="admin-data-table">
+          <thead>
             <tr>
-              <td>
-                <div class="table-user-profile-cell">
-                  <div class="user-avatar-placeholder">👤</div>
-                  <div class="profile-meta">
-                    <strong>{{ user.name }}</strong>
-                    <span class="user-email-label font-mono">{{ user.email }}</span>
+              <th>Operator Identity</th>
+              <th>Institutional Role</th>
+              <th>Accreditation License</th>
+              <th>Authorizing Admin</th>
+              <th>Clearance State</th>
+              <th style="text-align: right;">Access Controls</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (op of portfolioStore.adminOperatorsList(); track op.id) {
+              <tr>
+                <td>
+                  <div class="table-user-profile-cell">
+                    <div class="user-avatar-placeholder" style="background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4);">🛡️</div>
+                    <div class="profile-meta">
+                      <strong>{{ op.name }}</strong>
+                      <span class="user-email-label font-mono">{{ op.email }}</span>
+                    </div>
                   </div>
-                </div>
-              </td>
-              
-              <td>
-                <span class="compliance-badge-pill" [ngClass]="user.kycStatus.toLowerCase()">
-                  {{ user.kycStatus }}
-                </span>
-              </td>
-              
-              <td>
-                <div class="tier-status-tag" [class.premium-active]="isUserPremium(user.email)">
-                  {{ isUserPremium(user.email) ? '🥇 Premium VIP' : 'Standard Freemium' }}
-                </div>
-              </td>
-              
-              <td style="text-align: right;">
-                <div class="table-action-btn-cluster">
+                </td>
+
+                <td>
+                  <span class="system-badge font-mono" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+                    {{ op.role }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="font-mono" style="font-size: 0.8rem; color: #34d399; background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    {{ op.licenseNumber || 'EXEMPT' }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="font-mono" style="font-size: 0.75rem; color: #94a3b8;">
+                    {{ op.onboardedBy }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="compliance-badge-pill" [ngClass]="op.isActive ? 'approved' : 'rejected'">
+                    {{ op.isActive ? 'AUTHORIZED' : 'SUSPENDED' }}
+                  </span>
+                </td>
+
+                <td style="text-align: right;">
                   <button class="admin-action-btn btn-table-scale"
-                          [ngClass]="isUserPremium(user.email) ? 'btn-danger' : 'btn-success'"
-                          (click)="portfolioStore.togglePremiumStatus(user.email)">
-                    {{ isUserPremium(user.email) ? 'Downgrade' : 'Upgrade' }}
+                          [ngClass]="op.isActive ? 'btn-danger' : 'btn-success'"
+                          (click)="toggleOperator(op.email)">
+                    {{ op.isActive ? 'Suspend' : 'Reactivate' }}
                   </button>
-                </div>
-              </td>
-            </tr>
-          } @empty {
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-table-placeholder">
+                  <div class="empty-state-content">
+                    <span class="empty-icon">🛡️</span>
+                    <p>No external operators provisioned. Genesis Admin active.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  } @else {
+
+    <!-- Section 3: Investor Accounts Licensing Ledger -->
+    <section class="executive-surface-card col-span-12 ledger-analytics-card">
+      <div class="card-title-node">System Accounts Licensing Ledger</div>
+      <p class="section-desc-text">Manage administrative properties, audit active compliance standing, and toggle advanced feature access flags.</p>
+      
+      <div class="admin-table-wrapper">
+        <table class="admin-data-table">
+          <thead>
             <tr>
-              <td colspan="4" class="empty-table-placeholder">
-                <div class="empty-state-content">
-                  <span class="empty-icon">📂</span>
-                  <p>No registered user records loaded on this node layer at this time.</p>
-                </div>
-              </td>
+              <th>Registered User Profile</th>
+              <th>Compliance Standing</th>
+              <th>Current Licensing Tier</th>
+              <th style="text-align: right;">Administrative Actions</th>
             </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+          </thead>
+          <tbody>
+            @for (user of portfolioStore.usersComplianceQueue(); track user.email) {
+              <tr>
+                <td>
+                  <div class="table-user-profile-cell">
+                    <div class="user-avatar-placeholder">👤</div>
+                    <div class="profile-meta">
+                      <strong>{{ user.name }}</strong>
+                      <span class="user-email-label font-mono">{{ user.email }}</span>
+                    </div>
+                  </div>
+                </td>
+                
+                <td>
+                  <span class="compliance-badge-pill" [ngClass]="user.kycStatus.toLowerCase()">
+                    {{ user.kycStatus }}
+                  </span>
+                </td>
+                
+                <td>
+                  <div class="tier-status-tag" [class.premium-active]="isUserPremium(user.email)">
+                    {{ isUserPremium(user.email) ? '🥇 Premium VIP' : 'Standard Freemium' }}
+                  </div>
+                </td>
+                
+                <td style="text-align: right;">
+                  <div class="table-action-btn-cluster">
+                    <button class="admin-action-btn btn-table-scale"
+                            [ngClass]="isUserPremium(user.email) ? 'btn-danger' : 'btn-success'"
+                            (click)="portfolioStore.togglePremiumStatus(user.email)">
+                      {{ isUserPremium(user.email) ? 'Downgrade' : 'Upgrade' }}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-table-placeholder">
+                  <div class="empty-state-content">
+                    <span class="empty-icon">📂</span>
+                    <p>No registered user records loaded on this node layer at this time.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  }
 
 </div>

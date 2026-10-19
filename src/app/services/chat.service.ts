@@ -29,7 +29,7 @@ export class ChatService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for the real-time messaging engine
-  private readonly baseApiUrl = 'http://10.20.0.81:5156/api/chat';
+  private readonly baseApiUrl = 'http://localhost:5156/api/chat';
 
   /**
    * Helper utility to assemble authenticated bearer token headers

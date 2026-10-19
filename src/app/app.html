@@ -32,11 +32,24 @@
         <a routerLink="/compliance" routerLinkActive="active" class="nav-link-node">KYC Ledger</a>
         <a routerLink="/node-monitor" routerLinkActive="active" class="nav-link-node">Node Monitor</a>
         <a routerLink="/risk-engine" routerLinkActive="active" class="nav-link-node">Risk Engine</a>
-        <a routerLink="/subscriptions" routerLinkActive="active" class="nav-link-node">Tier Manager</a>
+        <a routerLink="/subscriptions" routerLinkActive="active" class="nav-link-node">Access & Operators</a>
       </nav>
       
       <!-- Administrative Identity Lifecycle Section -->
-      <div class="operator-profile">
+      <div class="operator-profile" style="display: flex; align-items: center; gap: 1rem;">
+        <div class="operator-meta" style="display: flex; flex-direction: column; align-items: flex-end; text-align: right;">
+          <div style="font-weight: 600; font-size: 0.875rem; color: #f1f5f9;">
+            {{ authService.currentUserProfile()?.name }}
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.35rem;">
+            <span style="font-size: 0.7rem; font-family: monospace; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">
+              {{ authService.currentUserProfile()?.role || 'Admin Operator' }}
+            </span>
+            <span style="font-size: 0.7rem; font-family: monospace; padding: 2px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+              {{ authService.currentUserProfile()?.licenseNumber || 'SECP-ADV' }}
+            </span>
+          </div>
+        </div>
         <button class="disconnect-btn" (click)="authService.logout()">
           Shutdown Station
         </button>
