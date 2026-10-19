@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 export interface SubscriptionPlanDetails {
   planId: string;
@@ -27,7 +28,9 @@ export class SubscriptionService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   
-  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/subscriptions';
+  private get baseApiUrl(): string {
+    return `${environment.apiUrl}/api/subscriptions`;
+  }
 
   /**
    * Helper utility to assemble authenticated bearer token headers

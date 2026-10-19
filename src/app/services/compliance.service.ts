@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 import { UserComplianceNode, KycVerificationStatus } from '../store/portfolio.store';
 
 export interface ComplianceAuditTrailLog {
@@ -39,7 +40,9 @@ export class ComplianceService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for citizen validation pipelines
-  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/compliance';
+  private get baseApiUrl(): string {
+    return `${environment.apiUrl}/api/compliance`;
+  }
 
   /**
    * Helper utility to assemble authenticated bearer token headers

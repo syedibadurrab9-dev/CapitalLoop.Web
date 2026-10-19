@@ -1,4 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://periodically-emails-whereas-evans.trycloudflare.com'
+  get apiUrl(): string {
+    return localStorage.getItem('cl_api_url') || 'https://cricket-queen-maintain-bennett.trycloudflare.com';
+  }
 };

@@ -21,6 +21,9 @@ export class LoginComponent implements OnInit {
    * pass the user directly through the gate to prevent redundant sign-in cycles.
    */
   public ngOnInit(): void {
+    this.authService.isExchangingCode.set(false);
+    this.authService.clearClearanceError();
+
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
     }

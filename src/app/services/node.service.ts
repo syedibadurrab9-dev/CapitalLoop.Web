@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 import { APIIntegrationNode, PositionItem } from '../store/portfolio.store';
 
 export interface NodeHealthSnapshot {
@@ -19,7 +20,9 @@ export class NodeService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for infrastructure microservices
-  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/nodes';
+  private get baseApiUrl(): string {
+    return `${environment.apiUrl}/api/nodes`;
+  }
 
   /**
    * Helper utility to assemble authenticated bearer token headers

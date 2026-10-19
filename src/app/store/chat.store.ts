@@ -3,6 +3,7 @@ import { inject, computed } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { AuthService } from '../services/auth.service';
 import { ChatService } from '../services/chat.service';
+import { environment } from '../../environments/environment';
 
 export interface ActiveUserSession {
   email: string;
@@ -86,7 +87,7 @@ export const ChatStore = signalStore(
         patchState(store, { connectionStatus: 'Connecting' });
 
         hubConnection = new HubConnectionBuilder()
-          .withUrl('https://periodically-emails-whereas-evans.trycloudflare.com/support-hub', {
+          .withUrl(`${environment.apiUrl}/support-hub`, {
             accessTokenFactory: () => token
           })
           .withAutomaticReconnect()

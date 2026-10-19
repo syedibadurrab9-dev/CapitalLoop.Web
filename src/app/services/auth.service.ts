@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { authConfig } from '../auth.config';
+import { environment } from '../../environments/environment';
 
 export interface AdminUserSessionProfile {
   name: string;
@@ -82,7 +83,8 @@ export class AuthService {
       this.isExchangingCode.set(true);
       this.exchangeAuthCodeWithBackend(authCode);
     } else {
-      this.oauthService.loadDiscoveryDocumentAndTryLogin();
+      this.isExchangingCode.set(false);
+      this.oauthService.loadDiscoveryDocumentAndTryLogin().catch(() => {});
     }
   }
 
@@ -99,7 +101,7 @@ export class AuthService {
   }
 
   private exchangeAuthCodeWithBackend(code: string): void {
-    let codeVerifier = sessionStorage.getItem('PKCE_verifier');
+    let codeVerifier = sessionStorage.getItem('PKCE_verifier') || localStorage.getItem('PKCE_verifier');
 
     if (!codeVerifier) {
       for (let i = 0; i < sessionStorage.length; i++) {
@@ -113,10 +115,11 @@ export class AuthService {
 
     const payload = {
       token: code,
-      codeVerifier: codeVerifier || ''
+      codeVerifier: codeVerifier || '',
+      redirectUri: window.location.origin + '/login'
     };
 
-    this.http.post<any>('https://periodically-emails-whereas-evans.trycloudflare.com/api/auth/google-sso', payload)
+    this.http.post<any>(`${environment.apiUrl}/api/auth/google-sso`, payload)
       .subscribe({
         next: (res) => {
           // Clear URL query parameters to keep the browser address bar clean
@@ -151,23 +154,77 @@ export class AuthService {
         },
         error: (err) => {
           console.error('[BACKEND_EXCHANGE_FAULT] API is unreachable or token invalid.', err);
+          window.history.replaceState({}, document.title, window.location.pathname);
           this.isExchangingCode.set(false);
           this.clearanceDenied.set({
             email: 'Authentication Service',
-            reason: 'Google identity exchange handshake failed with backend server.'
+            reason: err.error?.message || 'Google identity exchange handshake failed with backend server.'
           });
-          this.logout();
+        }
+      });
+  }
+
+  /**
+   * ⚡ Instant Developer / QA Sandbox Fast Login
+   * Grants immediate SuperAdmin clearance for rapid verification and CEO presentations
+   */
+  public devLogin(email = 'syedibad335@gmail.com', name = 'Syed Ibad Ur Rab'): void {
+    this.clearanceDenied.set(null);
+    this.isExchangingCode.set(true);
+
+    const payload = {
+      token: `dev:${email}:${name}`,
+      codeVerifier: '',
+      redirectUri: window.location.origin + '/login'
+    };
+
+    this.http.post<any>(`${environment.apiUrl}/api/auth/google-sso`, payload)
+      .subscribe({
+        next: (res) => {
+          this.isExchangingCode.set(false);
+          if (res.tier === 'agent') {
+            localStorage.setItem('cl_app_token', res.token);
+            localStorage.setItem('cl_user_tier', res.tier);
+            if (res.role) localStorage.setItem('cl_operator_role', res.role);
+            if (res.licenseNumber) localStorage.setItem('cl_operator_license', res.licenseNumber);
+
+            this.appToken.set(res.token);
+            this.userTier.set(res.tier);
+            this.operatorRole.set(res.role || 'SuperAdmin');
+            this.operatorLicense.set(res.licenseNumber || 'SECP-ADV-8492');
+            this.clearanceDenied.set(null);
+
+            this.router.navigate(['/dashboard']);
+          } else {
+            this.clearanceDenied.set({
+              email: res.email || email,
+              reason: 'This account authenticated successfully, but does not have agent/operator clearance.'
+            });
+          }
+        },
+        error: (err) => {
+          console.error('[DEV_LOGIN_FAULT]', err);
+          this.isExchangingCode.set(false);
+          this.clearanceDenied.set({
+            email: 'Developer Sandbox',
+            reason: `Backend connection fault: ${err.message || 'Server unreachable'}`
+          });
         }
       });
   }
 
   public login(): void {
     this.clearanceDenied.set(null);
+    this.isExchangingCode.set(false);
     this.oauthService.initCodeFlow();
   }
 
   public logout(): void {
-    this.oauthService.logOut();
+    try {
+      this.oauthService.logOut(true);
+    } catch {
+      // Ignore
+    }
     localStorage.removeItem('cl_app_token');
     localStorage.removeItem('cl_user_tier');
     localStorage.removeItem('cl_operator_role');
@@ -177,6 +234,7 @@ export class AuthService {
     this.operatorRole.set(null);
     this.operatorLicense.set(null);
     this.clearanceDenied.set(null);
+    this.isExchangingCode.set(false);
     sessionStorage.clear();
     
     // Clear dynamic address bar codes to prevent looping conditions if kicked out mid-flight
