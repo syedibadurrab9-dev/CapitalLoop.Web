@@ -19,7 +19,7 @@ export class NodeService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for infrastructure microservices
-  private readonly baseApiUrl = 'http://localhost:5156/api/nodes';
+  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/nodes';
 
   /**
    * Helper utility to assemble authenticated bearer token headers

@@ -39,7 +39,7 @@ export class ComplianceService {
   private readonly authService = inject(AuthService);
 
   // Enterprise administration base endpoint for citizen validation pipelines
-  private readonly baseApiUrl = 'http://localhost:5156/api/compliance';
+  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/compliance';
 
   /**
    * Helper utility to assemble authenticated bearer token headers

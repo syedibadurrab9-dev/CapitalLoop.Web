@@ -27,8 +27,7 @@ export class SubscriptionService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   
-  // Enterprise administration base endpoint for billing contracts
-  private readonly baseApiUrl = 'http://localhost:5156/api/subscriptions';
+  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/subscriptions';
 
   /**
    * Helper utility to assemble authenticated bearer token headers

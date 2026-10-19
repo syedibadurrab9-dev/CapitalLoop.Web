@@ -28,8 +28,7 @@ export class ChatService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
 
-  // Enterprise administration base endpoint for the real-time messaging engine
-  private readonly baseApiUrl = 'http://localhost:5156/api/chat';
+  private readonly baseApiUrl = 'https://periodically-emails-whereas-evans.trycloudflare.com/api/chat';
 
   /**
    * Helper utility to assemble authenticated bearer token headers

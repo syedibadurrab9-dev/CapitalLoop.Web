@@ -86,7 +86,7 @@ export const ChatStore = signalStore(
         patchState(store, { connectionStatus: 'Connecting' });
 
         hubConnection = new HubConnectionBuilder()
-          .withUrl('http://localhost:5156/support-hub', {
+          .withUrl('https://periodically-emails-whereas-evans.trycloudflare.com/support-hub', {
             accessTokenFactory: () => token
           })
           .withAutomaticReconnect()

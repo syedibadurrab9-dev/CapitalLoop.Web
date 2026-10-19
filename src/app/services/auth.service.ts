@@ -116,7 +116,7 @@ export class AuthService {
       codeVerifier: codeVerifier || ''
     };
 
-    this.http.post<any>('http://localhost:5156/api/auth/google-sso', payload)
+    this.http.post<any>('https://periodically-emails-whereas-evans.trycloudflare.com/api/auth/google-sso', payload)
       .subscribe({
         next: (res) => {
           // Clear URL query parameters to keep the browser address bar clean
