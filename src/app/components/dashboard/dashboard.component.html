@@ -1,132 +1,425 @@
-<div class="admin-grid-layout full-viewport-horizon">
+<!-- ==============================================================================
+     KOVAULT EXECUTIVE FINTECH DASHBOARD (EXACT ULTRA-PREMIUM ARCHITECTURE)
+     ============================================================================== -->
+<div class="kovault-dashboard-canvas">
   
   <!-- ==============================================================================
-       ROW 1: HIGH-LEVEL EXECUTIVE METRIC TILES
+       ROW 1: TOTAL BALANCE SPLINE ENGINE + MULTI-ASSET CARDS CAROUSEL
        ============================================================================== -->
-  <!-- Assets Under Management (AUM) Totalizer -->
-  <section class="executive-surface-card col-span-4">
-    <div class="card-header-flex">
-      <span class="card-title-node">Assets Under Management</span>
-      <span class="badge-emerald">SECP CONSOLIDATED</span>
-    </div>
-    <div class="metric-hero-display text-emerald">
-      Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
-    </div>
-    <div class="metric-delta-row">
-      <span class="delta-badge delta-up">▲ +12.4% MoM</span>
-      <p class="metric-subtext-note" style="margin: 0;">Multi-asset sovereign capital pool (Equities, Bullion, Sukuk).</p>
-    </div>
-  </section>
-
-  <!-- Identity Compliance Funnel Tracking Node -->
-  <section class="executive-surface-card col-span-4" routerLink="/compliance" style="cursor: pointer;">
-    <div class="card-header-flex">
-      <span class="card-title-node">Identity Compliance Pipeline</span>
-      <span class="badge-warning">FBR ATL VERIFIED</span>
-    </div>
-    <div class="metric-split-row">
-      <div class="split-segment">
-        <span class="value text-warning">{{ portfolioStore.totalPendingKycCount() }}</span>
-        <span class="label">Pending NADRA/SECP</span>
+  <div class="kovault-grid-row">
+    
+    <!-- CARD 1: TOTAL BALANCE & REAL-TIME SPLINE LINE CHART (58% WIDTH) -->
+    <section class="kovault-card col-balance">
+      <div class="card-head-between">
+        <span class="card-title">Total balance</span>
+        <div class="period-pill-select font-mono">
+          <button [class.active]="selectedPeriod() === '1Y'" (click)="setPeriod('1Y')">Last Year</button>
+          <button [class.active]="selectedPeriod() === '6M'" (click)="setPeriod('6M')">6M</button>
+          <button [class.active]="selectedPeriod() === '30D'" (click)="setPeriod('30D')">30D</button>
+        </div>
       </div>
-      <div class="split-segment border-left">
-        <span class="value text-muted">{{ portfolioStore.totalApprovedKycCount() }}</span>
-        <span class="label">Approved Profiles</span>
-      </div>
-    </div>
-    <div class="metric-delta-row">
-      <span class="delta-badge delta-up">14-Day SLA</span>
-      <p class="metric-subtext-note" style="margin: 0;">Automated NADRA Verisys & SBP AML/CFT Sanctions Trail.</p>
-    </div>
-  </section>
 
-  <!-- Premium Subscription User Saturation Tiers -->
-  <section class="executive-surface-card col-span-4" routerLink="/subscriptions" style="cursor: pointer;">
-    <div class="card-header-flex">
-      <span class="card-title-node">Accredited Investor Ratio</span>
-      <span class="badge-info">SECP SUITABILITY</span>
-    </div>
-    <div class="metric-hero-display text-teal">
-      {{ portfolioStore.premiumTierPercentage() }}%
-    </div>
-    <div class="metric-delta-row">
-      <span class="delta-badge delta-up">▲ +5.8% Growth</span>
-      <p class="metric-subtext-note" style="margin: 0;">Pro & Enterprise High-Net-Worth investor saturation.</p>
-    </div>
-  </section>
+      <!-- Main Balance Figure & Delta Metrics -->
+      <div class="balance-hero-block">
+        <div class="balance-amount-row font-mono">
+          <span class="currency-symbol">$</span>
+          <span class="integer-part">84,658</span>
+          <span class="decimal-part">.24</span>
+          
+          <div class="growth-pill-cluster">
+            <span class="growth-pill positive">
+              <span class="arrow">▲</span> +12.35%
+            </span>
+            <span class="delta-amount font-mono">+$23,658.24</span>
+          </div>
+        </div>
+        <div class="sovereign-equivalent font-mono">
+          Consolidated Sovereign Net Worth: <strong>Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}</strong>
+        </div>
+      </div>
+
+      <!-- Premium Spline Line Chart Engine (SVG) -->
+      <div class="spline-chart-container">
+        <svg class="spline-svg" viewBox="0 0 680 180" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="balanceGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+            </linearGradient>
+            <pattern id="diagonalHatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="#E2E8F0" stroke-width="2" />
+            </pattern>
+          </defs>
+
+          <!-- Horizontal Reference Dashed Gridlines -->
+          <line x1="0" y1="35" x2="680" y2="35" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+          <line x1="0" y1="85" x2="680" y2="85" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+          <line x1="0" y1="135" x2="680" y2="135" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+          <!-- Y-Axis Value Labels -->
+          <text x="670" y="32" class="y-axis-label font-mono">$100k</text>
+          <text x="670" y="82" class="y-axis-label font-mono">$250k</text>
+          <text x="670" y="132" class="y-axis-label font-mono">$200k</text>
+
+          <!-- Area Under Curve -->
+          <path d="M 10 120 
+                   C 70 125, 110 70, 160 85 
+                   C 210 100, 240 50, 290 60 
+                   C 340 70, 380 95, 430 80 
+                   C 480 65, 520 85, 570 35 
+                   C 600 20, 630 48, 660 52 
+                   L 660 170 L 10 170 Z" 
+                fill="url(#balanceGlow)" />
+
+          <!-- Dynamic Spline Curve (Black / Dark Slate Line matching Kovault) -->
+          <path d="M 10 120 
+                   C 70 125, 110 70, 160 85 
+                   C 210 100, 240 50, 290 60 
+                   C 340 70, 380 95, 430 80 
+                   C 480 65, 520 85, 570 35 
+                   C 600 20, 630 48, 660 52" 
+                fill="none" 
+                stroke="#0F172A" 
+                stroke-width="3" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"/>
+
+          <!-- High-Precision Metric Anchor Points -->
+          <circle cx="160" cy="85" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="290" cy="60" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="430" cy="80" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="570" cy="35" r="5" fill="#10B981" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="660" cy="52" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+        </svg>
+
+        <!-- Month Horizon X-Axis -->
+        <div class="x-axis-months font-mono">
+          <span>Feb</span>
+          <span>Mar</span>
+          <span>Apr</span>
+          <span>May</span>
+          <span>Jun</span>
+          <span>Jul</span>
+          <span>Aug</span>
+          <span>Sep</span>
+          <span>Oct</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 2: MULTI-ASSET CARDS CAROUSEL (42% WIDTH) -->
+    <section class="kovault-card col-cards">
+      <div class="card-head-between">
+        <span class="card-title">Cards</span>
+        <div class="card-action-cluster">
+          <button class="card-action-btn primary">+ Add New</button>
+          <button class="card-action-btn">Top Up</button>
+          <button class="card-action-btn">Transfer</button>
+        </div>
+      </div>
+
+      <!-- Horizontal Carousel Stack of Asset Cards -->
+      <div class="cards-carousel-scroll">
+        @for (card of cardsList; track card.id) {
+          <div class="payment-card-visual" [ngClass]="card.theme">
+            <div class="card-top-row">
+              <span class="card-type-tag">{{ card.accountType }}</span>
+              <span class="nfc-icon">🛜</span>
+            </div>
+
+            <div class="card-balance-display font-mono">
+              <span class="cur">$</span>
+              <span class="amt">{{ card.balanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+            </div>
+
+            <div class="card-footer-row">
+              <div class="card-digits-exp font-mono">
+                <span class="card-digits">{{ card.cardNumber }}</span>
+                <span class="card-expiry">{{ card.expiry }}</span>
+              </div>
+              <span class="visa-badge font-mono">VISA</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+  </div>
 
   <!-- ==============================================================================
-       ROW 2: DYNAMIC MARKET EXPOSURE MATRIX & NODE HEALTH ENGINE
+       ROW 2: BUDGET LIQUIDITY FLOW + QUICK TRANSFER + ASSET ALLOCATION DONUT
        ============================================================================== -->
-  <!-- Macro Allocation Exposure Map -->
-  <section class="executive-surface-card col-span-7" routerLink="/risk-engine" style="cursor: pointer;">
-    <div class="card-header-flex">
-      <span class="card-title-node">Macro Asset Allocation Mapping</span>
-      <span class="badge-emerald">SBP DIVERSIFIED</span>
-    </div>
-    <p class="section-desc-text" style="margin-bottom: 16px; color: #94A3B8; font-size: 13px;">Real-time capital distribution across SBP & SECP approved asset pools.</p>
+  <div class="kovault-grid-row">
     
-    <div class="exposure-list-track">
-      @for (sector of portfolioStore.sectorExposurePercentages(); track sector.category) {
-        <div class="exposure-progress-row">
-          <div class="exposure-meta">
-            <span class="category-name">
-              📁 {{ sector.category.replace('_', ' ') }}
-            </span>
-            <span class="percentage-val">{{ sector.percentage }}%</span>
+    <!-- CARD 3: BUDGET STACKED BAR CHART (50% WIDTH) -->
+    <section class="kovault-card col-budget">
+      <div class="card-head-between">
+        <span class="card-title">Budget</span>
+        <div class="period-pill-select font-mono">
+          <button class="active">Last 7 Days</button>
+        </div>
+      </div>
+
+      <!-- Stacked Bar Visualizer -->
+      <div class="budget-bars-wrapper">
+        <div class="bars-container">
+          
+          <!-- Sunday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 45px;"></div>
+              <div class="bar-segment grey" style="height: 30px;"></div>
+              <div class="bar-segment lime" style="height: 35px;"></div>
+            </div>
+            <span class="day-label font-mono">Sun</span>
           </div>
-          <div class="progress-bar-rail">
-            <div class="progress-bar-fill" 
-                 [style.width.%]="sector.percentage"
-                 [ngClass]="{
-                   'bg-indigo': sector.percentage < 40,
-                   'bg-teal': sector.percentage >= 40 && sector.percentage < 70,
-                   'bg-danger': sector.percentage >= 70
-                 }">
+
+          <!-- Monday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 35px;"></div>
+              <div class="bar-segment grey" style="height: 40px;"></div>
+              <div class="bar-segment lime" style="height: 25px;"></div>
+            </div>
+            <span class="day-label font-mono">Mon</span>
+          </div>
+
+          <!-- Tuesday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 20px;"></div>
+              <div class="bar-segment grey" style="height: 30px;"></div>
+              <div class="bar-segment lime" style="height: 40px;"></div>
+            </div>
+            <span class="day-label font-mono">Tue</span>
+          </div>
+
+          <!-- Wednesday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 55px;"></div>
+              <div class="bar-segment grey" style="height: 35px;"></div>
+              <div class="bar-segment lime" style="height: 50px;"></div>
+            </div>
+            <span class="day-label font-mono">Wed</span>
+          </div>
+
+          <!-- Thursday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 40px;"></div>
+              <div class="bar-segment grey" style="height: 25px;"></div>
+              <div class="bar-segment lime" style="height: 35px;"></div>
+            </div>
+            <span class="day-label font-mono">Thu</span>
+          </div>
+
+          <!-- Friday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 30px;"></div>
+              <div class="bar-segment grey" style="height: 50px;"></div>
+              <div class="bar-segment lime" style="height: 40px;"></div>
+            </div>
+            <span class="day-label font-mono">Fri</span>
+          </div>
+
+          <!-- Saturday -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 45px;"></div>
+              <div class="bar-segment grey" style="height: 35px;"></div>
+              <div class="bar-segment lime" style="height: 45px;"></div>
+            </div>
+            <span class="day-label font-mono">Sat</span>
+          </div>
+
+        </div>
+
+        <!-- Legend Ribbon -->
+        <div class="budget-legend-row font-mono">
+          <span class="leg-item"><span class="leg-box striped"></span> Income</span>
+          <span class="leg-item"><span class="leg-box grey"></span> Spent</span>
+          <span class="leg-item"><span class="leg-box lime"></span> Savings</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD 4 & 5: QUICK TRANSFER + TOP SPENDING / ALLOCATION DONUT (50% WIDTH) -->
+    <div class="split-col-container">
+      
+      <!-- QUICK TRANSFER -->
+      <section class="kovault-card col-quick-transfer">
+        <div class="card-head-between">
+          <span class="card-title">Quick transfer</span>
+          <span class="arrow-up-right">↗</span>
+        </div>
+
+        <div class="transfer-avatars-row">
+          <div class="avatar-contact" title="James Taylor">
+            <div class="avatar-img-circle" style="background: #EFF6FF;">👨🏻‍💼</div>
+          </div>
+          <div class="avatar-contact" title="Sara Khan">
+            <div class="avatar-img-circle" style="background: #FDF2F8;">👩🏽‍💼</div>
+          </div>
+          <div class="avatar-contact" title="Arthur Pendelton">
+            <div class="avatar-img-circle" style="background: #FEF3C7;">👨🏼‍💼</div>
+          </div>
+          <button class="add-recipient-btn" title="Add Recipient">
+            🔄
+          </button>
+        </div>
+      </section>
+
+      <!-- TOP SPENDING / ASSET CLASS ALLOCATION -->
+      <section class="kovault-card col-top-spending">
+        <div class="card-head-between">
+          <span class="card-title">Top spending</span>
+          <span class="arrow-up-right">↗</span>
+        </div>
+
+        <div class="donut-chart-flex">
+          <div class="donut-svg-wrapper">
+            <svg class="donut-svg" viewBox="0 0 120 120">
+              <!-- Background Ring -->
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#F1F5F9" stroke-width="18"/>
+              
+              <!-- 60% Black Arc (Equities / Major Outflow) -->
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#0F172A" stroke-width="18"
+                      stroke-dasharray="180.95 301.59" stroke-dashoffset="0" stroke-linecap="round"/>
+              
+              <!-- 30% Lime Arc (Sovereign Sukuk / Savings) -->
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#84F58C" stroke-width="18"
+                      stroke-dasharray="90.47 301.59" stroke-dashoffset="-185" stroke-linecap="round"/>
+
+              <!-- 10% Grey Arc (Sarafa Bullion / Gold) -->
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#E2E8F0" stroke-width="18"
+                      stroke-dasharray="30.15 301.59" stroke-dashoffset="-280" stroke-linecap="round"/>
+            </svg>
+            <div class="donut-center-metric font-mono">
+              <span class="center-pct">60%</span>
+              <span class="center-lbl">Equities</span>
+            </div>
+          </div>
+
+          <div class="donut-legend-col font-mono">
+            <div class="donut-leg-row">
+              <span class="dot-black">●</span>
+              <span class="label">60% PSX</span>
+            </div>
+            <div class="donut-leg-row">
+              <span class="dot-lime">●</span>
+              <span class="label">30% Sukuk</span>
+            </div>
+            <div class="donut-leg-row">
+              <span class="dot-grey">●</span>
+              <span class="label">10% Gold</span>
+            </div>
+            <div class="donut-total-val font-mono">
+              $18,658<small>.65</small>
             </div>
           </div>
         </div>
-      }
-    </div>
-  </section>
+      </section>
 
-  <!-- Network Integration API Telemetry Nodes Stack -->
-  <section class="executive-surface-card col-span-5" routerLink="/node-monitor" style="cursor: pointer;">
-    <div class="card-header-flex">
-      <span class="card-title-node">Market Telemetry & Price Feeds</span>
-      <span class="badge-emerald">ISLAMABAD DC</span>
     </div>
-    <p class="section-desc-text" style="margin-bottom: 16px; color: #94A3B8; font-size: 13px;">Live sovereign data pipelines, PSX KATS, and SBP Interbank pricing feeds.</p>
-    
-    <div class="node-telemetry-stack">
-      @for (node of portfolioStore.activeNodeStatusList(); track node.id) {
-        <div class="node-status-line">
-          <div class="node-identity">
-            <span class="indicator-dot" [class.live]="node.isHealthy"></span>
-            <span class="node-name">{{ node.name }}</span>
-          </div>
-          <div class="node-value-metric">
-            Rs. {{ node.lastKnownPrice.toLocaleString() }}
-            <span class="latency-pill">{{ node.latencyMs }}ms</span>
-          </div>
-        </div>
-      }
-    </div>
-  </section>
+
+  </div>
 
   <!-- ==============================================================================
-       ROW 3: OPERATIONAL COMMAND DOCK
+       ROW 3: PORTFOLIO SCORE & PERFORMANCE + TRANSACTION HISTORY
        ============================================================================== -->
-  <footer class="col-span-12 command-quick-dock" style="display: flex; gap: 16px; justify-content: flex-end; align-items: center; padding: 16px 0;">
-    <button class="dock-btn-node" routerLink="/compliance" style="background: rgba(16, 185, 129, 0.12); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer;">
-      🛡️ SECP Compliance Audit Ledger
-    </button>
-    <button class="dock-btn-node" routerLink="/risk-engine" style="background: rgba(56, 189, 248, 0.12); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer;">
-      📉 SBP Macro Devaluation Stress-Test
-    </button>
-    <button class="dock-btn-node" routerLink="/support-hub" style="background: #10B981; color: #06090F; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer;">
-      🎧 Open Operator Support Desk
-    </button>
-  </footer>
+  <div class="kovault-grid-row">
+    
+    <!-- CARD 6: PORTFOLIO SCORE METRIC TILES (42% WIDTH) -->
+    <section class="kovault-card col-scores">
+      <div class="score-cards-cluster">
+        
+        <!-- Score 1: Portfolio Score -->
+        <div class="score-sub-tile">
+          <span class="sub-tile-title">Portfolio Score</span>
+          <div class="score-val-row">
+            <span class="big-score font-mono">75<small>/100</small></span>
+            <span class="score-pill good">Good</span>
+          </div>
+          <!-- Bar meter grid -->
+          <div class="vertical-bars-meter">
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar active"></div>
+            <div class="v-bar"></div>
+            <div class="v-bar"></div>
+          </div>
+        </div>
+
+        <!-- Score 2: Total Savings -->
+        <div class="score-sub-tile">
+          <span class="sub-tile-title">Total Savings</span>
+          <div class="score-val-row">
+            <span class="savings-amount font-mono">$38,658<small>.85</small></span>
+          </div>
+          <!-- Matrix dot heatmap -->
+          <div class="matrix-dot-grid green-dots">
+            @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track i) {
+              <span class="matrix-dot active"></span>
+            }
+          </div>
+        </div>
+
+        <!-- Score 3: Avg Profit -->
+        <div class="score-sub-tile">
+          <span class="sub-tile-title">Avg. profit</span>
+          <div class="score-val-row">
+            <span class="profit-amount font-mono">76<small>%</small></span>
+          </div>
+          <!-- Mixed dot matrix -->
+          <div class="matrix-dot-grid mixed-dots">
+            @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track i) {
+              <span class="matrix-dot" [ngClass]="i % 3 === 0 ? 'red' : 'green'"></span>
+            }
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CARD 7: TRANSACTION HISTORY TABLE (58% WIDTH) -->
+    <section class="kovault-card col-transactions">
+      <div class="card-head-between">
+        <span class="card-title">Transaction history</span>
+        <button class="view-all-pill font-mono">View All ↗</button>
+      </div>
+
+      <div class="transactions-list-scroller">
+        @for (tx of transactions; track tx.id) {
+          <div class="tx-item-row">
+            <div class="tx-avatar-icon" [style.background-color]="tx.avatarBg">
+              <span>{{ tx.avatarIcon }}</span>
+            </div>
+            
+            <div class="tx-details-col">
+              <div class="tx-name-row">
+                <span class="tx-name">{{ tx.name }}</span>
+                <span class="tx-status-pill font-mono" [ngClass]="tx.status.toLowerCase()">
+                  {{ tx.status }}
+                </span>
+              </div>
+              <span class="tx-date font-mono">{{ tx.date }}</span>
+            </div>
+
+            <div class="tx-amount-col font-mono" [ngClass]="tx.isPositive ? 'positive' : 'negative'">
+              {{ tx.isPositive ? '+' : '-' }}${{ tx.amount.toFixed(2) }}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+  </div>
 
 </div>

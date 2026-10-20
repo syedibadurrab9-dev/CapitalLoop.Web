@@ -1,92 +1,117 @@
-<!-- Main Application Viewport Scaffold Wrapper -->
-<div class="dashboard-container">
+<!-- ==============================================================================
+     CAPITALLOOP SOVEREIGN FINTECH WORKSPACE (KOVAULT EXECUTIVE DESIGN SYSTEM)
+     ============================================================================== -->
+<div class="kovault-viewport-scaffold">
 
   @if (authService.isLoggedIn()) {
-    <!-- TOP SOVEREIGN REGULATORY TRUST STRIP & LIVE TICKER TAPE -->
-    <div class="sovereign-regulatory-strip">
-      <div class="reg-seals">
-        <span class="reg-seal"><span class="seal-icon">🏛️</span> <strong>State Bank of Pakistan</strong> Sandbox BPRD/2026</span>
-        <span class="reg-divider">•</span>
-        <span class="reg-seal"><span class="seal-icon">🛡️</span> <strong>SECP</strong> FinTech Sandbox #FS-2026-084</span>
-        <span class="reg-divider">•</span>
-        <span class="reg-seal"><span class="seal-icon">⚖️</span> <strong>FBR ATL</strong> Live WHT Engine</span>
-        <span class="reg-divider">•</span>
-        <span class="reg-seal"><span class="seal-icon">🔒</span> <strong>PDPB / PECA</strong> Sovereign Vault (Islamabad)</span>
+    <!-- TOP SLENDER REGULATORY COMPLIANCE TICKER STRIP -->
+    <aside class="kovault-top-trust-strip">
+      <div class="trust-seals-marquee">
+        <span class="trust-seal-item">🏛️ <strong>State Bank of Pakistan</strong> Sandbox BPRD/2026</span>
+        <span class="trust-dot">•</span>
+        <span class="trust-seal-item">🛡️ <strong>SECP</strong> FinTech Sandbox #FS-2026-084</span>
+        <span class="trust-dot">•</span>
+        <span class="trust-seal-item">⚖️ <strong>FBR ATL</strong> Live WHT Engine</span>
+        <span class="trust-dot">•</span>
+        <span class="trust-seal-item">🔒 <strong>PDPB / PECA</strong> Sovereign Vault (Islamabad DC)</span>
       </div>
-      <div class="live-ticker-strip">
-        <span class="ticker-item"><span class="t-sym">KSE-100</span> <span class="t-val">85,240.15</span> <span class="t-up">▲ +620.40</span></span>
-        <span class="ticker-item"><span class="t-sym">GOLD 24K</span> <span class="t-val">₨ 284,500</span> <span class="t-up">▲ +1,200</span></span>
-        <span class="ticker-item"><span class="t-sym">USD/PKR</span> <span class="t-val">₨ 278.45</span> <span class="t-down">▼ -0.15</span></span>
-        <span class="ticker-item"><span class="t-sym">KIBOR 6M</span> <span class="t-val">14.85%</span></span>
-      </div>
-    </div>
 
-    <header class="matrix-header">
-      
-      <!-- Left Panel: Brand Core Cluster Nodes -->
-      <div class="brand-cluster">
-        <div class="pulse-node">♾️</div>
-        <h1>CapitalLoop <span class="accent-text">Sovereign Station</span></h1>
-        
-        <!-- Live Connection State Tracking Link Telemetry Badge -->
+      <div class="live-status-pulse font-mono">
         @if (chatStore.connectionStatus() === 'Connected') {
-          <span class="system-badge connected font-mono">
-            ● SOVEREIGN TELEMETRY LIVE
-          </span>
-        } @else if (chatStore.connectionStatus() === 'Connecting') {
-          <span class="system-badge font-mono" style="background: rgba(245, 158, 11, 0.12); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.25);">
-            ⏳ SYNCING LEDGER...
-          </span>
+          <span class="pulse-dot-online"></span> SIGNALR TELEMETRY ACTIVE (50ms)
         } @else {
-          <span class="system-badge font-mono">
-            ● LINK OFFLINE
-          </span>
+          <span class="pulse-dot-syncing"></span> RECONNECTING GATEWAY...
         }
       </div>
+    </aside>
 
-      <!-- Main Operational Center Navigation Layout Matrix -->
-      <nav class="matrix-nav-links">
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link-node">Executive Analytics</a>
-        <a routerLink="/support-hub" routerLinkActive="active" class="nav-link-node">Advisory Desk</a>
-        <a routerLink="/compliance" routerLinkActive="active" class="nav-link-node">KYC & FBR Ledger</a>
-        <a routerLink="/node-monitor" routerLinkActive="active" class="nav-link-node">Asset Feeds</a>
-        <a routerLink="/risk-engine" routerLinkActive="active" class="nav-link-node">Macro Risk Engine</a>
-        <a routerLink="/subscriptions" routerLinkActive="active" class="nav-link-node">Access & Operators</a>
+    <!-- KOVAULT-STYLE EXECUTIVE DARK HEADER -->
+    <header class="kovault-master-header">
+      
+      <!-- Brand Identity Cluster -->
+      <div class="kovault-brand-anchor" routerLink="/dashboard">
+        <div class="geometric-logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <span class="brand-title">CapitalLoop</span>
+          <span class="brand-badge-pill">INSTITUTIONAL</span>
+        </div>
+      </div>
+
+      <!-- Centered Segmented Capsule Navigation Menu -->
+      <nav class="kovault-nav-capsule">
+        <a routerLink="/dashboard" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">🏠</span> Home
+        </a>
+        <a routerLink="/support-hub" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">🎧</span> Advisory Desk
+        </a>
+        <a routerLink="/compliance" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">🛡️</span> KYC Ledger
+        </a>
+        <a routerLink="/node-monitor" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">📈</span> Market Feeds
+        </a>
+        <a routerLink="/risk-engine" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">⚡</span> Risk Engine
+        </a>
+        <a routerLink="/subscriptions" routerLinkActive="active" class="capsule-btn">
+          <span class="btn-icon">👥</span> Operators
+        </a>
       </nav>
       
-      <!-- Administrative Identity Lifecycle Section -->
-      <div class="operator-profile" style="display: flex; align-items: center; gap: 1rem;">
-        <div class="operator-meta" style="display: flex; flex-direction: column; align-items: flex-end; text-align: right;">
-          <div style="font-weight: 700; font-size: 0.875rem; color: #f8fafc; letter-spacing: -0.2px;">
-            {{ authService.currentUserProfile()?.name }}
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 2px;">
-            <span style="font-size: 0.7rem; font-family: monospace; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-              {{ authService.currentUserProfile()?.role || 'SuperAdmin' }}
-            </span>
-            <span style="font-size: 0.7rem; font-family: monospace; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
-              {{ authService.currentUserProfile()?.licenseNumber || 'SECP-ADV-8492' }}
-            </span>
-          </div>
+      <!-- Right Executive Utility Section -->
+      <div class="kovault-right-cluster">
+        
+        <!-- SECP Accreditation Pill (Matching Kovault Rewards Button) -->
+        <div class="kovault-reward-badge" title="Verified SECP Investment Advisory License">
+          <span class="shield-glyph">🛡️</span>
+          <span>SECP Accredited</span>
         </div>
-        <button class="disconnect-btn" (click)="authService.logout()">
-          Shutdown Station
-        </button>
+
+        <!-- Live Financial Tickers -->
+        <div class="kovault-ticker-pill font-mono">
+          <span class="tick-cell">USD/PKR <strong>278.45</strong></span>
+          <span class="tick-cell text-emerald">KSE-100 <strong>85,240 ▲</strong></span>
+        </div>
+
+        <!-- Notification Bell -->
+        <div class="kovault-icon-circle" title="System Notifications">
+          <span>🔔</span>
+          <span class="unread-pip"></span>
+        </div>
+
+        <!-- Operator Avatar & Identity -->
+        <div class="kovault-profile-capsule">
+          <div class="avatar-ring">
+            <span>{{ authService.currentUserProfile()?.name?.substring(0, 2)?.toUpperCase() || 'SI' }}</span>
+          </div>
+          <div class="profile-info-col">
+            <span class="operator-display-name">{{ authService.currentUserProfile()?.name }}</span>
+            <span class="operator-role-tag font-mono">{{ authService.currentUserProfile()?.role || 'SuperAdmin' }}</span>
+          </div>
+          <button class="kovault-exit-btn" (click)="authService.logout()" title="Logout Station">
+            ⏻
+          </button>
+        </div>
+
       </div>
     </header>
 
-    <!-- 🚀 THE CRITICAL FULLSCREEN FIX: 
-         We apply a direct style override onto the parent element layout container.
-         This forces any loaded child component layout view wrapper matching your router rules 
-         to instantly spread and fill 100% of the horizontal monitor width. -->
-    <main class="workspace-viewport" style="display: flex; flex: 1 1 auto; width: 100%; max-width: 100vw; height: calc(100vh - 70px); overflow: hidden;">
+    <!-- MAIN DASHBOARD CONTENT VIEWPORT -->
+    <main class="kovault-content-viewport">
       <router-outlet></router-outlet>
     </main>
 
   } @else {
     
-    <!-- AUTH UNPROTECTED ROUTE OUTLET PORT: Absolute Full Screen Scaling Mode -->
-    <main class="auth-viewport-wrapper" style="width: 100%; height: 100vh; overflow: hidden; display: flex; flex-direction: column;">
+    <!-- AUTH UNPROTECTED ROUTE OUTLET PORT -->
+    <main class="auth-viewport-wrapper">
       <router-outlet></router-outlet>
     </main>
 

@@ -1,2 +1,676 @@
-/* Administrative component layout parameters */
-:host { display: block; }
+/* ==============================================================================
+   KOVAULT EXECUTIVE DASHBOARD COMPONENT SCSS
+   ============================================================================== */
+.kovault-dashboard-canvas {
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #F4F6F9;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.kovault-grid-row {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Base Kovault Surface Card */
+.kovault-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 16px -4px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.card-head-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.2px;
+  }
+
+  .arrow-up-right {
+    font-size: 16px;
+    color: #9CA3AF;
+    cursor: pointer;
+    &:hover { color: #111827; }
+  }
+}
+
+/* Period Pills */
+.period-pill-select {
+  display: flex;
+  background: #F3F4F6;
+  padding: 3px;
+  border-radius: 20px;
+  gap: 2px;
+
+  button {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    padding: 4px 10px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.active {
+      background: #FFFFFF;
+      color: #111827;
+      font-weight: 700;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   CARD 1: TOTAL BALANCE & SPLINE
+   ------------------------------------------------------------------------------ */
+.col-balance {
+  flex: 7;
+
+  .balance-hero-block {
+    margin-bottom: 12px;
+
+    .balance-amount-row {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+
+      .currency-symbol {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+      }
+      .integer-part {
+        font-size: 38px;
+        font-weight: 800;
+        color: #111827;
+        letter-spacing: -1.5px;
+        line-height: 1;
+      }
+      .decimal-part {
+        font-size: 22px;
+        font-weight: 700;
+        color: #9CA3AF;
+      }
+
+      .growth-pill-cluster {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 16px;
+
+        .growth-pill {
+          background: #DCFCE7;
+          color: #15803D;
+          border: 1px solid #BBF7D0;
+          padding: 3px 8px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 700;
+        }
+
+        .delta-amount {
+          font-size: 12px;
+          font-weight: 700;
+          color: #16A34A;
+        }
+      }
+    }
+
+    .sovereign-equivalent {
+      font-size: 12px;
+      color: #6B7280;
+      margin-top: 6px;
+      strong { color: #10B981; }
+    }
+  }
+
+  .spline-chart-container {
+    width: 100%;
+    margin-top: 8px;
+
+    .spline-svg {
+      width: 100%;
+      height: 140px;
+
+      .y-axis-label {
+        font-size: 10px;
+        fill: #94A3B8;
+        font-weight: 600;
+        text-anchor: end;
+      }
+    }
+
+    .x-axis-months {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   CARD 2: MULTI-ASSET CARDS CAROUSEL
+   ------------------------------------------------------------------------------ */
+.col-cards {
+  flex: 5;
+
+  .card-action-cluster {
+    display: flex;
+    gap: 6px;
+
+    .card-action-btn {
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #E5E7EB;
+      background: #FFFFFF;
+      color: #374151;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &.primary {
+        background: #0F172A;
+        color: #FFFFFF;
+        border-color: #0F172A;
+      }
+
+      &:hover:not(.primary) {
+        background: #F9FAFB;
+      }
+    }
+  }
+
+  .cards-carousel-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+
+    &::-webkit-scrollbar { height: 4px; }
+    &::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  }
+
+  .payment-card-visual {
+    flex: 0 0 210px;
+    height: 160px;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .card-type-tag {
+        font-size: 11px;
+        font-weight: 700;
+        opacity: 0.85;
+      }
+      .nfc-icon { font-size: 13px; }
+    }
+
+    .card-balance-display {
+      margin: 8px 0;
+      .cur { font-size: 15px; font-weight: 700; }
+      .amt { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    }
+
+    .card-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      .card-digits-exp {
+        display: flex;
+        flex-direction: column;
+        font-size: 11px;
+        opacity: 0.8;
+      }
+      .visa-badge {
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 1px;
+      }
+    }
+
+    /* Themes */
+    &.lime {
+      background: linear-gradient(135deg, #A3E635 0%, #84CC16 100%);
+      color: #14532D;
+    }
+    &.emerald {
+      background: linear-gradient(135deg, #6EE7B7 0%, #34D399 100%);
+      color: #064E3B;
+    }
+    &.titanium {
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      color: #FFFFFF;
+      .card-balance-display .cur,
+      .card-balance-display .amt { color: #FFFFFF; }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   CARD 3: BUDGET STACKED BARS
+   ------------------------------------------------------------------------------ */
+.col-budget {
+  flex: 1;
+
+  .budget-bars-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+
+    .bars-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 140px;
+      padding: 10px 10px 0 10px;
+
+      .bar-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+
+        .stacked-bar {
+          width: 32px;
+          display: flex;
+          flex-direction: column-reverse;
+          gap: 3px;
+
+          .bar-segment {
+            width: 100%;
+            border-radius: 4px;
+
+            &.lime { background: #84CC16; }
+            &.grey { background: #E2E8F0; }
+            &.striped {
+              background: repeating-linear-gradient(
+                -45deg,
+                #334155,
+                #334155 3px,
+                #1E293B 3px,
+                #1E293B 6px
+              );
+            }
+          }
+        }
+
+        .day-label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #94A3B8;
+        }
+      }
+    }
+
+    .budget-legend-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+      padding-left: 10px;
+      font-size: 11px;
+      color: #64748B;
+
+      .leg-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .leg-box {
+          width: 10px;
+          height: 10px;
+          border-radius: 2px;
+
+          &.lime { background: #84CC16; }
+          &.grey { background: #CBD5E1; }
+          &.striped {
+            background: repeating-linear-gradient(
+              -45deg,
+              #334155,
+              #334155 2px,
+              #1E293B 2px,
+              #1E293B 4px
+            );
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   CARDS 4 & 5: SPLIT QUICK TRANSFER & DONUT
+   ------------------------------------------------------------------------------ */
+.split-col-container {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+
+  .col-quick-transfer {
+    flex: 1;
+
+    .transfer-avatars-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+
+      .avatar-contact {
+        .avatar-img-circle {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          border: 1px solid #E2E8F0;
+        }
+      }
+
+      .add-recipient-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #F1F5F9;
+        border: 1px dashed #CBD5E1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover { background: #E2E8F0; }
+      }
+    }
+  }
+
+  .col-top-spending {
+    flex: 1;
+
+    .donut-chart-flex {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .donut-svg-wrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+
+        .donut-svg {
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+
+        .donut-center-metric {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+
+          .center-pct {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0F172A;
+            line-height: 1;
+          }
+          .center-lbl {
+            font-size: 9px;
+            color: #64748B;
+            font-weight: 700;
+            margin-top: 2px;
+          }
+        }
+      }
+
+      .donut-legend-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+
+        .donut-leg-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #475569;
+
+          .dot-black { color: #0F172A; }
+          .dot-lime { color: #84CC16; }
+          .dot-grey { color: #CBD5E1; }
+        }
+
+        .donut-total-val {
+          font-size: 16px;
+          font-weight: 800;
+          color: #0F172A;
+          margin-top: 4px;
+          letter-spacing: -0.5px;
+        }
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------
+   CARDS 6 & 7: PORTFOLIO SCORES & TRANSACTIONS
+   ------------------------------------------------------------------------------ */
+.col-scores {
+  flex: 5;
+
+  .score-cards-cluster {
+    display: flex;
+    gap: 16px;
+    height: 100%;
+
+    .score-sub-tile {
+      flex: 1;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .sub-tile-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748B;
+      }
+
+      .score-val-row {
+        margin: 10px 0;
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+
+        .big-score, .savings-amount, .profit-amount {
+          font-size: 22px;
+          font-weight: 800;
+          color: #0F172A;
+          letter-spacing: -0.5px;
+          small { font-size: 13px; color: #94A3B8; font-weight: 600; }
+        }
+
+        .score-pill {
+          background: #DCFCE7;
+          color: #15803D;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 700;
+        }
+      }
+
+      .vertical-bars-meter {
+        display: flex;
+        gap: 3px;
+        height: 24px;
+        align-items: flex-end;
+
+        .v-bar {
+          flex: 1;
+          height: 100%;
+          background: #E2E8F0;
+          border-radius: 2px;
+
+          &.active {
+            background: #84CC16;
+          }
+        }
+      }
+
+      .matrix-dot-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 4px;
+
+        .matrix-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #E2E8F0;
+
+          &.active, &.green { background: #84CC16; }
+          &.red { background: #F87171; }
+        }
+      }
+    }
+  }
+}
+
+.col-transactions {
+  flex: 7;
+
+  .view-all-pill {
+    background: transparent;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2563EB;
+    cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+
+  .transactions-list-scroller {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+    .tx-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: #F8FAFC;
+      border: 1px solid #F1F5F9;
+      transition: background 0.15s;
+
+      &:hover { background: #F1F5F9; }
+
+      .tx-avatar-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .tx-details-col {
+        flex: 1;
+        margin-left: 12px;
+        display: flex;
+        flex-direction: column;
+
+        .tx-name-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .tx-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0F172A;
+          }
+
+          .tx-status-pill {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 4px;
+
+            &.success {
+              background: #DCFCE7;
+              color: #15803D;
+            }
+            &.failed {
+              background: #FEE2E2;
+              color: #B91C1C;
+            }
+          }
+        }
+
+        .tx-date {
+          font-size: 11px;
+          color: #94A3B8;
+        }
+      }
+
+      .tx-amount-col {
+        font-size: 14px;
+        font-weight: 800;
+
+        &.positive { color: #16A34A; }
+        &.negative { color: #0F172A; }
+      }
+    }
+  }
+}
