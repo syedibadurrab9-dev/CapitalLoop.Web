@@ -74,6 +74,20 @@ export class AuthService {
 
   constructor() {
     this.oauthService.configure(authConfig);
+
+    // 🚀 Dynamic Remote Gateway Sync (Eliminates broken links forever)
+    this.http.get<{ apiUrl: string }>('https://raw.githubusercontent.com/syedibadurrab9-dev/CapitalLoop.Mobile/main/gateway.json')
+      .subscribe({
+        next: (config) => {
+          if (config && config.apiUrl) {
+            localStorage.setItem('cl_api_url', config.apiUrl);
+            console.log('[GATEWAY_SYNC] Live API URL dynamically synced:', config.apiUrl);
+          }
+        },
+        error: () => {
+          // Gracefully falls back to active baked environment.apiUrl
+        }
+      });
     
     // Check if we have incoming URL parameters from a Google redirect window
     const urlParams = new URLSearchParams(window.location.search);

@@ -2,21 +2,40 @@
 <div class="dashboard-container">
 
   @if (authService.isLoggedIn()) {
+    <!-- TOP SOVEREIGN REGULATORY TRUST STRIP & LIVE TICKER TAPE -->
+    <div class="sovereign-regulatory-strip">
+      <div class="reg-seals">
+        <span class="reg-seal"><span class="seal-icon">🏛️</span> <strong>State Bank of Pakistan</strong> Sandbox BPRD/2026</span>
+        <span class="reg-divider">•</span>
+        <span class="reg-seal"><span class="seal-icon">🛡️</span> <strong>SECP</strong> FinTech Sandbox #FS-2026-084</span>
+        <span class="reg-divider">•</span>
+        <span class="reg-seal"><span class="seal-icon">⚖️</span> <strong>FBR ATL</strong> Live WHT Engine</span>
+        <span class="reg-divider">•</span>
+        <span class="reg-seal"><span class="seal-icon">🔒</span> <strong>PDPB / PECA</strong> Sovereign Vault (Islamabad)</span>
+      </div>
+      <div class="live-ticker-strip">
+        <span class="ticker-item"><span class="t-sym">KSE-100</span> <span class="t-val">85,240.15</span> <span class="t-up">▲ +620.40</span></span>
+        <span class="ticker-item"><span class="t-sym">GOLD 24K</span> <span class="t-val">₨ 284,500</span> <span class="t-up">▲ +1,200</span></span>
+        <span class="ticker-item"><span class="t-sym">USD/PKR</span> <span class="t-val">₨ 278.45</span> <span class="t-down">▼ -0.15</span></span>
+        <span class="ticker-item"><span class="t-sym">KIBOR 6M</span> <span class="t-val">14.85%</span></span>
+      </div>
+    </div>
+
     <header class="matrix-header">
       
       <!-- Left Panel: Brand Core Cluster Nodes -->
       <div class="brand-cluster">
         <div class="pulse-node">♾️</div>
-        <h1>CapitalLoop <span class="accent-text">Admin Station</span></h1>
+        <h1>CapitalLoop <span class="accent-text">Sovereign Station</span></h1>
         
         <!-- Live Connection State Tracking Link Telemetry Badge -->
         @if (chatStore.connectionStatus() === 'Connected') {
           <span class="system-badge connected font-mono">
-            ● SYSTEM LIVE
+            ● SOVEREIGN TELEMETRY LIVE
           </span>
         } @else if (chatStore.connectionStatus() === 'Connecting') {
-          <span class="system-badge font-mono" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2);">
-            ⏳ SYNCING...
+          <span class="system-badge font-mono" style="background: rgba(245, 158, 11, 0.12); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.25);">
+            ⏳ SYNCING LEDGER...
           </span>
         } @else {
           <span class="system-badge font-mono">
@@ -28,25 +47,25 @@
       <!-- Main Operational Center Navigation Layout Matrix -->
       <nav class="matrix-nav-links">
         <a routerLink="/dashboard" routerLinkActive="active" class="nav-link-node">Executive Analytics</a>
-        <a routerLink="/support-hub" routerLinkActive="active" class="nav-link-node">Support Desk</a>
-        <a routerLink="/compliance" routerLinkActive="active" class="nav-link-node">KYC Ledger</a>
-        <a routerLink="/node-monitor" routerLinkActive="active" class="nav-link-node">Node Monitor</a>
-        <a routerLink="/risk-engine" routerLinkActive="active" class="nav-link-node">Risk Engine</a>
+        <a routerLink="/support-hub" routerLinkActive="active" class="nav-link-node">Advisory Desk</a>
+        <a routerLink="/compliance" routerLinkActive="active" class="nav-link-node">KYC & FBR Ledger</a>
+        <a routerLink="/node-monitor" routerLinkActive="active" class="nav-link-node">Asset Feeds</a>
+        <a routerLink="/risk-engine" routerLinkActive="active" class="nav-link-node">Macro Risk Engine</a>
         <a routerLink="/subscriptions" routerLinkActive="active" class="nav-link-node">Access & Operators</a>
       </nav>
       
       <!-- Administrative Identity Lifecycle Section -->
       <div class="operator-profile" style="display: flex; align-items: center; gap: 1rem;">
         <div class="operator-meta" style="display: flex; flex-direction: column; align-items: flex-end; text-align: right;">
-          <div style="font-weight: 600; font-size: 0.875rem; color: #f1f5f9;">
+          <div style="font-weight: 700; font-size: 0.875rem; color: #f8fafc; letter-spacing: -0.2px;">
             {{ authService.currentUserProfile()?.name }}
           </div>
-          <div style="display: flex; align-items: center; gap: 0.35rem;">
-            <span style="font-size: 0.7rem; font-family: monospace; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">
-              {{ authService.currentUserProfile()?.role || 'Admin Operator' }}
+          <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 2px;">
+            <span style="font-size: 0.7rem; font-family: monospace; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+              {{ authService.currentUserProfile()?.role || 'SuperAdmin' }}
             </span>
-            <span style="font-size: 0.7rem; font-family: monospace; padding: 2px 6px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
-              {{ authService.currentUserProfile()?.licenseNumber || 'SECP-ADV' }}
+            <span style="font-size: 0.7rem; font-family: monospace; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+              {{ authService.currentUserProfile()?.licenseNumber || 'SECP-ADV-8492' }}
             </span>
           </div>
         </div>
