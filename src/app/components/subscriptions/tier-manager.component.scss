@@ -3,33 +3,32 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #1F2937;
+  border-bottom: 1px solid #E2E8F0;
   padding-bottom: 16px;
   margin-bottom: 8px;
 
-  h2 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.5px; }
-  p { font-size: 13px; color: #9CA3AF; margin-top: 4px; }
+  h2 { font-size: 20px; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; }
+  p { font-size: 13px; color: #64748B; margin-top: 4px; }
 }
 
 .banner-telemetry-pill {
-  background: #090D16;
-  border: 1px solid #273549;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #F8FAFC;
+  color: #475569;
 
   .saturation-percentage {
-    color: #38BDF8;
+    color: #0284C7;
     margin-left: 4px;
     font-weight: 700;
-    text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
   }
 }
 
-.section-desc-text { font-size: 13px; color: #6B7280; line-height: 1.4; }
-.font-mono { font-family: monospace, monospace; }
+.section-desc-text { font-size: 13px; color: #64748B; line-height: 1.5; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Table Profile Cell Alignments */
 .table-user-profile-cell {
@@ -38,16 +37,16 @@
   gap: 14px;
 
   .user-avatar-placeholder {
-    font-size: 18px;
-    background: #141B2D;
-    border: 1px solid #273549;
-    padding: 8px;
-    border-radius: 50%;
+    font-size: 16px;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
     width: 38px;
     height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #64748B;
   }
 
   .profile-meta {
@@ -55,8 +54,8 @@
     flex-direction: column;
     gap: 2px;
     
-    strong { color: #FFFFFF; font-size: 14px; }
-    .user-email-label { font-size: 11px; color: #6B7280; }
+    strong { color: #0F172A; font-size: 13.5px; font-weight: 700; }
+    .user-email-label { font-size: 11px; color: #64748B; }
   }
 }
 
@@ -65,13 +64,13 @@
   font-size: 11px;
   font-weight: 700;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 8px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 
-  &.approved { background: rgba(16, 185, 129, 0.08); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.2); }
-  &.pending { background: rgba(245, 158, 11, 0.08); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.2); }
-  &.unverified { background: rgba(156, 163, 175, 0.08); color: #9CA3AF; border: 1px solid rgba(156, 163, 175, 0.2); }
+  &.approved { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+  &.pending { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+  &.unverified { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
 }
 
 /* Dynamic Tier Custom Badge Markers */
@@ -81,17 +80,16 @@
   font-weight: 800;
   padding: 4px 10px;
   border-radius: 6px;
-  background: #090D16;
-  border: 1px solid #1F2937;
-  color: #9CA3AF;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 
   &.premium-active {
-    background: rgba(234, 179, 8, 0.08);
-    border-color: rgba(234, 179, 8, 0.3);
-    color: #FBBF24;
-    text-shadow: 0 0 6px rgba(234, 179, 8, 0.2);
+    background: #FFFBEB;
+    border-color: #FDE68A;
+    color: #D97706;
   }
 }
 
@@ -104,13 +102,14 @@
   min-width: 160px;
   
   &.btn-danger-toggle {
-    border-color: rgba(220, 38, 38, 0.3);
-    color: #FCA5A5;
+    border-color: #FCA5A5;
+    background: #FEF2F2;
+    color: #DC2626;
     
     &:hover {
-      background: rgba(220, 38, 38, 0.1);
-      color: #EF4444;
-      border-color: #EF4444;
+      background: #DC2626;
+      color: #FFFFFF;
+      border-color: #DC2626;
     }
   }
 }
@@ -118,6 +117,6 @@
 .empty-table-placeholder {
   text-align: center;
   padding: 32px !important;
-  color: #4B5563;
+  color: #64748B;
   font-style: italic;
 }

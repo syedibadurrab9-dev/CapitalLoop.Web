@@ -1,19 +1,20 @@
 /* ==============================================================================
    CAPITALLOOP GLOBAL COMPONENT CORE VARIABLES & MATRIX DESIGN TOKENS
+   KOVAULT & INVETO DESIGN SYSTEM SPECIFICATION (LIGHT CANVASES, OBSIDIAN HEROES)
    ============================================================================== */
-$bg-main: #06090F;          /* Sovereign Obsidian Canvas */
-$bg-card: #0D1524;          /* Deep Vault Slate */
-$bg-card-elevated: #131E33; /* Elevated Glassmorphic Card */
-$bg-hover: #162238;         /* High-contrast telemetry row highlight */
-$accent-color: #10B981;     /* Emerald Sovereign Green */
+$bg-main: #F4F6F9;          /* Kovault Executive Light Canvas */
+$bg-card: #FFFFFF;          /* Pure White Executive Card */
+$bg-card-elevated: #FFFFFF; /* High-contrast elevated surface */
+$bg-hover: #F8FAFC;         /* Clean neutral row hover */
+$accent-color: #10B981;     /* Sovereign Emerald */
 $accent-hover: #059669;     /* Deep Emerald Interaction Tone */
 $accent-gold: #F59E0B;      /* Sarafa Bullion Gold */
-$accent-teal: #38BDF8;      /* Sky Interbank Blue */
+$accent-teal: #0284C7;      /* Fixed Income / Interbank Sky Blue */
 $accent-emerald: #10B981;   /* Emerald */
-$text-main: #F8FAFC;        /* Crisp arctic white for peak contrast */
-$text-muted: #94A3B8;       /* Clean steel slate */
-$text-dark: #64748B;        /* Muted slate */
-$border-color: #1E293B;     /* Structural grid border */
+$text-main: #0F172A;        /* Deep Obsidian Slate (Peak Contrast) */
+$text-muted: #64748B;       /* Refined Slate Subtitle */
+$text-dark: #94A3B8;        /* Subtle Meta Slate */
+$border-color: #E2E8F0;     /* Ultra-clean structural border */
 
 * { 
   box-sizing: border-box; 
@@ -389,13 +390,13 @@ app-chat-desk {
 }
 
 /* ==============================================================================
-   SIDEBAR CONVERSATIONS TRAY
+   SIDEBAR CONVERSATIONS TRAY (KOVAULT ADVISORY DESK ARCHITECTURE)
    ============================================================================== */
 .sidebar-tray { 
-  width: 340px; 
+  width: 350px; 
   flex-shrink: 0; 
-  background: $bg-card; 
-  border-right: 1px solid $border-color; 
+  background: #FFFFFF; 
+  border-right: 1px solid #E2E8F0; 
   display: flex; 
   flex-direction: column; 
 
@@ -403,15 +404,81 @@ app-chat-desk {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 20px 16px 20px;
+    padding: 20px 20px 14px 20px;
 
-    h2 { 
-      font-size: 12px; 
-      font-weight: 700; 
-      color: $text-dark; 
-      text-transform: uppercase; 
-      letter-spacing: 0.5px; 
-      padding: 0;
+    .tray-title-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .tray-title { 
+        font-size: 13px; 
+        font-weight: 800; 
+        color: #0F172A; 
+        text-transform: uppercase; 
+        letter-spacing: 0.6px; 
+        margin: 0;
+      }
+
+      .active-badge {
+        font-size: 10px;
+        font-weight: 700;
+        color: #0284C7;
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        padding: 2px 8px;
+        border-radius: 12px;
+      }
+    }
+  }
+
+  .tray-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 16px 12px 16px;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+
+    &:focus-within {
+      background: #FFFFFF;
+      border-color: #10B981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+    }
+
+    .search-icon {
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    .tray-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 12px;
+      color: #0F172A;
+      font-family: inherit;
+
+      &::placeholder {
+        color: #94A3B8;
+      }
+    }
+
+    .clear-search-btn {
+      background: none;
+      border: none;
+      color: #94A3B8;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0 4px;
+
+      &:hover {
+        color: #0F172A;
+      }
     }
   }
 }
@@ -419,60 +486,129 @@ app-chat-desk {
 .conversations-list { 
   flex: 1; 
   overflow-y: auto; 
-  padding: 0 12px 24px 12px; 
+  padding: 0 12px 20px 12px; 
   display: flex; 
   flex-direction: column; 
   gap: 8px; 
 }
 
 .empty-tray-msg { 
-  padding: 40px 24px; 
-  color: $text-dark; 
+  padding: 40px 20px; 
+  color: #64748B; 
   font-size: 13px; 
   text-align: center; 
   font-style: italic; 
 }
 
 .queue-card { 
-  padding: 16px 20px; 
+  padding: 14px 16px; 
   border-radius: 14px; 
-  background: #F8FAFC; 
-  border: 1px solid $border-color;
+  background: #FFFFFF; 
+  border: 1px solid #E2E8F0;
   cursor: pointer; 
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
 
-  &:hover { background: $bg-hover; transform: scale(1.005); }
+  &:hover { 
+    background: #F8FAFC; 
+    border-color: #CBD5E1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+  }
   
   &.active { 
-    background: #EFF6FF; 
-    border-color: #BFDBFE; 
-    box-shadow: inset 4px 0 0 $accent-color; 
+    background: #F0FDF4; 
+    border-color: #86EFAC; 
+    border-left: 4px solid #10B981; 
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
   }
 
   .queue-header { 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
-    margin-bottom: 4px; 
+    margin-bottom: 2px; 
 
-    .client-title { font-weight: 700; font-size: 14px; color: $text-main; letter-spacing: -0.1px; }
+    .client-title { 
+      font-weight: 700; 
+      font-size: 13.5px; 
+      color: #0F172A; 
+      letter-spacing: -0.1px; 
+    }
     
     .status-dot { 
       width: 8px; 
       height: 8px; 
       border-radius: 50%; 
-      background: $text-dark; 
+      background: #CBD5E1; 
       transition: background 0.3s, box-shadow 0.3s;
       
       &.online { 
-        background: $accent-emerald; 
-        box-shadow: 0 0 6px $accent-emerald; 
+        background: #10B981; 
+        box-shadow: 0 0 6px #10B981; 
       }
     }
   }
 
-  .client-email-sub { font-size: 11px; color: $text-dark; margin-bottom: 8px; font-weight: 500; }
-  .snippet { font-size: 13px; color: $text-muted; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .client-email-sub { 
+    font-size: 11px; 
+    color: #64748B; 
+    margin-bottom: 6px; 
+    font-weight: 500; 
+  }
+
+  .engagement-badge-row {
+    margin: 4px 0 6px 0; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    flex-wrap: wrap;
+
+    .badge-lock-mine {
+      font-size: 10px; 
+      background: #ECFDF5; 
+      color: #059669; 
+      border: 1px solid #A7F3D0; 
+      border-radius: 4px; 
+      padding: 2px 6px; 
+      font-weight: 700;
+    }
+
+    .badge-lock-other {
+      font-size: 10px; 
+      background: #FFFBEB; 
+      color: #D97706; 
+      border: 1px solid #FDE68A; 
+      border-radius: 4px; 
+      padding: 2px 6px; 
+      font-weight: 700;
+    }
+
+    .badge-lock-pool {
+      font-size: 10px; 
+      background: #F1F5F9; 
+      color: #64748B; 
+      border: 1px solid #CBD5E1; 
+      border-radius: 4px; 
+      padding: 2px 6px; 
+      font-weight: 700;
+    }
+
+    .typing-indicator {
+      font-size: 10px; 
+      color: #2563EB; 
+      font-weight: 700; 
+      animation: pulse 1.5s infinite;
+    }
+  }
+
+  .snippet { 
+    font-size: 12.5px; 
+    color: #475569; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+  }
 }
 
 /* ==============================================================================
@@ -491,43 +627,57 @@ app-chat-desk {
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    color: $text-dark; 
+    color: #64748B; 
     font-weight: 500; 
     padding: 40px; 
     text-align: center; 
 
     p { 
-      max-width: 420px; 
+      max-width: 440px; 
       line-height: 1.7; 
-      font-size: 14.5px; 
-      border: 1px dashed $border-color; 
+      font-size: 14px; 
+      border: 1px dashed #CBD5E1; 
       padding: 32px; 
       border-radius: 20px; 
-      background: $bg-card; 
+      background: #FFFFFF; 
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02);
+
+      strong {
+        color: #0F172A;
+      }
     }
   }
 }
 
 .active-chat-header { 
-  padding: 20px 32px; 
-  background: $bg-card; 
-  border-bottom: 1px solid $border-color; 
+  padding: 16px 28px; 
+  background: #FFFFFF; 
+  border-bottom: 1px solid #E2E8F0; 
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: space-between;
+  align-items: center;
   flex-shrink: 0;
 
-  h3 { font-size: 16px; font-weight: 700; color: $text-main; letter-spacing: -0.2px; }
-  span { font-size: 12px; color: $text-muted; font-weight: 500; }
+  h3 { 
+    font-size: 16px; 
+    font-weight: 800; 
+    color: #0F172A; 
+    letter-spacing: -0.2px; 
+  }
+  span { 
+    font-size: 12px; 
+    color: #64748B; 
+    font-weight: 500; 
+  }
 }
 
 .stream-scroller { 
   flex: 1; 
-  padding: 32px; 
+  padding: 28px; 
   overflow-y: auto; 
   display: flex; 
   flex-direction: column; 
-  gap: 20px; 
+  gap: 16px; 
 }
 
 .message-row { 
@@ -541,8 +691,15 @@ app-chat-desk {
     .bubble-wrapper { 
       align-items: flex-end; 
       
-      .sender-identity { color: $accent-color; }
-      .message-bubble { background: $accent-color; color: #FFFFFF; border-top-right-radius: 2px; border-top-left-radius: 16px; border: none; }
+      .sender-identity { color: #059669; }
+      .message-bubble { 
+        background: #0D111A; 
+        color: #FFFFFF; 
+        border-top-right-radius: 2px; 
+        border-top-left-radius: 16px; 
+        border: none; 
+        box-shadow: 0 4px 14px rgba(13, 17, 26, 0.15);
+      }
     }
   }
 }
@@ -556,65 +713,73 @@ app-chat-desk {
   .sender-identity { 
     font-size: 11px; 
     font-weight: 700; 
-    color: $text-dark; 
+    color: #64748B; 
     text-transform: uppercase; 
     letter-spacing: 0.5px; 
   }
 
   .message-bubble { 
-    padding: 14px 20px; 
+    padding: 12px 18px; 
     border-radius: 16px; 
-    font-size: 14.5px; 
+    font-size: 14px; 
     line-height: 1.6; 
     word-break: break-word; 
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02); 
-    background: $bg-card; 
-    color: $text-main; 
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03); 
+    background: #FFFFFF; 
+    color: #0F172A; 
     border-top-left-radius: 2px;
-    border: 1px solid $border-color;
+    border: 1px solid #E2E8F0;
   }
 
-  .timestamp-tag { font-size: 11px; color: $text-dark; margin-top: 2px; }
+  .timestamp-tag { 
+    font-size: 11px; 
+    color: #94A3B8; 
+    margin-top: 2px; 
+  }
 }
 
 .interaction-shelf { 
-  padding: 24px 32px; 
-  background: $bg-card; 
-  border-top: 1px solid $border-color; 
+  padding: 16px 28px; 
+  background: #FFFFFF; 
+  border-top: 1px solid #E2E8F0; 
   display: flex; 
-  gap: 16px; 
+  gap: 12px; 
   flex-shrink: 0;
 
   input { 
     flex: 1; 
     background: #F8FAFC; 
-    border: 1px solid $border-color; 
-    border-radius: 14px; 
-    color: $text-main; 
-    padding: 16px 20px; 
+    border: 1px solid #CBD5E1; 
+    border-radius: 12px; 
+    color: #0F172A; 
+    padding: 14px 18px; 
     font-size: 14px; 
     outline: none; 
     transition: all 0.2s ease; 
 
     &:focus:not(:disabled) { 
-      border-color: $accent-color; 
+      border-color: #10B981; 
       background: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); 
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); 
     }
 
     &:disabled {
       background: #F1F5F9;
-      color: $text-dark;
+      color: #94A3B8;
       cursor: not-allowed;
+    }
+
+    &::placeholder {
+      color: #94A3B8;
     }
   }
 
   .dispatch-btn { 
-    background: #0F172A; 
+    background: #0D111A; 
     color: #FFFFFF; 
-    padding: 0 32px; 
+    padding: 0 28px; 
     border: none; 
-    border-radius: 14px; 
+    border-radius: 12px; 
     font-weight: 700; 
     font-size: 14px; 
     cursor: pointer; 
@@ -622,14 +787,14 @@ app-chat-desk {
 
     &:hover:not(:disabled) { 
       background: #1E293B; 
-      transform: scale(1.02); 
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1); 
+      transform: translateY(-1px); 
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); 
     }
-    &:active:not(:disabled) { transform: scale(0.98); }
+    &:active:not(:disabled) { transform: translateY(0); }
 
     &:disabled {
       background: #E2E8F0;
-      color: $text-dark;
+      color: #94A3B8;
       cursor: not-allowed;
       transform: none !important;
       box-shadow: none !important;
@@ -641,10 +806,10 @@ app-chat-desk {
    DYNAMIC USER FINANCIAL CONTEXT SIDEBAR
    ============================================================================== */
 .context-sidebar-panel {
-  width: 360px;
+  width: 350px;
   flex-shrink: 0; 
-  background: $bg-card;
-  border-left: 1px solid $border-color;
+  background: #FFFFFF;
+  border-left: 1px solid #E2E8F0;
   display: flex;
   flex-direction: column;
   padding: 24px;
@@ -652,18 +817,18 @@ app-chat-desk {
   height: 100%;
 
   .panel-section-header {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     
     h3 {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
-      color: $text-main;
+      color: #0F172A;
       letter-spacing: -0.2px;
       margin-bottom: 4px;
     }
     p {
       font-size: 12px;
-      color: $text-muted;
+      color: #64748B;
     }
   }
 }
@@ -671,13 +836,13 @@ app-chat-desk {
 .context-data-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 18px;
 
   label {
     font-size: 11px;
     font-weight: 700;
-    color: $text-dark;
+    color: #64748B;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -686,10 +851,10 @@ app-chat-desk {
     padding: 10px 14px;
     border-radius: 10px;
     background: #F8FAFC;
-    border: 1px solid $border-color;
+    border: 1px solid #E2E8F0;
     font-size: 13px;
     font-weight: 700;
-    color: $text-muted;
+    color: #475569;
 
     &.premium {
       color: #D97706;
@@ -705,10 +870,10 @@ app-chat-desk {
     padding: 4px 10px;
     border-radius: 6px;
     background: #F1F5F9;
-    color: $text-muted;
-    border: 1px solid $border-color;
+    color: #64748B;
+    border: 1px solid #E2E8F0;
 
-    &.approved { background: #E6F4EA; border-color: #A7F3D0; color: $accent-emerald; }
+    &.approved { background: #E6F4EA; border-color: #A7F3D0; color: #059669; }
     &.pending { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
     &.unverified { background: #FEF2F2; border-color: #FCA5A5; color: #DC2626; }
   }
@@ -716,8 +881,8 @@ app-chat-desk {
 
 .panel-divider {
   border: none;
-  border-top: 1px solid $border-color;
-  margin: 8px 0 24px 0;
+  border-top: 1px solid #E2E8F0;
+  margin: 6px 0 20px 0;
 }
 
 /* Itemized Position Scrollable Ledger Matrix */
@@ -735,10 +900,10 @@ app-chat-desk {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: #F8FAFC;
-  border-radius: 12px;
-  border: 1px solid $border-color;
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
 
   .asset-meta-info {
     display: flex;
@@ -747,9 +912,9 @@ app-chat-desk {
     max-width: 60%;
 
     .name {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
-      color: $text-main;
+      color: #0F172A;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -757,15 +922,15 @@ app-chat-desk {
     .category-pill {
       font-size: 10px;
       font-weight: 700;
-      color: $accent-color;
+      color: #10B981;
       text-transform: uppercase;
     }
   }
 
   .asset-value-metric {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
-    color: $text-main;
+    color: #0F172A;
   }
 }
 
@@ -773,23 +938,23 @@ app-chat-desk {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 18px;
-  background: #EFF6FF;
-  border: 1px solid #BFDBFE;
-  border-radius: 14px;
+  padding: 16px;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 12px;
   margin-top: 8px;
 
   span {
     font-size: 11px;
     font-weight: 700;
-    color: $text-muted;
+    color: #059669;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
   strong {
     font-size: 18px;
     font-weight: 800;
-    color: $accent-color;
+    color: #065F46;
   }
 }
 
@@ -848,21 +1013,20 @@ app-chat-desk {
 }
 
 .executive-surface-card {
-  background: rgba(13, 21, 36, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 26px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 18px !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(16, 185, 129, 0.12);
-    border-color: rgba(16, 185, 129, 0.35);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+    border-color: #CBD5E1 !important;
   }
 
   .card-header-flex {
@@ -875,7 +1039,7 @@ app-chat-desk {
   .card-title-node {
     font-size: 11px;
     font-weight: 700;
-    color: #94A3B8;
+    color: #64748B;
     text-transform: uppercase;
     letter-spacing: 0.75px;
     margin-bottom: 0;
@@ -884,9 +1048,9 @@ app-chat-desk {
   .badge-emerald {
     font-size: 10px;
     font-weight: 700;
-    color: #34D399;
-    background: rgba(16, 185, 129, 0.15);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #059669;
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
     padding: 2px 7px;
     border-radius: 6px;
     letter-spacing: 0.5px;
@@ -895,9 +1059,9 @@ app-chat-desk {
   .badge-warning {
     font-size: 10px;
     font-weight: 700;
-    color: #FBBF24;
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #D97706;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
     padding: 2px 7px;
     border-radius: 6px;
     letter-spacing: 0.5px;
@@ -906,30 +1070,28 @@ app-chat-desk {
   .badge-info {
     font-size: 10px;
     font-weight: 700;
-    color: #38BDF8;
-    background: rgba(56, 189, 248, 0.15);
-    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #0284C7;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
     padding: 2px 7px;
     border-radius: 6px;
     letter-spacing: 0.5px;
   }
 
   .metric-hero-display {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 800;
     letter-spacing: -0.75px;
     margin: 8px 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
     font-variant-numeric: tabular-nums;
-    color: #F8FAFC;
+    color: #0F172A;
 
     &.text-emerald { 
-      color: #34D399; 
-      text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+      color: #059669; 
     }
     &.text-teal { 
-      color: #38BDF8; 
-      text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+      color: #0284C7; 
     } 
   }
 
@@ -951,20 +1113,20 @@ app-chat-desk {
     font-family: 'JetBrains Mono', monospace;
 
     &.delta-up {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34D399;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: #ECFDF5;
+      color: #059669;
+      border: 1px solid #A7F3D0;
     }
     &.delta-down {
-      background: rgba(239, 68, 68, 0.15);
-      color: #F87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FCA5A5;
     }
   }
 
   .metric-subtext-note {
     font-size: 12px;
-    color: #94A3B8;
+    color: #64748B;
     line-height: 1.5;
   }
 }
@@ -973,41 +1135,41 @@ app-chat-desk {
    DASHBOARD UNIVERSAL SUB-BANNER SHELF
    ============================================================================== */
 .system-banner-shelf {
-  background: $bg-card;
-  border: 1px solid $border-color;
-  border-radius: 24px;
-  padding: 24px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.02);
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 18px !important;
+  padding: 22px 28px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
   width: 100% !important;
 
   .banner-meta {
     h2 {
       font-size: 20px;
       font-weight: 800;
-      color: $text-main;
+      color: #0F172A;
       letter-spacing: -0.4px;
       margin-bottom: 4px;
     }
     p {
       font-size: 13px;
-      color: $text-dark;
+      color: #64748B;
     }
   }
 
   .banner-telemetry-pill {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
-    color: $text-muted;
+    color: #475569;
     background: #F8FAFC;
     padding: 8px 16px;
-    border-radius: 12px;
-    border: 1px solid $border-color;
+    border-radius: 10px;
+    border: 1px solid #E2E8F0;
 
     .heartbeat-indicator.active-safe {
-      color: $accent-emerald;
+      color: #059669;
       font-weight: 800;
     }
 
@@ -1020,7 +1182,7 @@ app-chat-desk {
 
 .section-desc-text {
   font-size: 13px;
-  color: $text-dark;
+  color: #64748B;
   margin-bottom: 24px;
   line-height: 1.5;
 }
@@ -1047,14 +1209,14 @@ app-chat-desk {
     .sector-label-text {
       font-size: 13px;
       font-weight: 700;
-      color: $text-main;
+      color: #0F172A;
       letter-spacing: -0.1px;
     }
 
     .percentage-metric {
       font-size: 14px;
       font-weight: 800;
-      color: $accent-color;
+      color: #10B981;
       font-variant-numeric: tabular-nums;
 
       &.alert-text { color: #DC2626; }
@@ -1064,7 +1226,7 @@ app-chat-desk {
   .risk-rail-track {
     height: 10px;
     width: 100%;
-    background: #E2E8F0;
+    background: #F1F5F9;
     border-radius: 6px;
     overflow: hidden;
   }
@@ -1074,9 +1236,9 @@ app-chat-desk {
     border-radius: 6px;
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
-    &.gauge-normal   { background: linear-gradient(90deg, #3B82F6, $accent-color); }
+    &.gauge-normal   { background: linear-gradient(90deg, #3B82F6, #10B981); }
     &.gauge-warning  { background: linear-gradient(90deg, #0EA5E9, #0284C7); }
-    &.gauge-critical { background: linear-gradient(90deg, #EF4444, #DC2626); }
+    &.gauge-critical { background: linear-gradient(90deg, #F59E0B, #DC2626); }
   }
 
   .rail-bounds-labels {
@@ -1086,14 +1248,14 @@ app-chat-desk {
 
     span.pool-space-label {
       font-size: 11px;
-      color: $text-dark;
+      color: #64748B;
       font-weight: 500;
     }
 
     .bound-alert-msg {
       font-size: 11px;
       font-weight: 700;
-      color: $accent-emerald;
+      color: #059669;
 
       &.breached-msg { color: #DC2626; }
     }
@@ -1107,9 +1269,9 @@ app-chat-desk {
 
   .limit-parameter-box {
     background: #F8FAFC;
-    border: 1px solid $border-color;
+    border: 1px solid #E2E8F0;
     padding: 16px;
-    border-radius: 16px;
+    border-radius: 14px;
     margin-bottom: 12px;
     transition: background-color 0.2s ease;
 
@@ -1124,19 +1286,19 @@ app-chat-desk {
       strong {
         font-size: 13px;
         font-weight: 700;
-        color: $text-main;
+        color: #0F172A;
       }
 
       .parameter-badge-pill {
         font-size: 11px;
         font-weight: 700;
-        color: $text-muted;
+        color: #475569;
         background: #E2E8F0;
         padding: 3px 8px;
         border-radius: 6px;
 
         &.target-badge {
-          color: $accent-color;
+          color: #0284C7;
           background: #EFF6FF;
           border: 1px solid #DBEAFE;
         }
@@ -1145,13 +1307,13 @@ app-chat-desk {
 
     p {
       font-size: 12px;
-      color: $text-muted;
+      color: #64748B;
       line-height: 1.5;
     }
   }
 
   .panel-divider-line {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid #E2E8F0;
     margin: 12px 0 20px 0;
     width: 100%;
   }
@@ -1160,12 +1322,12 @@ app-chat-desk {
     h4 {
       font-size: 13px;
       font-weight: 700;
-      color: $text-main;
+      color: #0F172A;
       margin-bottom: 6px;
     }
     p {
       font-size: 12px;
-      color: $text-dark;
+      color: #64748B;
       line-height: 1.6;
     }
   }
@@ -1177,11 +1339,11 @@ app-chat-desk {
 .admin-table-wrapper {
   width: 100% !important;
   overflow-x: auto;
-  margin-top: 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background-color: #0D1524;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
 }
 
 .admin-data-table {
@@ -1190,37 +1352,37 @@ app-chat-desk {
   text-align: left;
 
   thead {
-    background-color: #06090F;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
 
     th {
-      padding: 16px 24px;
+      padding: 14px 20px;
       font-size: 11px;
       font-weight: 700;
-      color: #94A3B8;
+      color: #475569;
       text-transform: uppercase;
-      letter-spacing: 0.75px;
+      letter-spacing: 0.5px;
     }
   }
 
   tbody {
     tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid #F1F5F9;
       transition: background-color 0.15s ease;
 
       &:last-child { border-bottom: none; }
-      &:hover { background-color: rgba(255, 255, 255, 0.03); }
+      &:hover { background-color: #F8FAFC; }
       
       &.faulted-row-bg {
-        background-color: rgba(239, 68, 68, 0.12);
-        &:hover { background-color: rgba(239, 68, 68, 0.18); }
+        background-color: #FEF2F2;
+        &:hover { background-color: #FEE2E2; }
       }
     }
 
     td {
-      padding: 18px 24px;
-      font-size: 14px;
-      color: #F8FAFC;
+      padding: 16px 20px;
+      font-size: 13.5px;
+      color: #0F172A;
       vertical-align: middle;
     }
   }
@@ -1235,27 +1397,27 @@ app-chat-desk {
   gap: 2px;
 
   strong {
-    font-size: 14px;
-    font-weight: 600;
-    color: $text-main;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0F172A;
   }
   .system-id-code {
     font-size: 11px;
     font-weight: 500;
-    color: $text-dark;
+    color: #64748B;
   }
 }
 
 .latency-badge {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 8px;
   display: inline-block;
 
-  &.latency-low  { background-color: #E6F4EA; color: $accent-emerald; }
-  &.latency-mid  { background-color: #FFFBEB; color: #D97706; }
-  &.latency-high { background-color: #FEF2F2; color: #DC2626; }
+  &.latency-low  { background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+  &.latency-mid  { background-color: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+  &.latency-high { background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
 }
 
 .status-pill-badge {
@@ -1264,7 +1426,7 @@ app-chat-desk {
   color: #DC2626;
 
   &.live-state {
-    color: $accent-emerald;
+    color: #059669;
     font-weight: 700;
   }
 }
@@ -1275,7 +1437,7 @@ app-chat-desk {
   background-color: #FFFBEB;
   border: 1px solid #FDE68A;
   padding: 16px;
-  border-radius: 16px;
+  border-radius: 14px;
   line-height: 1.6;
   margin-bottom: 24px;
 }
@@ -1288,19 +1450,19 @@ app-chat-desk {
   width: 100%;
 
   .form-input-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    color: $text-muted;
+    color: #64748B;
     text-transform: uppercase;
-    letter-spacing: 0.25px;
+    letter-spacing: 0.5px;
   }
 }
 
 .admin-form-field {
   width: 100%;
   background-color: #F8FAFC;
-  border: 1px solid $border-color;
-  color: $text-main;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
   padding: 12px 16px;
   font-size: 14px;
   font-weight: 500;
@@ -1310,9 +1472,9 @@ app-chat-desk {
   font-family: inherit;
 
   &:focus {
-    border-color: $accent-color;
+    border-color: #10B981;
     background-color: #FFFFFF;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   }
 }
 
@@ -1337,7 +1499,7 @@ select.admin-form-field {
     left: 16px;
     font-size: 14px;
     font-weight: 700;
-    color: $text-muted;
+    color: #64748B;
     user-select: none;
   }
 
@@ -1362,55 +1524,55 @@ select.admin-form-field {
 .table-user-profile-cell {
   display: flex !important;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 
   .user-avatar-placeholder {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background-color: #F1F5F9;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 18px;
-    border: 1px solid $border-color;
-    color: $text-muted;
+    font-size: 16px;
+    border: 1px solid #E2E8F0;
+    color: #64748B;
   }
 
   .profile-meta {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     text-align: left;
 
     strong {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
-      color: $text-main;
+      color: #0F172A;
       letter-spacing: -0.1px;
     }
     .user-email-label {
-      font-size: 12px;
-      color: $text-dark;
+      font-size: 11px;
+      color: #64748B;
       font-weight: 500;
     }
   }
 }
 
 .table-timestamp-cell {
-  color: $text-muted;
-  font-size: 13px;
+  color: #64748B;
+  font-size: 12.5px;
   font-weight: 600;
 }
 
 .compliance-badge-pill {
   font-size: 11px;
   font-weight: 700;
-  padding: 6px 14px;
-  border-radius: 10px;
+  padding: 4px 10px;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid transparent;
@@ -1422,8 +1584,8 @@ select.admin-form-field {
   }
 
   &.approved {
-    background-color: #E6F4EA;
-    color: $accent-emerald;
+    background-color: #ECFDF5;
+    color: #059669;
     border-color: #A7F3D0;
   }
   &.pending {
@@ -1441,7 +1603,7 @@ select.admin-form-field {
 .table-action-btn-cluster {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -1461,21 +1623,21 @@ select.admin-form-field {
     flex-direction: column;
     gap: 4px;
     &.border-left {
-      border-left: 1px solid $border-color;
-      padding-left: 24px;
+      border-left: 1px solid #E2E8F0;
+      padding-left: 20px;
     }
     .value {
-      font-size: 36px;
+      font-size: 32px;
       font-weight: 800;
       letter-spacing: -0.5px;
       font-variant-numeric: tabular-nums;
+      color: #0F172A;
       &.text-warning { color: #D97706; }
-      &.text-muted { color: $text-main; }
     }
     .label {
       font-size: 12px;
       font-weight: 600;
-      color: $text-dark;
+      color: #64748B;
     }
   }
 }
@@ -1483,7 +1645,7 @@ select.admin-form-field {
 .exposure-list-track {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   justify-content: center;
   flex: 1;
 }
@@ -1491,15 +1653,15 @@ select.admin-form-field {
 .exposure-progress-row {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   .exposure-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .category-name { font-size: 13px; font-weight: 700; color: #F8FAFC; }
-    .percentage-val { font-size: 13px; font-weight: 700; color: #38BDF8; font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
+    .category-name { font-size: 13px; font-weight: 700; color: #0F172A; }
+    .percentage-val { font-size: 13px; font-weight: 700; color: #0284C7; font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
   }
-  .progress-bar-rail { height: 8px; width: 100%; background: rgba(255, 255, 255, 0.08); border-radius: 6px; overflow: hidden; }
+  .progress-bar-rail { height: 8px; width: 100%; background: #F1F5F9; border-radius: 6px; overflow: hidden; }
   .progress-bar-fill {
     height: 100%; border-radius: 6px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     &.bg-indigo { background: linear-gradient(90deg, #10B981, #059669); }
@@ -1508,62 +1670,62 @@ select.admin-form-field {
   }
 }
 
-.node-telemetry-stack { display: flex; flex-direction: column; gap: 10px; flex: 1; overflow-y: auto; padding-right: 4px; }
+.node-telemetry-stack { display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; padding-right: 4px; }
 .node-status-line {
-  display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255, 255, 255, 0.03); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.2s ease;
-  &:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(16, 185, 129, 0.25); }
+  display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #F8FAFC; border-radius: 12px; border: 1px solid #E2E8F0; transition: all 0.2s ease;
+  &:hover { background: #F1F5F9; border-color: #CBD5E1; }
   .node-identity {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 10px;
     .indicator-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #475569;
-      &.live { background: #10B981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+      width: 8px; height: 8px; border-radius: 50%; background: #94A3B8;
+      &.live { background: #10B981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
     }
-    .node-name { font-size: 13px; font-weight: 600; color: #F8FAFC; }
+    .node-name { font-size: 13px; font-weight: 600; color: #0F172A; }
   }
   .node-value-metric {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
-    color: #E2E8F0;
+    color: #0F172A;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-variant-numeric: tabular-nums;
     font-family: 'JetBrains Mono', monospace;
-    .latency-pill { font-size: 11px; font-weight: 700; color: #34D399; background: rgba(16, 185, 129, 0.12); padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .latency-pill { font-size: 11px; font-weight: 700; color: #059669; background: #ECFDF5; padding: 2px 7px; border-radius: 6px; border: 1px solid #A7F3D0; }
   }
 }
 
 /* Global Action Buttons Layout Mechanics */
 .admin-action-btn {
-  border: none; padding: 14px 24px; font-size: 14px; font-weight: 700; border-radius: 14px; cursor: pointer;
+  border: none; padding: 12px 20px; font-size: 13px; font-weight: 700; border-radius: 12px; cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); display: inline-flex; justify-content: center; align-items: center;
 
-  &.btn-table-scale { padding: 8px 18px; font-size: 12px; border-radius: 10px; }
+  &.btn-table-scale { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
   &.btn-success {
-    background-color: #EFF6FF; color: $accent-color; border: 1px solid #BFDBFE;
-    &:hover:not(:disabled) { background-color: $accent-color; color: #FFFFFF; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15); }
+    background-color: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;
+    &:hover:not(:disabled) { background-color: #10B981; color: #FFFFFF; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
   }
   &.btn-danger {
     background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5;
-    &:hover:not(:disabled) { background-color: #DC2626; color: #FFFFFF; box-shadow: 0 4px 12px rgba(220, 38, 235, 0.15); }
+    &:hover:not(:disabled) { background-color: #DC2626; color: #FFFFFF; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2); }
   }
-  &:disabled { background-color: #E2E8F0; color: $text-dark; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+  &:disabled { background-color: #E2E8F0; color: #94A3B8; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 }
 
 .empty-table-placeholder {
-  text-align: center !important; padding: 64px 0 !important;
+  text-align: center !important; padding: 48px 0 !important;
   .empty-state-content {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    .empty-icon { font-size: 32px; opacity: 0.7; }
-    p { color: $text-dark; font-size: 14px; font-weight: 500; margin: 0; }
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    .empty-icon { font-size: 28px; opacity: 0.7; }
+    p { color: #64748B; font-size: 13.5px; font-weight: 500; margin: 0; }
   }
 }
 
 .command-quick-dock {
   margin-top: 16px; display: flex; justify-content: flex-start;
   .dock-btn-node {
-    background: #0F172A; color: #FFFFFF; border: none; padding: 16px 28px; border-radius: 16px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    &:hover { background: #1E293B; transform: translateY(-2px); box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18); }
+    background: #0D111A; color: #FFFFFF; border: none; padding: 14px 24px; border-radius: 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    &:hover { background: #1E293B; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18); }
     &:active { transform: translateY(0); }
   }
 }
@@ -1574,7 +1736,7 @@ select.admin-form-field {
 .tier-status-tag {
   font-size: 12px;
   font-weight: 600;
-  color: $text-muted;
+  color: #64748B;
   display: inline-flex;
   align-items: center;
 
@@ -1585,81 +1747,81 @@ select.admin-form-field {
 }
 
 /* ==============================================================================
-   IDENTITY KYC LEDGER WORKSPACE ISOLATION CONTAINER HOOKS
+   IDENTITY KYC LEDGER WORKSPACE (UNIFIED KOVAULT LIGHT ARCHITECTURE)
    ============================================================================== */
 .kyc-ledger-workspace {
   width: 100% !important;
   max-width: 100vw !important;
   display: grid !important;
   grid-template-columns: repeat(12, 1fr) !important;
-  gap: 28px !important;
-  padding: 36px !important;
-  background-color: #06090F !important;
+  gap: 24px !important;
+  padding: 32px !important;
+  background-color: #F4F6F9 !important;
 
   .system-banner-shelf {
-    background: #0D1524 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 20px !important;
-    padding: 24px 32px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 18px !important;
+    padding: 22px 28px !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
     width: 100% !important;
 
     h2 {
-      color: #F8FAFC !important;
+      color: #0F172A !important;
       font-size: 20px !important;
       font-weight: 800 !important;
       margin-bottom: 4px !important;
     }
 
     p {
-      color: #94A3B8 !important;
+      color: #64748B !important;
       font-size: 13px !important;
     }
 
     .banner-telemetry-pill {
-      font-size: 13px !important;
+      font-size: 12.5px !important;
       font-weight: 700 !important;
-      color: #94A3B8 !important;
-      background: #06090F !important;
+      color: #475569 !important;
+      background: #F8FAFC !important;
       padding: 8px 16px !important;
-      border-radius: 12px !important;
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 10px !important;
+      border: 1px solid #E2E8F0 !important;
 
       .attention-count-val {
-        color: #FBBF24 !important;
+        color: #D97706 !important;
         font-weight: 800 !important;
       }
     }
   }
 
   .ledger-analytics-card {
-    background: #0D1524 !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 20px !important;
-    padding: 28px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 18px !important;
+    padding: 24px !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
     width: 100% !important;
 
     .card-title-node {
       font-size: 12px !important;
       font-weight: 700 !important;
-      color: #94A3B8 !important;
+      color: #64748B !important;
       text-transform: uppercase !important;
       letter-spacing: 0.75px !important;
-      margin-bottom: 16px !important;
+      margin-bottom: 14px !important;
     }
   }
 
   .admin-table-wrapper {
     width: 100% !important;
     overflow-x: auto !important;
-    margin-top: 20px !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    background-color: #06090F !important;
+    margin-top: 16px !important;
+    border-radius: 14px !important;
+    border: 1px solid #E2E8F0 !important;
+    background-color: #FFFFFF !important;
   }
 
   .admin-data-table {
@@ -1668,28 +1830,28 @@ select.admin-form-field {
     text-align: left !important;
 
     thead {
-      background-color: #04070D !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      background-color: #F8FAFC !important;
+      border-bottom: 1px solid #E2E8F0 !important;
 
       th {
-        padding: 16px 24px !important;
+        padding: 14px 20px !important;
         font-size: 11px !important;
         font-weight: 700 !important;
-        color: #94A3B8 !important;
+        color: #475569 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.75px !important;
+        letter-spacing: 0.5px !important;
       }
     }
 
     tbody tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+      border-bottom: 1px solid #F1F5F9 !important;
       &:last-child { border-bottom: none !important; }
-      &:hover { background-color: rgba(255, 255, 255, 0.03) !important; }
+      &:hover { background-color: #F8FAFC !important; }
 
       td {
-        padding: 18px 24px !important;
-        font-size: 14px !important;
-        color: #F8FAFC !important;
+        padding: 16px 20px !important;
+        font-size: 13.5px !important;
+        color: #0F172A !important;
         vertical-align: middle !important;
       }
     }
@@ -1698,33 +1860,33 @@ select.admin-form-field {
   .table-user-profile-cell {
     display: flex !important;
     align-items: center !important;
-    gap: 16px !important;
+    gap: 14px !important;
 
     .user-avatar-placeholder {
-      width: 40px !important;
-      height: 40px !important;
-      border-radius: 12px !important;
-      background-color: rgba(255, 255, 255, 0.05) !important;
+      width: 38px !important;
+      height: 38px !important;
+      border-radius: 10px !important;
+      background-color: #F1F5F9 !important;
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
-      font-size: 18px !important;
-      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      font-size: 16px !important;
+      border: 1px solid #E2E8F0 !important;
     }
 
     .profile-meta {
       display: flex !important;
       flex-direction: column !important;
-      gap: 3px !important;
+      gap: 2px !important;
 
       strong {
-        font-size: 14px !important;
+        font-size: 13.5px !important;
         font-weight: 700 !important;
-        color: #F8FAFC !important;
+        color: #0F172A !important;
       }
       .user-email-label {
-        font-size: 12px !important;
-        color: #94A3B8 !important;
+        font-size: 11px !important;
+        color: #64748B !important;
       }
     }
   }
@@ -1732,11 +1894,11 @@ select.admin-form-field {
   .compliance-badge-pill {
     font-size: 11px !important;
     font-weight: 700 !important;
-    padding: 6px 14px !important;
-    border-radius: 10px !important;
+    padding: 4px 10px !important;
+    border-radius: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 5px !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     border: 1px solid transparent !important;
@@ -1746,8 +1908,8 @@ select.admin-form-field {
       font-size: 8px !important;
     }
 
-    &.approved { background-color: rgba(16, 185, 129, 0.15) !important; color: #34D399 !important; border-color: rgba(16, 185, 129, 0.3) !important; }
-    &.pending { background-color: rgba(245, 158, 11, 0.15) !important; color: #FBBF24 !important; border-color: rgba(245, 158, 11, 0.3) !important; }
-    &.unverified, &.rejected { background-color: rgba(239, 68, 68, 0.15) !important; color: #F87171 !important; border-color: rgba(239, 68, 68, 0.3) !important; }
+    &.approved { background-color: #ECFDF5 !important; color: #059669 !important; border-color: #A7F3D0 !important; }
+    &.pending { background-color: #FFFBEB !important; color: #D97706 !important; border-color: #FDE68A !important; }
+    &.unverified, &.rejected { background-color: #FEF2F2 !important; color: #DC2626 !important; border-color: #FCA5A5 !important; }
   }
 }

@@ -3,28 +3,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #1F2937;
+  border-bottom: 1px solid #E2E8F0;
   padding-bottom: 16px;
   margin-bottom: 8px;
 
-  h2 { font-size: 22px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.5px; }
-  p { font-size: 13px; color: #9CA3AF; margin-top: 4px; }
+  h2 { font-size: 20px; font-weight: 800; color: #0F172A; letter-spacing: -0.5px; }
+  p { font-size: 13px; color: #64748B; margin-top: 4px; }
 }
 
 .banner-telemetry-pill {
-  background: #090D16;
-  border: 1px solid #273549;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #F8FAFC;
+  color: #475569;
 
   .heartbeat-indicator.active {
-    color: #10B981;
+    color: #059669;
     margin-left: 4px;
     font-weight: 700;
-    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
   }
 }
 
@@ -33,47 +32,47 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  strong { color: #FFFFFF; font-size: 13px; }
-  .system-id-code { font-size: 11px; color: #6B7280; font-family: monospace; }
+  strong { color: #0F172A; font-size: 13.5px; font-weight: 700; }
+  .system-id-code { font-size: 11px; color: #64748B; font-family: 'JetBrains Mono', monospace; }
 }
 
-.font-mono { font-family: monospace, monospace; font-size: 14px; font-weight: 600; }
+.font-mono { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; }
 
 /* Micro Latency Pings Custom Styling Overrides */
 .latency-badge {
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
 
-  &.latency-low { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-  &.latency-mid { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
-  &.latency-high { background: rgba(220, 38, 38, 0.1); color: #EF4444; }
+  &.latency-low { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+  &.latency-mid { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+  &.latency-high { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
 }
 
 /* Internal Connection Status Indicators */
 .status-pill-badge {
-  color: #EF4444;
+  color: #DC2626;
   font-size: 12px;
   font-weight: 600;
   
-  &.live-state { color: #10B981; }
+  &.live-state { color: #059669; font-weight: 700; }
 }
 
 /* Error Row Alert Shrouds */
 .faulted-row-bg td {
-  background: rgba(220, 38, 38, 0.03) !important;
-  border-bottom-color: rgba(220, 38, 38, 0.15) !important;
+  background: #FEF2F2 !important;
+  border-bottom-color: #FCA5A5 !important;
 }
 
 /* Override Input Control Mechanics */
 .panel-warning-text {
   font-size: 12px;
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  color: #D97706;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   line-height: 1.6;
   margin: 14px 0 20px 0;
 }
@@ -86,7 +85,7 @@
   .form-input-label {
     font-size: 11px;
     font-weight: 700;
-    color: #9CA3AF;
+    color: #64748B;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -101,17 +100,17 @@
   .currency-prefix {
     position: absolute;
     left: 16px;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
-    color: #6B7280;
-    font-family: monospace;
+    color: #64748B;
+    font-family: 'JetBrains Mono', monospace;
     pointer-events: none;
   }
 
   .field-with-prefix {
     padding-left: 48px;
-    font-family: monospace;
-    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
     font-weight: 600;
   }
 }
@@ -120,7 +119,7 @@
 
 .audit-trail-footer-note {
   font-size: 11px;
-  color: #4B5563;
+  color: #64748B;
   text-align: center;
   margin-top: 10px;
   line-height: 1.4;

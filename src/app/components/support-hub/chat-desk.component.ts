@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef, AfterViewChecked, OnInit, effect, signal } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, AfterViewChecked, OnInit, effect, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatStore } from '../../store/chat.store';
@@ -19,6 +19,20 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked {
   // Injecting real-time messaging pipeline and central portfolio ledger stores
   protected readonly chatStore = inject(ChatStore);
   protected readonly portfolioStore = inject(PortfolioStore);
+
+  // Search filter for queue
+  public readonly searchQuery = signal<string>('');
+
+  public readonly filteredThreads = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
+    const threads = this.chatStore.activeThreads();
+    if (!query) return threads;
+    return threads.filter(t => 
+      t.clientName.toLowerCase().includes(query) || 
+      t.email.toLowerCase().includes(query) ||
+      (t.lastMessageSnippet && t.lastMessageSnippet.toLowerCase().includes(query))
+    );
+  });
 
   // Binding reference coordinate to anchor automatic scroll down positions
   @ViewChild('streamContainer') private readonly streamContainer!: ElementRef;

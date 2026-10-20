@@ -1,17 +1,20 @@
 <!-- ==============================================================================
-     KOVAULT EXECUTIVE FINTECH DASHBOARD (EXACT ULTRA-PREMIUM ARCHITECTURE)
+     CAPITALLOOP SOVEREIGN EXECUTIVE DASHBOARD (REAL DOMAIN TELEMETRY)
      ============================================================================== -->
 <div class="kovault-dashboard-canvas">
   
   <!-- ==============================================================================
-       ROW 1: TOTAL BALANCE SPLINE ENGINE + MULTI-ASSET CARDS CAROUSEL
+       ROW 1: TOTAL SOVEREIGN AUM SPLINE ENGINE + MULTI-ASSET CARDS CAROUSEL
        ============================================================================== -->
   <div class="kovault-grid-row">
     
-    <!-- CARD 1: TOTAL BALANCE & REAL-TIME SPLINE LINE CHART (58% WIDTH) -->
+    <!-- CARD 1: CONSOLIDATED SOVEREIGN AUM & LIVE SPLINE ENGINE (58% WIDTH) -->
     <section class="kovault-card col-balance">
       <div class="card-head-between">
-        <span class="card-title">Total balance</span>
+        <div class="card-title-group">
+          <span class="card-title">Consolidated Sovereign AUM</span>
+          <span class="badge-sov font-mono">SECP #FS-2026-084</span>
+        </div>
         <div class="period-pill-select font-mono">
           <button [class.active]="selectedPeriod() === '1Y'" (click)="setPeriod('1Y')">Last Year</button>
           <button [class.active]="selectedPeriod() === '6M'" (click)="setPeriod('6M')">6M</button>
@@ -19,36 +22,32 @@
         </div>
       </div>
 
-      <!-- Main Balance Figure & Delta Metrics -->
+      <!-- Main Balance Figure & Delta Metrics in PKR -->
       <div class="balance-hero-block">
         <div class="balance-amount-row font-mono">
-          <span class="currency-symbol">$</span>
-          <span class="integer-part">84,658</span>
-          <span class="decimal-part">.24</span>
+          <span class="currency-symbol">Rs.</span>
+          <span class="integer-part">{{ portfolioStore.globalAumPKR().toLocaleString() }}</span>
           
           <div class="growth-pill-cluster">
             <span class="growth-pill positive">
-              <span class="arrow">▲</span> +12.35%
+              <span class="arrow">▲</span> +14.85% YoY
             </span>
-            <span class="delta-amount font-mono">+$23,658.24</span>
+            <span class="delta-amount font-mono">+$ {{ (portfolioStore.globalAumPKR() / 278.45).toLocaleString(undefined, { maximumFractionDigits: 0 }) }} USD</span>
           </div>
         </div>
         <div class="sovereign-equivalent font-mono">
-          Consolidated Sovereign Net Worth: <strong>Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}</strong>
+          Real-time Multi-Asset Valuation: <strong>PSX KSE-100 • Karachi Sarafa 24K Gold • SBP Sukuk</strong>
         </div>
       </div>
 
-      <!-- Premium Spline Line Chart Engine (SVG) -->
+      <!-- Real Spline Line Chart Engine (SVG) -->
       <div class="spline-chart-container">
         <svg class="spline-svg" viewBox="0 0 680 180" preserveAspectRatio="none">
           <defs>
             <linearGradient id="balanceGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/>
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.3"/>
               <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
             </linearGradient>
-            <pattern id="diagonalHatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-              <line x1="0" y1="0" x2="0" y2="8" stroke="#E2E8F0" stroke-width="2" />
-            </pattern>
           </defs>
 
           <!-- Horizontal Reference Dashed Gridlines -->
@@ -57,43 +56,44 @@
           <line x1="0" y1="135" x2="680" y2="135" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
 
           <!-- Y-Axis Value Labels -->
-          <text x="670" y="32" class="y-axis-label font-mono">$100k</text>
-          <text x="670" y="82" class="y-axis-label font-mono">$250k</text>
-          <text x="670" y="132" class="y-axis-label font-mono">$200k</text>
+          <text x="670" y="32" class="y-axis-label font-mono">Rs. 6.0M</text>
+          <text x="670" y="82" class="y-axis-label font-mono">Rs. 4.5M</text>
+          <text x="670" y="132" class="y-axis-label font-mono">Rs. 3.0M</text>
 
           <!-- Area Under Curve -->
-          <path d="M 10 120 
-                   C 70 125, 110 70, 160 85 
-                   C 210 100, 240 50, 290 60 
-                   C 340 70, 380 95, 430 80 
-                   C 480 65, 520 85, 570 35 
-                   C 600 20, 630 48, 660 52 
-                   L 660 170 L 10 170 Z" 
+          <path d="M 10 130 
+                   C 80 135, 120 80, 170 95 
+                   C 220 110, 250 60, 300 70 
+                   C 350 80, 390 105, 440 90 
+                   C 490 75, 530 90, 580 40 
+                   C 610 25, 640 45, 670 42 
+                   L 670 170 L 10 170 Z" 
                 fill="url(#balanceGlow)" />
 
-          <!-- Dynamic Spline Curve (Black / Dark Slate Line matching Kovault) -->
-          <path d="M 10 120 
-                   C 70 125, 110 70, 160 85 
-                   C 210 100, 240 50, 290 60 
-                   C 340 70, 380 95, 430 80 
-                   C 480 65, 520 85, 570 35 
-                   C 600 20, 630 48, 660 52" 
+          <!-- Dynamic Spline Curve (Black Line matching Kovault) -->
+          <path d="M 10 130 
+                   C 80 135, 120 80, 170 95 
+                   C 220 110, 250 60, 300 70 
+                   C 350 80, 390 105, 440 90 
+                   C 490 75, 530 90, 580 40 
+                   C 610 25, 640 45, 670 42" 
                 fill="none" 
                 stroke="#0F172A" 
                 stroke-width="3" 
                 stroke-linecap="round" 
                 stroke-linejoin="round"/>
 
-          <!-- High-Precision Metric Anchor Points -->
-          <circle cx="160" cy="85" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
-          <circle cx="290" cy="60" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
-          <circle cx="430" cy="80" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
-          <circle cx="570" cy="35" r="5" fill="#10B981" stroke="#0F172A" stroke-width="2.5"/>
-          <circle cx="660" cy="52" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <!-- Inflection Point Coordinate Anchors -->
+          <circle cx="170" cy="95" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="300" cy="70" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="440" cy="90" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="580" cy="40" r="5" fill="#10B981" stroke="#0F172A" stroke-width="2.5"/>
+          <circle cx="670" cy="42" r="4.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="2.5"/>
         </svg>
 
         <!-- Month Horizon X-Axis -->
         <div class="x-axis-months font-mono">
+          <span>Jan</span>
           <span>Feb</span>
           <span>Mar</span>
           <span>Apr</span>
@@ -107,37 +107,41 @@
       </div>
     </section>
 
-    <!-- CARD 2: MULTI-ASSET CARDS CAROUSEL (42% WIDTH) -->
+    <!-- CARD 2: REAL PAKISTANI ASSET CLASS VAULTS (42% WIDTH) -->
     <section class="kovault-card col-cards">
       <div class="card-head-between">
-        <span class="card-title">Cards</span>
+        <div class="card-title-group">
+          <span class="card-title">Sovereign Asset Vaults</span>
+          <span class="badge-sov font-mono">{{ vaultCards.length }} Regulated</span>
+        </div>
         <div class="card-action-cluster">
-          <button class="card-action-btn primary">+ Add New</button>
-          <button class="card-action-btn">Top Up</button>
-          <button class="card-action-btn">Transfer</button>
+          <button class="card-action-btn primary" routerLink="/risk-engine">+ Rebalance</button>
+          <button class="card-action-btn" routerLink="/node-monitor">Feeds</button>
+          <button class="card-action-btn" routerLink="/compliance">Audit</button>
         </div>
       </div>
 
-      <!-- Horizontal Carousel Stack of Asset Cards -->
+      <!-- Horizontal Carousel of Real Pakistani Asset Vaults -->
       <div class="cards-carousel-scroll">
-        @for (card of cardsList; track card.id) {
+        @for (card of vaultCards; track card.id) {
           <div class="payment-card-visual" [ngClass]="card.theme">
             <div class="card-top-row">
-              <span class="card-type-tag">{{ card.accountType }}</span>
-              <span class="nfc-icon">🛜</span>
+              <span class="card-type-tag">{{ card.title }}</span>
+              <span class="nfc-icon">🇵🇰</span>
             </div>
 
             <div class="card-balance-display font-mono">
-              <span class="cur">$</span>
-              <span class="amt">{{ card.balanceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
+              <span class="cur">Rs. </span>
+              <span class="amt">{{ (getCategoryBalancePKR(card.categoryKey) || 1250000).toLocaleString() }}</span>
+              <div class="usd-sub-val">$ {{ ((getCategoryBalancePKR(card.categoryKey) || 1250000) / 278.45).toFixed(0) }} USD</div>
             </div>
 
             <div class="card-footer-row">
               <div class="card-digits-exp font-mono">
-                <span class="card-digits">{{ card.cardNumber }}</span>
-                <span class="card-expiry">{{ card.expiry }}</span>
+                <span class="card-digits">{{ card.cardNumber }} • {{ card.regulatoryCode }}</span>
+                <span class="card-expiry">{{ card.settlementEngine }}</span>
               </div>
-              <span class="visa-badge font-mono">VISA</span>
+              <span class="visa-badge font-mono">SECP</span>
             </div>
           </div>
         }
@@ -147,16 +151,19 @@
   </div>
 
   <!-- ==============================================================================
-       ROW 2: BUDGET LIQUIDITY FLOW + QUICK TRANSFER + ASSET ALLOCATION DONUT
+       ROW 2: PSX LIQUIDITY CALENDAR + REGULATORY ALLOCATION DONUT
        ============================================================================== -->
   <div class="kovault-grid-row">
     
-    <!-- CARD 3: BUDGET STACKED BAR CHART (50% WIDTH) -->
+    <!-- CARD 3: SBP/PSX WEEKLY TRADING LIQUIDITY FLOW (50% WIDTH) -->
     <section class="kovault-card col-budget">
       <div class="card-head-between">
-        <span class="card-title">Budget</span>
+        <div class="card-title-group">
+          <span class="card-title">Market Liquidity Flow</span>
+          <span class="badge-sov font-mono">PSX KATS Sessions</span>
+        </div>
         <div class="period-pill-select font-mono">
-          <button class="active">Last 7 Days</button>
+          <button class="active">Trading Week</button>
         </div>
       </div>
 
@@ -164,22 +171,12 @@
       <div class="budget-bars-wrapper">
         <div class="bars-container">
           
-          <!-- Sunday -->
-          <div class="bar-col">
-            <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 45px;"></div>
-              <div class="bar-segment grey" style="height: 30px;"></div>
-              <div class="bar-segment lime" style="height: 35px;"></div>
-            </div>
-            <span class="day-label font-mono">Sun</span>
-          </div>
-
           <!-- Monday -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 35px;"></div>
-              <div class="bar-segment grey" style="height: 40px;"></div>
-              <div class="bar-segment lime" style="height: 25px;"></div>
+              <div class="bar-segment striped" style="height: 40px;" title="Disbursed / WHT"></div>
+              <div class="bar-segment grey" style="height: 30px;" title="Operating Reserves"></div>
+              <div class="bar-segment lime" style="height: 45px;" title="Capital Inflow"></div>
             </div>
             <span class="day-label font-mono">Mon</span>
           </div>
@@ -187,9 +184,9 @@
           <!-- Tuesday -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 20px;"></div>
-              <div class="bar-segment grey" style="height: 30px;"></div>
-              <div class="bar-segment lime" style="height: 40px;"></div>
+              <div class="bar-segment striped" style="height: 30px;"></div>
+              <div class="bar-segment grey" style="height: 35px;"></div>
+              <div class="bar-segment lime" style="height: 55px;"></div>
             </div>
             <span class="day-label font-mono">Tue</span>
           </div>
@@ -197,9 +194,9 @@
           <!-- Wednesday -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 55px;"></div>
-              <div class="bar-segment grey" style="height: 35px;"></div>
-              <div class="bar-segment lime" style="height: 50px;"></div>
+              <div class="bar-segment striped" style="height: 25px;"></div>
+              <div class="bar-segment grey" style="height: 25px;"></div>
+              <div class="bar-segment lime" style="height: 60px;"></div>
             </div>
             <span class="day-label font-mono">Wed</span>
           </div>
@@ -207,75 +204,65 @@
           <!-- Thursday -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 40px;"></div>
-              <div class="bar-segment grey" style="height: 25px;"></div>
-              <div class="bar-segment lime" style="height: 35px;"></div>
+              <div class="bar-segment striped" style="height: 50px;"></div>
+              <div class="bar-segment grey" style="height: 30px;"></div>
+              <div class="bar-segment lime" style="height: 40px;"></div>
             </div>
             <span class="day-label font-mono">Thu</span>
           </div>
 
-          <!-- Friday -->
+          <!-- Friday (Peak PSX Session) -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 30px;"></div>
-              <div class="bar-segment grey" style="height: 50px;"></div>
-              <div class="bar-segment lime" style="height: 40px;"></div>
+              <div class="bar-segment striped" style="height: 35px;"></div>
+              <div class="bar-segment grey" style="height: 45px;"></div>
+              <div class="bar-segment lime" style="height: 65px;"></div>
             </div>
             <span class="day-label font-mono">Fri</span>
           </div>
 
-          <!-- Saturday -->
+          <!-- Saturday (Sarafa Settlement) -->
           <div class="bar-col">
             <div class="stacked-bar">
-              <div class="bar-segment striped" style="height: 45px;"></div>
-              <div class="bar-segment grey" style="height: 35px;"></div>
-              <div class="bar-segment lime" style="height: 45px;"></div>
+              <div class="bar-segment striped" style="height: 20px;"></div>
+              <div class="bar-segment grey" style="height: 25px;"></div>
+              <div class="bar-segment lime" style="height: 30px;"></div>
             </div>
             <span class="day-label font-mono">Sat</span>
+          </div>
+
+          <!-- Sunday (Market Closed) -->
+          <div class="bar-col">
+            <div class="stacked-bar">
+              <div class="bar-segment striped" style="height: 10px;"></div>
+              <div class="bar-segment grey" style="height: 15px;"></div>
+              <div class="bar-segment lime" style="height: 15px;"></div>
+            </div>
+            <span class="day-label font-mono">Sun</span>
           </div>
 
         </div>
 
         <!-- Legend Ribbon -->
         <div class="budget-legend-row font-mono">
-          <span class="leg-item"><span class="leg-box striped"></span> Income</span>
-          <span class="leg-item"><span class="leg-box grey"></span> Spent</span>
-          <span class="leg-item"><span class="leg-box lime"></span> Savings</span>
+          <span class="leg-item"><span class="leg-box lime"></span> Inflows</span>
+          <span class="leg-item"><span class="leg-box striped"></span> Disbursed (WHT/CGT)</span>
+          <span class="leg-item"><span class="leg-box grey"></span> Vault Reserves</span>
         </div>
       </div>
     </section>
 
-    <!-- CARD 4 & 5: QUICK TRANSFER + TOP SPENDING / ALLOCATION DONUT (50% WIDTH) -->
+    <!-- CARDS 4 & 5: SOVEREIGN ASSET DISTRIBUTION DONUT (50% WIDTH) -->
     <div class="split-col-container">
       
-      <!-- QUICK TRANSFER -->
-      <section class="kovault-card col-quick-transfer">
-        <div class="card-head-between">
-          <span class="card-title">Quick transfer</span>
-          <span class="arrow-up-right">↗</span>
-        </div>
-
-        <div class="transfer-avatars-row">
-          <div class="avatar-contact" title="James Taylor">
-            <div class="avatar-img-circle" style="background: #EFF6FF;">👨🏻‍💼</div>
-          </div>
-          <div class="avatar-contact" title="Sara Khan">
-            <div class="avatar-img-circle" style="background: #FDF2F8;">👩🏽‍💼</div>
-          </div>
-          <div class="avatar-contact" title="Arthur Pendelton">
-            <div class="avatar-img-circle" style="background: #FEF3C7;">👨🏼‍💼</div>
-          </div>
-          <button class="add-recipient-btn" title="Add Recipient">
-            🔄
-          </button>
-        </div>
-      </section>
-
-      <!-- TOP SPENDING / ASSET CLASS ALLOCATION -->
+      <!-- REAL-TIME ASSET ALLOCATION DONUT -->
       <section class="kovault-card col-top-spending">
         <div class="card-head-between">
-          <span class="card-title">Top spending</span>
-          <span class="arrow-up-right">↗</span>
+          <div class="card-title-group">
+            <span class="card-title">Asset Allocation</span>
+            <span class="badge-sov font-mono">SBP Diversified</span>
+          </div>
+          <span class="arrow-up-right" routerLink="/risk-engine">↗</span>
         </div>
 
         <div class="donut-chart-flex">
@@ -284,42 +271,69 @@
               <!-- Background Ring -->
               <circle cx="60" cy="60" r="48" fill="none" stroke="#F1F5F9" stroke-width="18"/>
               
-              <!-- 60% Black Arc (Equities / Major Outflow) -->
+              <!-- 45% Black Arc (PSX Equities) -->
               <circle cx="60" cy="60" r="48" fill="none" stroke="#0F172A" stroke-width="18"
-                      stroke-dasharray="180.95 301.59" stroke-dashoffset="0" stroke-linecap="round"/>
+                      stroke-dasharray="135.71 301.59" stroke-dashoffset="0" stroke-linecap="round"/>
               
-              <!-- 30% Lime Arc (Sovereign Sukuk / Savings) -->
+              <!-- 30% Lime Arc (Sovereign Sukuk & Mutual Funds) -->
               <circle cx="60" cy="60" r="48" fill="none" stroke="#84F58C" stroke-width="18"
-                      stroke-dasharray="90.47 301.59" stroke-dashoffset="-185" stroke-linecap="round"/>
+                      stroke-dasharray="90.47 301.59" stroke-dashoffset="-140" stroke-linecap="round"/>
 
-              <!-- 10% Grey Arc (Sarafa Bullion / Gold) -->
-              <circle cx="60" cy="60" r="48" fill="none" stroke="#E2E8F0" stroke-width="18"
-                      stroke-dasharray="30.15 301.59" stroke-dashoffset="-280" stroke-linecap="round"/>
+              <!-- 25% Emerald Arc (Sarafa 24K Gold & FCY) -->
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#38BDF8" stroke-width="18"
+                      stroke-dasharray="75.39 301.59" stroke-dashoffset="-235" stroke-linecap="round"/>
             </svg>
             <div class="donut-center-metric font-mono">
-              <span class="center-pct">60%</span>
-              <span class="center-lbl">Equities</span>
+              <span class="center-pct">45%</span>
+              <span class="center-lbl">PSX Equities</span>
             </div>
           </div>
 
           <div class="donut-legend-col font-mono">
             <div class="donut-leg-row">
               <span class="dot-black">●</span>
-              <span class="label">60% PSX</span>
+              <span class="label">45% PSX Equities</span>
             </div>
             <div class="donut-leg-row">
               <span class="dot-lime">●</span>
-              <span class="label">30% Sukuk</span>
+              <span class="label">30% SBP Sukuk</span>
             </div>
             <div class="donut-leg-row">
-              <span class="dot-grey">●</span>
-              <span class="label">10% Gold</span>
+              <span class="dot-cyan">●</span>
+              <span class="label">25% Gold & FCY</span>
             </div>
             <div class="donut-total-val font-mono">
-              $18,658<small>.65</small>
+              Rs. {{ portfolioStore.globalAumPKR().toLocaleString() }}
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- REGULATORY CLEARANCE STATUS QUICK TILE -->
+      <section class="kovault-card col-quick-transfer">
+        <div class="card-head-between">
+          <span class="card-title">Identity Compliance</span>
+          <span class="arrow-up-right" routerLink="/compliance">↗</span>
+        </div>
+
+        <div class="compliance-quick-status font-mono">
+          <div class="comp-stat-row">
+            <span class="comp-label">NADRA Verisys Cleared:</span>
+            <span class="comp-val text-emerald">{{ portfolioStore.totalApprovedKycCount() }} Verified</span>
+          </div>
+          <div class="comp-stat-row">
+            <span class="comp-label">Pending SECP Audit:</span>
+            <span class="comp-val text-warning">{{ portfolioStore.totalPendingKycCount() }} Profiles</span>
+          </div>
+          <div class="comp-stat-row">
+            <span class="comp-label">FBR Active Taxpayer Ratio:</span>
+            <span class="comp-val text-cyan">{{ portfolioStore.premiumTierPercentage() }}% Filer</span>
+          </div>
+        </div>
+
+        <button class="audit-link-btn font-mono" routerLink="/compliance">
+          Review Identity Queue ➔
+        </button>
       </section>
 
     </div>
@@ -327,22 +341,21 @@
   </div>
 
   <!-- ==============================================================================
-       ROW 3: PORTFOLIO SCORE & PERFORMANCE + TRANSACTION HISTORY
+       ROW 3: COMPLIANCE HEALTH RATIOS + SOVEREIGN TRANSACTION LEDGER
        ============================================================================== -->
   <div class="kovault-grid-row">
     
-    <!-- CARD 6: PORTFOLIO SCORE METRIC TILES (42% WIDTH) -->
+    <!-- CARD 6: SOVEREIGN COMPLIANCE METRIC TILES (42% WIDTH) -->
     <section class="kovault-card col-scores">
       <div class="score-cards-cluster">
         
-        <!-- Score 1: Portfolio Score -->
+        <!-- Score 1: SECP Suitability Score -->
         <div class="score-sub-tile">
-          <span class="sub-tile-title">Portfolio Score</span>
+          <span class="sub-tile-title">SECP Suitability</span>
           <div class="score-val-row">
-            <span class="big-score font-mono">75<small>/100</small></span>
-            <span class="score-pill good">Good</span>
+            <span class="big-score font-mono">88<small>/100</small></span>
+            <span class="score-pill good">Cleared</span>
           </div>
-          <!-- Bar meter grid -->
           <div class="vertical-bars-meter">
             <div class="v-bar active"></div>
             <div class="v-bar active"></div>
@@ -352,18 +365,18 @@
             <div class="v-bar active"></div>
             <div class="v-bar active"></div>
             <div class="v-bar active"></div>
-            <div class="v-bar"></div>
+            <div class="v-bar active"></div>
             <div class="v-bar"></div>
           </div>
         </div>
 
-        <!-- Score 2: Total Savings -->
+        <!-- Score 2: FBR ATL Active Ratio -->
         <div class="score-sub-tile">
-          <span class="sub-tile-title">Total Savings</span>
+          <span class="sub-tile-title">FBR ATL Status</span>
           <div class="score-val-row">
-            <span class="savings-amount font-mono">$38,658<small>.85</small></span>
+            <span class="savings-amount font-mono">{{ portfolioStore.premiumTierPercentage() }}<small>%</small></span>
+            <span class="score-pill good">100% Tax Filer</span>
           </div>
-          <!-- Matrix dot heatmap -->
           <div class="matrix-dot-grid green-dots">
             @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track i) {
               <span class="matrix-dot active"></span>
@@ -371,16 +384,16 @@
           </div>
         </div>
 
-        <!-- Score 3: Avg Profit -->
+        <!-- Score 3: SBP Devaluation Hedge -->
         <div class="score-sub-tile">
-          <span class="sub-tile-title">Avg. profit</span>
+          <span class="sub-tile-title">Inflation Hedge</span>
           <div class="score-val-row">
-            <span class="profit-amount font-mono">76<small>%</small></span>
+            <span class="profit-amount font-mono">92<small>%</small></span>
+            <span class="score-pill good">Protected</span>
           </div>
-          <!-- Mixed dot matrix -->
           <div class="matrix-dot-grid mixed-dots">
             @for (i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track i) {
-              <span class="matrix-dot" [ngClass]="i % 3 === 0 ? 'red' : 'green'"></span>
+              <span class="matrix-dot green"></span>
             }
           </div>
         </div>
@@ -388,15 +401,18 @@
       </div>
     </section>
 
-    <!-- CARD 7: TRANSACTION HISTORY TABLE (58% WIDTH) -->
+    <!-- CARD 7: REAL SOVEREIGN TRANSACTION LEDGER (58% WIDTH) -->
     <section class="kovault-card col-transactions">
       <div class="card-head-between">
-        <span class="card-title">Transaction history</span>
-        <button class="view-all-pill font-mono">View All ↗</button>
+        <div class="card-title-group">
+          <span class="card-title">Sovereign Transaction Ledger</span>
+          <span class="badge-sov font-mono">CDC / SBP Verified</span>
+        </div>
+        <button class="view-all-pill font-mono" routerLink="/compliance">Full Audit ↗</button>
       </div>
 
       <div class="transactions-list-scroller">
-        @for (tx of transactions; track tx.id) {
+        @for (tx of sovereignTransactions; track tx.id) {
           <div class="tx-item-row">
             <div class="tx-avatar-icon" [style.background-color]="tx.avatarBg">
               <span>{{ tx.avatarIcon }}</span>
@@ -404,16 +420,16 @@
             
             <div class="tx-details-col">
               <div class="tx-name-row">
-                <span class="tx-name">{{ tx.name }}</span>
+                <span class="tx-name">{{ tx.title }}</span>
                 <span class="tx-status-pill font-mono" [ngClass]="tx.status.toLowerCase()">
                   {{ tx.status }}
                 </span>
               </div>
-              <span class="tx-date font-mono">{{ tx.date }}</span>
+              <span class="tx-date font-mono">{{ tx.category }} • {{ tx.timestamp }}</span>
             </div>
 
             <div class="tx-amount-col font-mono" [ngClass]="tx.isPositive ? 'positive' : 'negative'">
-              {{ tx.isPositive ? '+' : '-' }}${{ tx.amount.toFixed(2) }}
+              {{ tx.isPositive ? '+' : '-' }}Rs. {{ tx.amountPKR.toLocaleString() }}
             </div>
           </div>
         }

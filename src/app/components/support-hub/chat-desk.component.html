@@ -3,27 +3,45 @@
   <aside class="sidebar-tray">
     
     <div class="hub-telemetry-header">
-      <h2>Active Chats</h2>
+      <div class="tray-title-meta">
+        <h2 class="tray-title">Advisory Desk</h2>
+        <span class="active-badge font-mono">{{ filteredThreads().length }} Investors</span>
+      </div>
       
       <div class="connection-status-wrapper">
         @if (chatStore.connectionStatus() === 'Connected') {
-          <span class="hub-pill status-online font-mono" style="background: #E6F4EA; color: #059669; border: 1px solid #A7F3D0; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+          <span class="hub-pill status-online font-mono">
             ● Online
           </span>
         } @else if (chatStore.connectionStatus() === 'Connecting') {
-          <span class="hub-pill status-syncing font-mono" style="background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            ⏳ Connecting...
+          <span class="hub-pill status-syncing font-mono">
+            ⏳ Syncing
           </span>
         } @else {
-          <span class="hub-pill status-offline font-mono" style="background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+          <span class="hub-pill status-offline font-mono">
             ● Offline
           </span>
         }
       </div>
     </div>
+
+    <!-- Search / Filter Input -->
+    <div class="tray-search-box">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        [ngModel]="searchQuery()" 
+        (ngModelChange)="searchQuery.set($event)" 
+        placeholder="Filter by name or email..." 
+        class="tray-search-input"
+      />
+      @if (searchQuery()) {
+        <button class="clear-search-btn" (click)="searchQuery.set('')">✕</button>
+      }
+    </div>
     
     <div class="conversations-list">
-      @for (chat of chatStore.activeThreads(); track chat.email) {
+      @for (chat of filteredThreads(); track chat.email) {
         <div class="queue-card" 
              [class.active]="portfolioStore.selectedUserEmail() === chat.email"
              (click)="selectClientUser(chat.email)">
@@ -36,32 +54,38 @@
           <div class="client-email-sub font-mono">{{ chat.email }}</div>
           
           <!-- Session Locking & Engagement Status Badge -->
-          <div style="margin: 4px 0 6px 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div class="engagement-badge-row">
             @if (chat.isLockedByMe) {
-              <span style="font-size: 10px; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+              <span class="badge-lock-mine">
                 🟢 Your Active Session
               </span>
             } @else if (chat.isLockedByOther) {
-              <span style="font-size: 10px; background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+              <span class="badge-lock-other">
                 🔒 {{ chat.assignedAdvisorName || 'Engaged' }}
               </span>
             } @else {
-              <span style="font-size: 10px; background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+              <span class="badge-lock-pool">
                 ⚡ Open Pool
               </span>
             }
 
             @if (chat.isTyping) {
-              <span style="font-size: 10px; color: #2563EB; font-weight: 700; animation: pulse 1.5s infinite;">
+              <span class="typing-indicator font-mono">
                 ✍️ typing...
               </span>
             }
           </div>
 
-          <div class="snippet">{{ chat.lastMessageSnippet }}</div>
+          <div class="snippet">{{ chat.lastMessageSnippet || 'No messages yet' }}</div>
         </div>
       } @empty {
-        <div class="empty-tray-msg">No active customer conversations running right now.</div>
+        <div class="empty-tray-msg">
+          @if (searchQuery()) {
+            No active investor matches "{{ searchQuery() }}"
+          } @else {
+            No active customer conversations running right now.
+          }
+        </div>
       }
     </div>
   </aside>

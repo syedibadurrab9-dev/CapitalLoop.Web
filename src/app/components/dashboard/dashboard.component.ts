@@ -1,29 +1,29 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PortfolioStore } from '../../store/portfolio.store';
 
-export interface DashboardTransaction {
+export interface SovereignTransaction {
   id: string;
-  name: string;
+  title: string;
   category: string;
-  date: string;
-  status: 'Success' | 'Failed' | 'Pending';
-  amount: number;
+  timestamp: string;
+  status: 'Settled' | 'Secured' | 'Processed' | 'Cleared';
+  amountPKR: number;
   isPositive: boolean;
   avatarIcon: string;
   avatarBg: string;
 }
 
-export interface AssetCardItem {
+export interface SovereignVaultCard {
   id: string;
   title: string;
-  accountType: 'Debit Card' | 'Credit Card' | 'Vault Card';
-  balancePKR: number;
-  balanceUSD: number;
-  cardNumber: string;
-  expiry: string;
+  regulatoryCode: string;
+  cardType: string;
+  categoryKey: string;
   theme: 'lime' | 'emerald' | 'titanium';
+  cardNumber: string;
+  settlementEngine: string;
 }
 
 @Component({
@@ -40,106 +40,107 @@ export class DashboardComponent implements OnInit {
   protected readonly portfolioStore = inject(PortfolioStore);
 
   public readonly selectedPeriod = signal<'1Y' | '6M' | '30D'>('1Y');
-  public readonly activeCardTab = signal<number>(0);
 
-  public readonly cardsList: AssetCardItem[] = [
+  // Real Pakistani Sovereign Asset Cards
+  public readonly vaultCards: SovereignVaultCard[] = [
     {
-      id: 'c1',
-      title: 'PSX Equities Tier',
-      accountType: 'Debit Card',
-      balancePKR: 2150000,
-      balanceUSD: 48658.24,
-      cardNumber: '**** 5682',
-      expiry: '02/29',
-      theme: 'lime'
+      id: 'vc-1',
+      title: 'PSX Sovereign Equities',
+      regulatoryCode: 'KSE-100 / CDC',
+      cardType: 'Direct Equity Sub-Account',
+      categoryKey: 'STOCKS',
+      theme: 'lime',
+      cardNumber: '•••• 8115',
+      settlementEngine: 'T+2 KATS Clearing'
     },
     {
-      id: 'c2',
-      title: 'Sovereign Sukuk Pool',
-      accountType: 'Credit Card',
-      balancePKR: 1850000,
-      balanceUSD: 115412.00,
-      cardNumber: '**** 7706',
-      expiry: '04/26',
-      theme: 'emerald'
+      id: 'vc-2',
+      title: 'Sovereign Sukuk & Funds',
+      regulatoryCode: 'SBP / SECP Shariah',
+      cardType: 'Fixed Income Sukuk Pool',
+      categoryKey: 'MUTUAL_FUNDS',
+      theme: 'emerald',
+      cardNumber: '•••• 6312',
+      settlementEngine: 'Semi-Annual Coupon'
     },
     {
-      id: 'c3',
+      id: 'vc-3',
       title: 'Sarafa Bullion Vault',
-      accountType: 'Vault Card',
-      balancePKR: 852500,
-      balanceUSD: 68241.56,
-      cardNumber: '**** 4548',
-      expiry: '07/28',
-      theme: 'titanium'
+      regulatoryCode: '24K Karachi Sarafa',
+      cardType: 'Physical Gold Tola Custody',
+      categoryKey: 'GOLD_SILVER',
+      theme: 'titanium',
+      cardNumber: '•••• 4920',
+      settlementEngine: 'Sovereign Depository'
     }
   ];
 
-  public readonly transactions: DashboardTransaction[] = [
+  // Real Pakistani Investment Market Transactions Ledger
+  public readonly sovereignTransactions: SovereignTransaction[] = [
     {
-      id: 't1',
-      name: 'James Taylor',
-      category: 'Transfer',
-      date: '8 Sep, 11:32 AM',
-      status: 'Success',
-      amount: 500.00,
-      isPositive: false,
-      avatarIcon: '👤',
-      avatarBg: '#E0F2FE'
+      id: 'st-1',
+      title: 'PSX Dividend Credit (ENGRO Corp)',
+      category: 'KSE-100 Equity Cash Dividend',
+      timestamp: 'Today, 11:32 AM',
+      status: 'Settled',
+      amountPKR: 45000,
+      isPositive: true,
+      avatarIcon: '📈',
+      avatarBg: '#DCFCE7'
     },
     {
-      id: 't2',
-      name: "McDonald's",
-      category: 'Purchase',
-      date: '8 Sep, 11:02 AM',
-      status: 'Success',
-      amount: 29.99,
+      id: 'st-2',
+      title: '24K Sarafa Gold Tola Purchase',
+      category: 'Bullion Physical Custody',
+      timestamp: 'Yesterday, 03:15 PM',
+      status: 'Secured',
+      amountPKR: 284500,
       isPositive: false,
-      avatarIcon: '🍔',
+      avatarIcon: '🪙',
       avatarBg: '#FEF3C7'
     },
     {
-      id: 't3',
-      name: 'PayPal Global',
-      category: 'Deposit',
-      date: '8 Sep, 04:35 AM',
-      status: 'Success',
-      amount: 300.25,
+      id: 'st-3',
+      title: 'Meezan Islamic Sukuk Coupon',
+      category: 'SBP Sovereign Fixed Yield',
+      timestamp: '18 Oct, 09:40 AM',
+      status: 'Settled',
+      amountPKR: 32500,
       isPositive: true,
-      avatarIcon: '🅿️',
+      avatarIcon: '📜',
       avatarBg: '#EFF6FF'
     },
     {
-      id: 't4',
-      name: 'Apple Services',
-      category: 'Purchase',
-      date: '7 Sep, 09:20 PM',
-      status: 'Failed',
-      amount: 299.00,
+      id: 'st-4',
+      title: 'DHA Phase 9 Plot Installment',
+      category: 'Real Estate Capital Equity',
+      timestamp: '15 Oct, 02:20 PM',
+      status: 'Processed',
+      amountPKR: 150000,
       isPositive: false,
-      avatarIcon: '🍎',
-      avatarBg: '#FEE2E2'
-    },
-    {
-      id: 't5',
-      name: 'Adobe Creative Cloud',
-      category: 'Subscription',
-      date: '6 Sep, 10:14 AM',
-      status: 'Success',
-      amount: 52.00,
-      isPositive: false,
-      avatarIcon: '🎨',
+      avatarIcon: '🏛️',
       avatarBg: '#F3E8FF'
     },
     {
-      id: 't6',
-      name: 'Walmart Supercenter',
-      category: 'Groceries',
-      date: '6 Aug, 10:00 PM',
-      status: 'Success',
-      amount: 18.75,
+      id: 'st-5',
+      title: 'FBR WHT Section 236A Deduction',
+      category: 'ATL Active Tax Filer Ledger',
+      timestamp: '14 Oct, 10:14 AM',
+      status: 'Cleared',
+      amountPKR: 4875,
       isPositive: false,
-      avatarIcon: '🛒',
+      avatarIcon: '⚖️',
+      avatarBg: '#FEE2E2'
+    },
+    {
+      id: 'st-6',
+      title: 'NADRA Bio-Verisys Biometric Fee',
+      category: 'PDPB/SECP AML Identity Gate',
+      timestamp: '12 Oct, 11:00 AM',
+      status: 'Cleared',
+      amountPKR: 100,
+      isPositive: false,
+      avatarIcon: '🆔',
       avatarBg: '#ECFDF5'
     }
   ];
@@ -152,5 +153,20 @@ export class DashboardComponent implements OnInit {
 
   public setPeriod(p: '1Y' | '6M' | '30D'): void {
     this.selectedPeriod.set(p);
+  }
+
+  /**
+   * Helper to retrieve calculated asset category holding value from real store
+   */
+  public getCategoryBalancePKR(categoryKey: string): number {
+    const allAssets = Object.values(this.portfolioStore.userAssetRegistry()).flat();
+    return allAssets
+      .filter(a => a.category.toUpperCase() === categoryKey.toUpperCase())
+      .reduce((sum, item) => sum + item.holdingValuePKR, 0);
+  }
+
+  public getCategoryBalanceUSD(categoryKey: string): number {
+    const pkr = this.getCategoryBalancePKR(categoryKey);
+    return Math.round(pkr / 278.45);
   }
 }
