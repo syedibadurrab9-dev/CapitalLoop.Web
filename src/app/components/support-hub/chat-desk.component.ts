@@ -63,6 +63,7 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked {
 
     this.portfolioStore.selectedUserEmail.set(normalizedEmail);
     this.chatStore.loadActiveThreadStream(normalizedEmail);
+    this.chatStore.clearEngagementWarning();
   }
 
   protected getActiveThreadName(): string {
@@ -109,6 +110,31 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked {
     this.showVerificationModal.set(false);
   }
 
+  public async claimCurrentSession(forceTakeover: boolean = false): Promise<void> {
+    const email = this.portfolioStore.selectedUserEmail();
+    if (!email) return;
+
+    if (!this.isConsultantVerified()) {
+      this.openVerificationModal();
+      return;
+    }
+
+    await this.chatStore.claimSession(email, this.consultantLicense(), forceTakeover);
+  }
+
+  public async releaseCurrentSession(): Promise<void> {
+    const email = this.portfolioStore.selectedUserEmail();
+    if (!email) return;
+
+    await this.chatStore.releaseSession(email);
+  }
+
+  public onInputTyping(text: string): void {
+    const email = this.portfolioStore.selectedUserEmail();
+    if (!email) return;
+    this.chatStore.sendTypingNotification(email, text.length > 0);
+  }
+
   protected dispatchResponse(inputRef: HTMLInputElement): void {
     if (!this.isConsultantVerified()) {
       this.openVerificationModal();
@@ -122,11 +148,30 @@ export class ChatDeskComponent implements OnInit, AfterViewChecked {
     
     const normalizedEmail = rawDestinationEmail.trim().toLowerCase();
 
+    // Check if session is locked by another advisor
+    if (this.chatStore.isCurrentSessionLockedByOther()) {
+      const otherAdvisor = this.chatStore.currentSession()?.assignedAdvisorName || 'Another Advisor';
+      if (!confirm(`⚠️ Investor session is currently locked to ${otherAdvisor}. Would you like to TAKE OVER the session and transmit this advice?`)) {
+        return;
+      }
+      // Advisor chose to take over
+      this.claimCurrentSession(true).then((success) => {
+        // Proceed with transmission
+        this.sendFormattedReply(inputRef, normalizedEmail, targetText);
+      });
+      return;
+    }
+
+    this.sendFormattedReply(inputRef, normalizedEmail, targetText);
+  }
+
+  private sendFormattedReply(inputRef: HTMLInputElement, email: string, text: string): void {
     // Attach regulatory verification stamp
     const badgeLabel = this.consultantType() === 'SECP_ADVISOR' ? 'SECP Advisor' : 'FBR Tax Practitioner';
-    const stampedMessage = `[Verified ${badgeLabel} #${this.consultantLicense()}] ${targetText}`;
+    const stampedMessage = `[Verified ${badgeLabel} #${this.consultantLicense()}] ${text}`;
 
-    this.chatStore.transmitAgentMessage(normalizedEmail, stampedMessage);
+    this.chatStore.transmitAgentMessage(email, stampedMessage);
+    this.chatStore.sendTypingNotification(email, false);
     
     inputRef.value = '';
     this.shouldScrollToBottom = true;

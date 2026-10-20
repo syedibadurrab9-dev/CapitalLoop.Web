@@ -14,12 +14,17 @@ export interface ChatMessageBackupPayload {
 }
 
 export interface SupportSessionSummary {
-  sessionToken: string;
-  clientEmail: string;
-  clientName: string;
+  investorEmail: string;
+  investorName: string;
+  status: 'UNASSIGNED' | 'ENGAGED' | 'RESOLVED';
+  assignedAdvisorEmail?: string | null;
+  assignedAdvisorName?: string | null;
+  assignedAdvisorLicense?: string | null;
   openedAt: Date;
-  isArchived: boolean;
-  assignedAgentEmail?: string;
+  engagedAt?: Date | null;
+  lastActivityAt: Date;
+  isOnline: boolean;
+  unreadCountByAdvisor: number;
 }
 
 @Injectable({
@@ -57,10 +62,48 @@ export class ChatService {
   }
 
   /**
+   * Fetches all active sessions with real-time advisor engagement states
+   */
+  public getActiveSessions(): Observable<SupportSessionSummary[]> {
+    return this.http.get<SupportSessionSummary[]>(`${this.baseApiUrl}/sessions`, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Claims an investor session for the authenticated advisor
+   */
+  public claimSession(clientEmail: string, license?: string, force: boolean = false): Observable<any> {
+    const query = new URLSearchParams();
+    if (license) query.set('license', license);
+    if (force) query.set('force', 'true');
+    const queryString = query.toString() ? `?${query.toString()}` : '';
+
+    return this.http.post<any>(`${this.baseApiUrl}/claim/${clientEmail}${queryString}`, {}, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Releases an investor session back to the unassigned common pool
+   */
+  public releaseSession(clientEmail: string): Observable<any> {
+    return this.http.post<any>(`${this.baseApiUrl}/release/${clientEmail}`, {}, {
+      headers: this.getRequestHeaders()
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Fetches a list of historical or archived support sessions matching an audit request
    */
-  public getClosedSessionsArchive(): Observable<SupportSessionSummary[]> {
-    return this.http.get<SupportSessionSummary[]>(`${this.baseApiUrl}/archive`, {
+  public getClosedSessionsArchive(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseApiUrl}/archive`, {
       headers: this.getRequestHeaders()
     }).pipe(
       catchError(this.handleError)
@@ -73,18 +116,6 @@ export class ChatService {
    */
   public markThreadAsRead(clientEmail: string): Observable<void> {
     return this.http.post<void>(`${this.baseApiUrl}/acknowledge/${clientEmail}`, {}, {
-      headers: this.getRequestHeaders()
-    }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  /**
-   * Administratively archives an active support session thread, removing it from the open live connection map
-   * @param sessionToken The unique session token block to close
-   */
-  public archiveSupportSession(sessionToken: string): Observable<void> {
-    return this.http.post<void>(`${this.baseApiUrl}/session/archive/${sessionToken}`, {}, {
       headers: this.getRequestHeaders()
     }).pipe(
       catchError(this.handleError)

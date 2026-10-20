@@ -34,6 +34,30 @@
           </div>
           
           <div class="client-email-sub font-mono">{{ chat.email }}</div>
+          
+          <!-- Session Locking & Engagement Status Badge -->
+          <div style="margin: 4px 0 6px 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            @if (chat.isLockedByMe) {
+              <span style="font-size: 10px; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+                🟢 Your Active Session
+              </span>
+            } @else if (chat.isLockedByOther) {
+              <span style="font-size: 10px; background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+                🔒 {{ chat.assignedAdvisorName || 'Engaged' }}
+              </span>
+            } @else {
+              <span style="font-size: 10px; background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; border-radius: 4px; padding: 2px 6px; font-weight: 700;">
+                ⚡ Open Pool
+              </span>
+            }
+
+            @if (chat.isTyping) {
+              <span style="font-size: 10px; color: #2563EB; font-weight: 700; animation: pulse 1.5s infinite;">
+                ✍️ typing...
+              </span>
+            }
+          </div>
+
           <div class="snippet">{{ chat.lastMessageSnippet }}</div>
         </div>
       } @empty {
@@ -45,10 +69,11 @@
   <section class="chat-terminal-core">
     @if (portfolioStore.selectedUserEmail()) {
       
+      <!-- Top Bar: Client Name & Regulatory License Status -->
       <div class="active-chat-header" style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <h3>{{ getActiveThreadName() }}</h3>
-          <span>Connected securely over live messaging gateway</span>
+          <h3 style="margin: 0; font-size: 16px; font-weight: 700;">{{ getActiveThreadName() }}</h3>
+          <span style="font-size: 11px; color: #64748B;">Connected securely over live SignalR messaging gateway</span>
         </div>
 
         <!-- Consultant Verification Status Pill -->
@@ -68,6 +93,51 @@
           }
         </div>
       </div>
+
+      <!-- Single Advisor Engagement Status Bar -->
+      @if (chatStore.isCurrentSessionLockedByMe()) {
+        <div style="background: #ECFDF5; border-bottom: 1px solid #A7F3D0; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; color: #065F46; display: flex; align-items: center; gap: 6px;">
+            🔒 Session Locked to You (Dedicated Advisory Channel)
+          </span>
+          <button (click)="releaseCurrentSession()" style="background: #FFF; color: #DC2626; border: 1px solid #FCA5A5; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+            Release to Pool
+          </button>
+        </div>
+      } @else if (chatStore.isCurrentSessionLockedByOther()) {
+        <div style="background: #FFFBEB; border-bottom: 1px solid #FDE68A; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
+            ⚠️ Locked to {{ chatStore.currentSession()?.assignedAdvisorName || 'Another Advisor' }} ({{ chatStore.currentSession()?.assignedAdvisorEmail }})
+          </span>
+          <button (click)="claimCurrentSession(true)" style="background: #D97706; color: #FFF; border: none; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+            Take Over Session
+          </button>
+        </div>
+      } @else {
+        <div style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 6px;">
+            ⚡ Available in Pool (No advisor currently claimed)
+          </span>
+          <button (click)="claimCurrentSession(false)" style="background: #2563EB; color: #FFF; border: none; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+            Claim Session & Lock
+          </button>
+        </div>
+      }
+
+      <!-- Collision / Warning Banner -->
+      @if (chatStore.engagementWarning()) {
+        <div style="background: #FEF2F2; border-bottom: 1px solid #FCA5A5; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; color: #DC2626; display: flex; align-items: center; gap: 6px;">
+            🚨 {{ chatStore.engagementWarning() }}
+          </span>
+          <div style="display: flex; gap: 8px;">
+            <button (click)="claimCurrentSession(true)" style="background: #DC2626; color: #FFF; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+              Force Take Over
+            </button>
+            <button (click)="chatStore.clearEngagementWarning()" style="background: none; border: none; color: #991B1B; font-size: 16px; cursor: pointer;">✕</button>
+          </div>
+        </div>
+      }
 
       <div class="stream-scroller" #streamContainer>
         @for (msg of chatStore.activeMessageStream(); track msg.id) {
@@ -98,13 +168,13 @@
         <input type="text" 
                #replyInput
                [disabled]="chatStore.connectionStatus() !== 'Connected'"
-               [placeholder]="!isConsultantVerified() ? 'Click Verify Now to unlock advisory desk...' : (chatStore.connectionStatus() === 'Connected' ? 'Type accredited advisory response...' : 'Connection broken. Awaiting reconnection...')" 
-               (input)="0"
+               [placeholder]="!isConsultantVerified() ? 'Click Verify Now to unlock advisory desk...' : (chatStore.isCurrentSessionLockedByOther() ? 'Locked to another advisor. Type and press Enter to Take Over...' : (chatStore.connectionStatus() === 'Connected' ? 'Type accredited advisory response...' : 'Connection broken. Awaiting reconnection...'))" 
+               (input)="onInputTyping(replyInput.value)"
                (keyup.enter)="chatStore.connectionStatus() === 'Connected' && replyInput.value.trim() && dispatchResponse(replyInput)" />
         <button class="dispatch-btn" 
                 [disabled]="chatStore.connectionStatus() !== 'Connected' || !replyInput.value.trim()" 
                 (click)="dispatchResponse(replyInput)">
-          Send Message
+          {{ chatStore.isCurrentSessionLockedByOther() ? 'Take Over & Send' : 'Send Message' }}
         </button>
       </footer>
 
